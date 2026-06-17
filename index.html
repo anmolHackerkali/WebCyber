@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hamburger Menu</title>
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:Arial, sans-serif;
+    }
+
+    /* Header */
+    header{
+        background:#333;
+        color:white;
+        padding:15px;
+        display:flex;
+        align-items:center;
+    }
+
+    /* Hamburger Icon */
+    .menu-btn{
+        font-size:30px;
+        cursor:pointer;
+        margin-right:15px;
+    }
+
+    /* Side Menu */
+    .sidebar{
+        height:100%;
+        width:0;
+        position:fixed;
+        top:0;
+        left:0;
+        background:#222;
+        overflow-x:hidden;
+        transition:0.4s;
+        padding-top:60px;
+    }
+
+    .sidebar a{
+        display:block;
+        color:white;
+        text-decoration:none;
+        padding:15px 25px;
+        font-size:18px;
+    }
+
+    .sidebar a:hover{
+        background:#444;
+    }
+
+    .close-btn{
+        position:absolute;
+        top:10px;
+        right:20px;
+        font-size:30px;
+        cursor:pointer;
+        color:white;
+    }
+
+    .content{
+        padding:20px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Side Menu -->
+<div id="mySidebar" class="sidebar">
+    <span class="close-btn" onclick="closeMenu()">&times;</span>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Services</a>
+    <a href="#">Contact</a>
+</div>
+
+<!-- Header -->
+<header>
+    <span class="menu-btn" onclick="openMenu()">☰</span>
+    <h2>Main Page</h2>
+</header>
+
+<!-- Main Content -->
+<div class="content">
+    <h1>Welcome</h1>
+    <p>3-line menu icon par click karke menu kholiye.</p>
+</div>
+
+<script>
+function openMenu() {
+    document.getElementById("mySidebar").style.width = "250px";
+}
+
+function closeMenu() {
+    document.getElementById("mySidebar").style.width = "0";
+}
+</script>
+
+</body>
+</html>
