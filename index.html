@@ -1,41 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Main Page</title>
 
 <style>
 
-body{
+*{
 margin:0;
-background:#111;
-color:white;
-font-family:Arial;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
+
+body{
+background:white;
+height:100vh;
+overflow:hidden;
+}
+
+.content{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:40px;
+font-weight:bold;
+transition:.4s;
+}
+
+.content.blur{
+filter:blur(10px);
+}
+
+/* Hamburger */
 
 .menu-btn{
 position:fixed;
 top:20px;
 right:20px;
+z-index:10000;
 cursor:pointer;
-z-index:1000;
 }
 
-.menu-btn div{
+.menu-btn span{
+display:block;
 width:35px;
 height:4px;
-background:#00ff66;
+background:#000;
 margin:7px;
 border-radius:10px;
-box-shadow:0 0 10px #00ff66;
+transition:.4s;
 }
 
-.content{
-padding:100px;
-text-align:center;
+.menu-btn.active span:nth-child(1){
+transform:translateY(11px) rotate(45deg);
 }
 
-iframe{
+.menu-btn.active span:nth-child(2){
+opacity:0;
+}
+
+.menu-btn.active span:nth-child(3){
+transform:translateY(-11px) rotate(-45deg);
+}
+
+/* Menu iframe */
+
+#menuFrame{
 position:fixed;
 top:0;
 left:0;
@@ -43,7 +76,8 @@ width:100%;
 height:100%;
 border:none;
 display:none;
-z-index:999;
+z-index:5000;
+background:transparent;
 }
 
 </style>
@@ -51,23 +85,55 @@ z-index:999;
 
 <body>
 
-<div class="menu-btn" onclick="openMenu()">
-<div></div>
-<div></div>
-<div></div>
+<div class="menu-btn" id="menuBtn">
+<span></span>
+<span></span>
+<span></span>
 </div>
 
-<div class="content">
-<h1>YOUR WEBSITE</h1>
-<p>Yahan apna content lagao.</p>
+<div class="content" id="content">
+YOUR WEBSITE
 </div>
 
-<iframe id="menuFrame" src="menu.html"></iframe>
+<iframe
+id="menuFrame"
+src="menu.html">
+</iframe>
 
 <script>
-function openMenu(){
-document.getElementById("menuFrame").style.display="block";
+
+const btn=document.getElementById("menuBtn");
+const frame=document.getElementById("menuFrame");
+const content=document.getElementById("content");
+
+btn.addEventListener("click",()=>{
+
+if(btn.classList.contains("active")){
+
+btn.classList.remove("active");
+frame.style.display="none";
+content.classList.remove("blur");
+
+}else{
+
+btn.classList.add("active");
+frame.style.display="block";
+content.classList.add("blur");
+
 }
+
+});
+
+/* menu.html se call hoga */
+
+window.closeMenu=function(){
+
+btn.classList.remove("active");
+frame.style.display="none";
+content.classList.remove("blur");
+
+}
+
 </script>
 
 </body>
