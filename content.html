@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Hacker Contact</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Consolas,monospace;
+}
+
+body{
+background:#000;
+overflow-x:hidden;
+min-height:100vh;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* MAIN BOX */
+
+.container{
+width:450px;
+max-width:95%;
+margin:30px auto;
+padding:25px;
+border-radius:20px;
+background:rgba(0,0,0,.85);
+border:3px solid #00ff00;
+box-shadow:
+0 0 15px #00ff00,
+0 0 30px red,
+0 0 50px #00ff00;
+backdrop-filter:blur(6px);
+}
+
+/* MAIN TITLE */
+
+h1{
+text-align:center;
+font-size:42px;
+font-weight:bold;
+margin-bottom:25px;
+letter-spacing:3px;
+
+background:linear-gradient(
+90deg,
+#ff0000,
+#ff7300,
+#ffff00,
+#00ff00,
+#00ffff,
+#0066ff,
+#ff00ff,
+#ff0000
+);
+
+background-size:400% 400%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:rgbMove 6s linear infinite;
+text-shadow:
+0 0 10px red,
+0 0 20px #00ff00,
+0 0 30px blue;
+}
+
+@keyframes rgbMove{
+0%{background-position:0% 50%;}
+100%{background-position:100% 50%;}
+}
+
+/* WHATSAPP BOX */
+
+.whatsapp{
+background:rgba(0,255,0,.08);
+border:2px solid #25D366;
+border-radius:15px;
+padding:15px;
+box-shadow:0 0 15px #25D366;
+}
+
+.whatsapp h2{
+text-align:center;
+font-size:28px;
+margin-bottom:10px;
+color:#25D366;
+text-shadow:
+0 0 10px #25D366,
+0 0 20px #25D366;
+}
+
+.number{
+text-align:center;
+font-size:22px;
+font-weight:bold;
+line-height:1.8;
+}
+
+.number a{
+color:#00ff88;
+text-decoration:none;
+transition:.3s;
+}
+
+.number a:hover{
+color:white;
+text-shadow:
+0 0 10px #00ff88,
+0 0 20px #00ff88;
+}
+
+.click{
+margin-top:10px;
+text-align:center;
+color:#fff;
+font-size:14px;
+}
+
+/* MAIL TITLE */
+
+.mail{
+margin:25px 0 15px;
+text-align:center;
+font-size:34px;
+font-weight:bold;
+
+background:linear-gradient(
+90deg,
+#4285F4,
+#EA4335,
+#FBBC05,
+#34A853,
+#4285F4
+);
+
+background-size:300% 300%;
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:googleColor 4s linear infinite;
+
+text-shadow:
+0 0 10px #4285F4,
+0 0 20px #EA4335,
+0 0 30px #34A853;
+}
+
+@keyframes googleColor{
+0%{background-position:0%;}
+100%{background-position:100%;}
+}
+
+/* INPUTS */
+
+input,
+textarea{
+width:100%;
+padding:15px;
+margin:10px 0;
+border-radius:12px;
+border:2px solid #00ff00;
+background:#111;
+color:white;
+font-size:17px;
+outline:none;
+transition:.3s;
+}
+
+input:focus,
+textarea:focus{
+border-color:red;
+box-shadow:
+0 0 10px red,
+0 0 20px #00ff00;
+}
+
+input::placeholder,
+textarea::placeholder{
+color:#aaa;
+}
+
+textarea{
+height:140px;
+resize:none;
+}
+
+/* BUTTON */
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+border:none;
+border-radius:12px;
+
+background:linear-gradient(
+90deg,
+red,
+orange,
+yellow,
+#00ff00,
+cyan,
+blue,
+violet
+);
+
+background-size:400% 400%;
+
+animation:btnRGB 5s linear infinite;
+
+color:white;
+
+box-shadow:
+0 0 15px red,
+0 0 25px #00ff00;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+@keyframes btnRGB{
+0%{background-position:0%;}
+100%{background-position:100%;}
+}
+
+/* FOOTER */
+
+.footer{
+margin-top:15px;
+text-align:center;
+color:#999;
+font-size:13px;
+}
+
+/* MOBILE */
+
+@media(max-width:500px){
+
+h1{
+font-size:32px;
+}
+
+.mail{
+font-size:28px;
+}
+
+.whatsapp h2{
+font-size:24px;
+}
+
+.number{
+font-size:18px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+
+<h1>🔥 CONTACT TO ME 🔥</h1>
+
+<div class="whatsapp">
+
+<h2>WhatsApp Contact</h2>
+
+<div class="number">
+
+<a href="https://wa.me/919349181116" target="_blank">
+9349181116
+</a>
+
+<br>
+
+<a href="https://wa.me/919832911573" target="_blank">
+9832911573
+</a>
+
+</div>
+
+<div class="click">
+📲 Click Number To Open WhatsApp
+</div>
+
+</div>
+
+<div class="mail">
+MAIL CONTACT
+</div>
+
+<form id="contactForm">
+
+<input
+type="text"
+placeholder="Enter Your Name"
+required>
+
+<input
+type="email"
+placeholder="Enter Your Email"
+required>
+
+<textarea
+placeholder="Type Your Message Here..."
+required></textarea>
+
+<button type="submit">
+🚀 SEND MESSAGE
+</button>
+
+</form>
+
+<div class="footer">
+Cyber Hacker Contact Panel © 2026
+</div>
+
+</div>
+
+<script>
+
+/* MATRIX EFFECT */
+
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+
+function resizeCanvas(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+}
+
+resizeCanvas();
+
+const letters=
+"01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&@";
+
+const fontSize=16;
+let columns=Math.floor(canvas.width/fontSize);
+
+let drops=[];
+
+for(let i=0;i<columns;i++){
+drops[i]=1;
+}
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,.05)";
+ctx.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+const colors=[
+"#00ff00",
+"#ff0000",
+"#ffff00"
+];
+
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+
+const text=
+letters[Math.floor(
+Math.random()*letters.length
+)];
+
+ctx.fillStyle=
+colors[Math.floor(
+Math.random()*colors.length
+)];
+
+ctx.fillText(
+text,
+i*fontSize,
+drops[i]*fontSize
+);
+
+if(
+drops[i]*fontSize>
+canvas.height
+&&
+Math.random()>0.975
+){
+drops[i]=0;
+}
+
+drops[i]++;
+}
+}
+
+setInterval(draw,50);
+
+window.addEventListener(
+"resize",
+()=>{
+resizeCanvas();
+}
+);
+
+/* FORM */
+
+document
+.getElementById("contactForm")
+.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+alert(
+"✅ Message Submitted Successfully!"
+);
+
+this.reset();
+
+}
+);
+
+</script>
+
+</body>
+</html>
