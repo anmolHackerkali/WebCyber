@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>30 Din Mein HTML Seekhein</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Hind:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <!-- ===== TOP BAR (pinned/fixed at top) ===== -->
+  <header class="topbar">
+    <button id="sidebarToggle" class="toggle-btn" aria-label="Days list kholiye/band kariye">
+      <span class="toggle-icon">☰</span>
+      <span class="toggle-text">Days</span>
+    </button>
+    <div class="brand">
+      <span class="brand-mark">&lt;/&gt;</span>
+      <span class="brand-text">30 Din Mein <strong>HTML</strong> Seekhein</span>
+    </div>
+    <div class="day-pill" id="activeDayPill">Day 1</div>
+  </header>
+
+  <div class="app-shell">
+
+    <!-- ===== SIDEBAR : Day 1 - Day 30 list ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <p>Course Roadmap</p>
+        <span>30 Days</span>
+      </div>
+      <nav class="day-list" id="dayList"><!-- JS se fill hoga --></nav>
+    </aside>
+
+    <!-- backdrop for mobile drawer -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="content" id="mainContent">
+
+      <section class="explain-card">
+        <div class="day-heading-row">
+          <span class="day-number" id="dayNumberBadge">01</span>
+          <h1 class="day-title" id="dayTitle">Loading...</h1>
+        </div>
+        <div class="explain-text" id="dayExplanation"><!-- JS se fill hoga --></div>
+      </section>
+
+      <section class="workspace">
+
+        <!-- CODE EDITOR PANEL -->
+        <div class="panel code-panel">
+          <div class="panel-bar">
+            <span class="panel-dot dot-html"></span>
+            <span class="panel-title">CODE EDITOR — index.html</span>
+            <div class="panel-actions">
+              <button id="resetBtn" class="ghost-btn" title="Default code wapas laaye">⟲ Reset</button>
+              <button id="runBtn" class="run-btn" title="Code run kariye">▶ Run Code</button>
+            </div>
+          </div>
+          <textarea id="codeEditor" class="code-editor" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+        </div>
+
+        <!-- TERMINAL / OUTPUT PANEL (shared across all 30 days) -->
+        <div class="panel terminal-panel">
+          <div class="panel-bar terminal-bar">
+            <span class="term-dot dot-red"></span>
+            <span class="term-dot dot-yellow"></span>
+            <span class="term-dot dot-green"></span>
+            <span class="panel-title">TERMINAL — live output</span>
+            <div class="panel-actions">
+              <button id="clearTermBtn" class="ghost-btn" title="Terminal saaf kariye">🧹 Clear</button>
+            </div>
+          </div>
+
+          <div class="preview-wrap">
+            <iframe id="previewFrame" class="preview-frame" title="Live Preview" sandbox="allow-scripts"></iframe>
+          </div>
+
+          <div class="console-wrap">
+            <div class="console-label">console / output log</div>
+            <div id="consoleOutput" class="console-output"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <p class="footnote">
+        🔒 Yeh page copy-protected hai — content sirf seekhne ke liye hai. Code likhiye, badliye, aur <strong>Run</strong> dabaiye taaki real output dekh sakein.
+      </p>
+
+    </main>
+  </div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
