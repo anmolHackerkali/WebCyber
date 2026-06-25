@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>30 Days of JavaScript — Seekho aur Likho</title>
+<style>
+  :root{
+    --bg: #0b0f14;
+    --panel: #11161d;
+    --panel-2: #0d1217;
+    --line: #1f2730;
+    --text: #d7dde4;
+    --muted: #7d8a98;
+    --accent: #ffb454;      /* day heading / accent gold */
+    --accent-2: #39e6a4;    /* cyan-green for buttons/links */
+    --terminal-text: #4dff9a;
+    --danger: #ff5d6c;
+    --radius: 10px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0; height:100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", "Noto Sans Devanagari", Arial, sans-serif;
+    -webkit-user-select:none;
+    user-select:none;
+    overflow:hidden;
+  }
+
+  textarea{ user-select:text; }
+
+  ::selection{ background: rgba(255,180,84,.25); }
+
+  /* ===== Top bar (pinned) ===== */
+  .topbar{
+    position:fixed; top:0; left:0; right:0; height:56px;
+    background: linear-gradient(180deg, #121922, #0e141b);
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:12px;
+    padding:0 14px; z-index:50;
+  }
+  .topbar .brand{
+    font-weight:700; letter-spacing:.3px; color:var(--text); font-size:15px;
+    display:flex; align-items:center; gap:8px; white-space:nowrap;
+  }
+  .brand .dot{ color: var(--accent-2); }
+  .toggle-btn{
+    margin-left:auto;
+    background: var(--accent-2); color:#06231a; border:none;
+    font-weight:700; font-size:14px;
+    padding:9px 16px; border-radius:8px; cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    transition: transform .15s, background .2s;
+  }
+  .toggle-btn:hover{ transform: translateY(-1px); }
+  .toggle-btn:active{ transform: translateY(0); }
+  .toggle-btn.is-open{ background:#ffb454; }
+  .day-pill{
+    background:var(--panel-2); border:1px solid var(--line); color:var(--muted);
+    padding:6px 10px; border-radius:20px; font-size:12px; white-space:nowrap;
+  }
+
+  /* ===== Sidebar (overlay, opens/closes with the pin button) ===== */
+  .backdrop{
+    position:fixed; inset:0; top:56px; background:rgba(0,0,0,.55);
+    opacity:0; pointer-events:none; transition:opacity .25s; z-index:40;
+  }
+  .backdrop.show{ opacity:1; pointer-events:auto; }
+
+  .sidebar{
+    position:fixed; top:56px; bottom:0; left:0; width:300px; max-width:86vw;
+    background: var(--panel); border-right:1px solid var(--line);
+    transform: translateX(-105%);
+    transition: transform .28s ease;
+    z-index:45; overflow-y:auto;
+  }
+  .sidebar.open{ transform: translateX(0); }
+  .sidebar-head{
+    padding:14px 16px; border-bottom:1px solid var(--line);
+    font-size:13px; color:var(--muted);
+  }
+  .day-list{ padding:8px; display:flex; flex-direction:column; gap:6px; }
+  .day-btn{
+    text-align:left; background:var(--panel-2); border:1px solid var(--line);
+    color:var(--text); padding:10px 12px; border-radius:8px; cursor:pointer;
+    font-size:13.5px; display:flex; gap:8px; align-items:center;
+    transition: background .15s, border-color .15s;
+  }
+  .day-btn .num{ color: var(--accent); font-weight:700; min-width:46px; }
+  .day-btn:hover{ border-color: var(--accent-2); }
+  .day-btn.active{ background: rgba(57,230,164,.12); border-color: var(--accent-2); }
+
+  /* ===== Main workspace ===== */
+  .workspace{
+    position:fixed; top:56px; left:0; right:0; bottom:0;
+    display:flex; gap:10px; padding:10px;
+  }
+  .panel{
+    background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .left-panel{ flex:1.15; min-width:0; }
+  .right-panel{ flex:1; min-width:0; }
+
+  .panel-head{
+    padding:10px 14px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .panel-head h3{ margin:0; font-size:13px; color:var(--muted); letter-spacing:.5px; text-transform:uppercase; }
+
+  .day-heading{
+    font-size:20px; font-weight:800; color: var(--accent);
+    margin:0; padding:14px 16px 0 16px;
+    border-left:4px solid var(--accent); padding-left:12px; margin-left:16px;
+  }
+  .day-explain{
+    padding:10px 18px 16px 32px; font-size:14.5px; line-height:1.7; color:#c8d1da;
+    overflow-y:auto; border-bottom:1px solid var(--line);
+    user-select:text;
+  }
+
+  .editor-wrap{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  textarea#editor{
+    flex:1; width:100%; resize:none; border:none; outline:none;
+    background: var(--panel-2); color:#e9eef3;
+    font-family: "Fira Code","Consolas", monospace; font-size:14px; line-height:1.6;
+    padding:14px 16px; tab-size:2;
+  }
+
+  .run-bar{
+    padding:10px 14px; border-top:1px solid var(--line);
+    display:flex; gap:10px;
+  }
+  .btn{
+    border:none; border-radius:8px; padding:9px 18px; font-weight:700; cursor:pointer;
+    font-size:13.5px; transition: transform .12s, opacity .15s;
+  }
+  .btn:active{ transform: scale(.97); }
+  .btn-run{ background: var(--accent-2); color:#06231a; }
+  .btn-clear{ background: transparent; color:var(--muted); border:1px solid var(--line); }
+  .btn-clear:hover{ color:var(--danger); border-color: var(--danger); }
+
+  .terminal{
+    flex:1; overflow-y:auto; background:#070a0d; padding:14px 16px;
+    font-family:"Fira Code","Consolas",monospace; font-size:13.5px; line-height:1.6;
+    color: var(--terminal-text); user-select:text;
+  }
+  .terminal .ln{ white-space:pre-wrap; word-break:break-word; margin-bottom:4px; }
+  .terminal .ln.err{ color: var(--danger); }
+  .terminal .ln.warn{ color: #ffd166; }
+  .terminal .ln.info{ color:#6fb7ff; }
+  .terminal .empty{ color:#3a4654; }
+
+  iframe#sandbox{ display:none; }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 860px){
+    .workspace{ flex-direction:column; padding:8px; gap:8px; }
+    .left-panel, .right-panel{ flex:1; }
+    .brand span.full{ display:none; }
+    .day-heading{ font-size:17px; }
+    .day-explain{ padding-left:18px; font-size:13.5px; max-height:30vh; }
+  }
+
+  .footer-note{
+    position:fixed; bottom:6px; right:10px; font-size:11px; color:#445; z-index:5;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand"><span class="dot">●</span> <span class="full">30 Days of JavaScript</span><span> 30 DOJ</span></div>
+    <div class="day-pill" id="currentDayPill">Day 1 selected</div>
+    <button class="toggle-btn" id="toggleSidebar">📅 Days List</button>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-head">Day 1 se Day 30 tak — kisi bhi din par click karo</div>
+    <div class="day-list" id="dayList"></div>
+  </div>
+
+  <div class="workspace">
+    <div class="panel left-panel">
+      <h2 class="day-heading" id="dayHeading">Day 1: Variables</h2>
+      <div class="day-explain" id="dayExplain">Loading...</div>
+      <div class="editor-wrap">
+        <textarea id="editor" spellcheck="false"></textarea>
+        <div class="run-bar">
+          <button class="btn btn-run" id="runBtn">▶ Run Code</button>
+          <button class="btn btn-clear" id="resetBtn">⟲ Reset Code</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel right-panel">
+      <div class="panel-head">
+        <h3>Terminal / Output</h3>
+        <button class="btn btn-clear" id="clearTermBtn" style="margin-left:auto;">🧹 Clear Terminal</button>
+      </div>
+      <div class="terminal" id="terminal"><div class="ln empty">// output yahin dikhega — Run Code dabao</div></div>
+    </div>
+  </div>
+
+  <iframe id="sandbox" sandbox="allow-scripts"></iframe>
+
+  <div class="footer-note">© Sabhi rights reserved — copy/paste disabled</div>
+
+<script>
+/* ============================================================
+   30 DAYS DATA — Hindi explanation + starter code per day
+   ============================================================ */
+const daysData = [
+{ title:"Day 1: Variables (var, let, const)",
+  explain:"JavaScript me data ko store karne ke liye variables ka use hota hai. 'var' purana tarika hai jisme function-scope hota hai, 'let' aur 'const' modern tarike hain jisme block-scope hota hai. 'const' wahan use karo jahan value kabhi badalni na ho, aur 'let' wahan jahan value future me change ho sakti hai. Naam dene ke rules: number se start nahi kar sakte, special characters allowed nahi (sirf _ aur $).",
+  code:`let naam = "Rahul";
+const age = 22;
+var city = "Delhi";
+
+console.log("Naam:", naam);
+console.log("Age:", age);
+console.log("City:", city);
+
+age = 23; // ❌ Ye line error degi kyunki const ki value badal nahi sakte
+console.log("Updated age:", age);` },
+
+{ title:"Day 2: Data Types",
+  explain:"JavaScript me 2 type ke data hote hain — Primitive (String, Number, Boolean, Undefined, Null, Symbol, BigInt) aur Non-Primitive (Object, Array, Function). 'typeof' operator se hum kisi bhi variable ka data type check kar sakte hain. Yeh samajhna zaroori hai kyunki different data types par different operations kaam karte hain.",
+  code:`let str = "Hello";
+let num = 42;
+let bool = true;
+let und;
+let nul = null;
+let obj = { a: 1 };
+let arr = [1, 2, 3];
+
+console.log(typeof str);
+console.log(typeof num);
+console.log(typeof bool);
+console.log(typeof und);
+console.log(typeof nul);   // historic JS bug: "object" aayega
+console.log(typeof obj);
+console.log(typeof arr);   // "object" hi aayega, Array.isArray() se confirm karo
+console.log(Array.isArray(arr));` },
+
+{ title:"Day 3: Operators",
+  explain:"Operators ki madad se hum calculations aur comparisons karte hain. Arithmetic (+, -, *, /, %, **), Comparison (==, ===, !=, !==, >, <), Logical (&&, ||, !) aur Assignment (=, +=, -=) operators sabse zyada use hote hain. '===' aur '==' ka fark samajhna bahut important hai — '===' type bhi check karta hai, '==' nahi.",
+  code:`let a = 10, b = 3;
+
+console.log("Sum:", a + b);
+console.log("Power:", a ** b);
+console.log("Modulus:", a % b);
+
+console.log(5 == "5");    // true  (type ignore karta hai)
+console.log(5 === "5");   // false (type bhi check karta hai)
+
+let isAdult = true, hasID = false;
+console.log("Entry allowed:", isAdult && hasID);
+console.log("Entry allowed:", isAdult || hasID);` },
+
+{ title:"Day 4: Conditional Statements (if-else)",
+  explain:"if-else statements ki madad se hum decision lete hain — agar koi condition true hai to ek code chalega, warna doosra. 'else if' multiple conditions check karne ke liye use hota hai. Yeh programming ki sabse basic aur sabse zyada use hone wali concept hai.",
+  code:`let marks = 78;
+
+if (marks >= 90) {
+  console.log("Grade: A+");
+} else if (marks >= 75) {
+  console.log("Grade: A");
+} else if (marks >= 50) {
+  console.log("Grade: B");
+} else {
+  console.log("Grade: Fail");
+}` },
+
+{ title:"Day 5: Switch Case",
+  explain:"Jab humare paas ek hi variable ki multiple possible values check karni ho to switch-case if-else se zyada clean aur readable hota hai. Har case ke end me 'break' lagana zaroori hai, warna code neeche wale cases me bhi chala jayega (fall-through).",
+  code:`let day = 3;
+let dayName;
+
+switch (day) {
+  case 1: dayName = "Somvaar"; break;
+  case 2: dayName = "Mangalvaar"; break;
+  case 3: dayName = "Budhvaar"; break;
+  case 4: dayName = "Guruvaar"; break;
+  case 5: dayName = "Shukravaar"; break;
+  default: dayName = "Weekend";
+}
+
+console.log("Aaj hai:", dayName);` },
+
+{ title:"Day 6: Loops (for, while, do-while)",
+  explain:"Loops ka use repeat hone wale kaam ke liye hota hai. 'for' loop tab use hota hai jab humein pata ho kitni baar repeat karna hai. 'while' loop tab use hota hai jab condition pe depend karna ho. 'do-while' loop body ko kam se kam ek baar zaroor chalata hai, condition baad me check hoti hai.",
+  code:`console.log("--- for loop ---");
+for (let i = 1; i <= 5; i++) {
+  console.log("Count:", i);
+}
+
+console.log("--- while loop ---");
+let i = 1;
+while (i <= 3) {
+  console.log("While count:", i);
+  i++;
+}
+
+console.log("--- do while loop ---");
+let j = 1;
+do {
+  console.log("Do-while count:", j);
+  j++;
+} while (j <= 2);` },
+
+{ title:"Day 7: Functions",
+  explain:"Function ek reusable block of code hota hai jo ek specific kaam karta hai. Isse code repeat nahi karna padta. Function ko parameters diye ja sakte hain aur 'return' keyword se value wapas bheji ja sakti hai. Function declaration aur function expression — dono tarike JavaScript me chalte hain.",
+  code:`function addNumbers(a, b) {
+  return a + b;
+}
+
+console.log("Sum:", addNumbers(5, 7));
+
+function greet(name = "Dost") {
+  return "Namaste, " + name + "!";
+}
+
+console.log(greet());
+console.log(greet("Priya"));` },
+
+{ title:"Day 8: Arrow Functions",
+  explain:"Arrow functions ES6 me aaye, ye function likhne ka short tarika hai. Inme 'function' keyword nahi likhna padta aur agar ek hi statement ho to curly braces aur return bhi optional ho jaate hain. Arrow functions apna 'this' nahi banate, wo bahar wale scope ka 'this' use karte hain.",
+  code:`const add = (a, b) => a + b;
+const square = x => x * x;
+const sayHi = () => console.log("Hi from arrow function!");
+
+console.log("Add:", add(4, 6));
+console.log("Square:", square(5));
+sayHi();` },
+
+{ title:"Day 9: Arrays",
+  explain:"Array ek list jaisa data structure hai jisme multiple values ek sath store hoti hain, index 0 se start hota hai. Arrays me push, pop, shift, unshift jaise methods se hum items add/remove kar sakte hain. Array.length se size pata chalta hai.",
+  code:`let fruits = ["Mango", "Apple", "Banana"];
+
+console.log("Pehla fruit:", fruits[0]);
+console.log("Total fruits:", fruits.length);
+
+fruits.push("Orange");      // end me add
+console.log("Push ke baad:", fruits);
+
+fruits.pop();                // end se remove
+console.log("Pop ke baad:", fruits);
+
+fruits.unshift("Grapes");   // start me add
+console.log("Unshift ke baad:", fruits);` },
+
+{ title:"Day 10: Array Methods (map, filter, reduce)",
+  explain:"Yeh teen methods JavaScript me sabse powerful hain. 'map()' har element ko transform karke naya array deta hai. 'filter()' condition ke basis pe sirf matching elements ka naya array deta hai. 'reduce()' saare elements ko combine karke ek single value deta hai (jaise total sum).",
+  code:`let numbers = [1, 2, 3, 4, 5, 6];
+
+let doubled = numbers.map(n => n * 2);
+console.log("Doubled:", doubled);
+
+let evens = numbers.filter(n => n % 2 === 0);
+console.log("Even numbers:", evens);
+
+let total = numbers.reduce((sum, n) => sum + n, 0);
+console.log("Total sum:", total);` },
+
+{ title:"Day 11: Objects",
+  explain:"Object key-value pairs me data store karta hai, real-world entity ko represent karne ke liye best hai (jaise ek 'student' object jisme naam, age, marks ho). Object ki properties ko dot notation (obj.key) ya bracket notation (obj['key']) se access kiya ja sakta hai.",
+  code:`let student = {
+  name: "Aman",
+  age: 20,
+  marks: 88,
+  isPassed: true
+};
+
+console.log("Name:", student.name);
+console.log("Marks:", student["marks"]);
+
+student.city = "Mumbai";   // naya property add
+console.log("Updated object:", student);
+
+for (let key in student) {
+  console.log(key, "=>", student[key]);
+}` },
+
+{ title:"Day 12: Strings",
+  explain:"String text data ko represent karta hai, single, double quotes ya backticks me likha ja sakta hai. Strings 'immutable' hote hain matlab unko directly modify nahi kiya ja sakta, naya string banana padta hai. String ko array jaisa index se bhi access kiya ja sakta hai.",
+  code:`let name = "JavaScript";
+
+console.log("Length:", name.length);
+console.log("First char:", name[0]);
+console.log("Uppercase:", name.toUpperCase());
+console.log("Lowercase:", name.toLowerCase());
+console.log("Includes 'Script':", name.includes("Script"));` },
+
+{ title:"Day 13: String Methods (slice, split, trim, replace)",
+  explain:"String par bahut saare useful methods milte hain. 'slice()' kisi part ko nikalta hai, 'split()' string ko array me todta hai, 'trim()' extra spaces hatata hai, aur 'replace()' kisi word ko doosre se badalta hai. Yeh sabhi methods data cleaning me bahut kaam aate hain.",
+  code:`let text = "   Mera Naam Rahul Hai   ";
+
+console.log("Trim:", text.trim());
+console.log("Slice:", text.trim().slice(0, 10));
+console.log("Split:", text.trim().split(" "));
+console.log("Replace:", text.trim().replace("Rahul", "Aryan"));` },
+
+{ title:"Day 14: Template Literals",
+  explain:"Template literals backticks (\\`) se likhe jaate hain aur inme \\${} ke andar variables/expressions directly daal sakte hain — string concatenation se kahin zyada clean tareeka. Multi-line strings likhna bhi inme easy ho jaata hai.",
+  code:`let name = "Sneha";
+let age = 21;
+
+let oldWay = "Mera naam " + name + " hai aur main " + age + " saal ki hoon.";
+let newWay = \`Mera naam \${name} hai aur main \${age} saal ki hoon.\`;
+
+console.log(oldWay);
+console.log(newWay);
+console.log(\`2 + 2 = \${2 + 2}\`);` },
+
+{ title:"Day 15: Ternary Operator",
+  explain:"Ternary operator ek line me if-else jaisa decision lene ka short tarika hai. Syntax hai: condition ? trueValue : falseValue. Chhote conditions ke liye yeh code ko bahut concise bana deta hai.",
+  code:`let age = 17;
+let result = age >= 18 ? "Vote kar sakte ho" : "Vote nahi kar sakte";
+console.log(result);
+
+let num = 7;
+console.log(num % 2 === 0 ? "Even number" : "Odd number");` },
+
+{ title:"Day 16: Math Object",
+  explain:"Math object JavaScript me built-in hai aur isme mathematical operations ke liye ready-made methods milte hain — round, floor, ceil, random, max, min, power, sqrt waghera. Real projects me random number generate karna ya values round karna bahut common kaam hai.",
+  code:`console.log("Round:", Math.round(4.6));
+console.log("Floor:", Math.floor(4.6));
+console.log("Ceil:", Math.ceil(4.1));
+console.log("Max:", Math.max(10, 25, 3));
+console.log("Min:", Math.min(10, 25, 3));
+console.log("Random (0-1):", Math.random());
+console.log("Random int 1-10:", Math.floor(Math.random() * 10) + 1);
+console.log("Square root:", Math.sqrt(81));` },
+
+{ title:"Day 17: Date Object",
+  explain:"Date object current date aur time ke saath kaam karne ke liye use hota hai. Isse hum saal, mahina, din, ghanta, minute nikal sakte hain. Yeh attendance system, booking app, ya kisi bhi time-based feature banane me kaam aata hai.",
+  code:`let now = new Date();
+
+console.log("Pura Date:", now.toString());
+console.log("Saal:", now.getFullYear());
+console.log("Mahina (0-11):", now.getMonth());
+console.log("Din:", now.getDate());
+console.log("Ghanta:", now.getHours());
+console.log("Minute:", now.getMinutes());` },
+
+{ title:"Day 18: Scope (Global vs Local)",
+  explain:"Scope batata hai ki ek variable kahan available hai. Global scope wala variable kahin se bhi access ho sakta hai, jabki function/block ke andar bane local variable sirf usi function/block ke andar available hota hai. Scope samajhna bugs se bachne ke liye bahut zaroori hai.",
+  code:`let globalVar = "Main global hoon";
+
+function testScope() {
+  let localVar = "Main local hoon";
+  console.log(globalVar);  // ✅ chalega
+  console.log(localVar);   // ✅ chalega
+}
+
+testScope();
+console.log(globalVar);    // ✅ chalega
+// console.log(localVar);  // ❌ Error - localVar yahan available nahi hai` },
+
+{ title:"Day 19: Hoisting",
+  explain:"Hoisting JavaScript ka wo behavior hai jisme variable aur function declarations code chalne se pehle hi memory me 'upar' utha li jaati hain. 'var' aur functions hoist hote hain (undefined value ke sath), lekin 'let'/'const' hoist hone par bhi 'Temporal Dead Zone' me rehte hain — use karne se error aata hai.",
+  code:`console.log(a); // undefined aayega (hoisting ki wajah se)
+var a = 5;
+
+sayHello(); // ✅ ye chalega kyunki function declaration fully hoist hoti hai
+function sayHello() {
+  console.log("Hello from hoisted function!");
+}
+
+// console.log(b); // ❌ Error: Cannot access 'b' before initialization
+let b = 10;` },
+
+{ title:"Day 20: Closures",
+  explain:"Closure ek aisa function hai jo apne bahar wale function ke variables ko yaad rakhta hai, chahe bahar wala function khatam ho gaya ho. Closures ka use counters, private variables aur data hiding ke liye hota hai — ye JavaScript ki sabse powerful concepts me se ek hai.",
+  code:`function counter() {
+  let count = 0;
+  return function () {
+    count++;
+    return count;
+  };
+}
+
+const increment = counter();
+console.log(increment());  // 1
+console.log(increment());  // 2
+console.log(increment());  // 3 — count yaad rehta hai!` },
+
+{ title:"Day 21: Higher Order Functions",
+  explain:"Higher Order Function wo function hota hai jo doosre function ko parameter ke roop me leta hai ya function ko return karta hai. map, filter, reduce sab higher order functions ke examples hain. Yeh functional programming ka core concept hai.",
+  code:`function operate(a, b, operation) {
+  return operation(a, b);
+}
+
+const add = (x, y) => x + y;
+const multiply = (x, y) => x * y;
+
+console.log("Add result:", operate(4, 5, add));
+console.log("Multiply result:", operate(4, 5, multiply));` },
+
+{ title:"Day 22: Callback Functions",
+  explain:"Callback function wo function hota hai jo kisi doosre function ko argument ke roop me diya jaata hai, aur jisse wo function baad me 'call back' karta hai. Yeh asynchronous JavaScript samajhne ki pehli seedhi hai — file reading, API calls sab callbacks pe based hote hain.",
+  code:`function greetUser(name, callback) {
+  console.log("Namaste,", name);
+  callback();
+}
+
+function afterGreet() {
+  console.log("Greeting complete hui!");
+}
+
+greetUser("Vikas", afterGreet);` },
+
+{ title:"Day 23: setTimeout & setInterval",
+  explain:"'setTimeout' kisi code ko ek specific time ke baad ek baar chalata hai. 'setInterval' kisi code ko repeatedly har kuch milliseconds baad chalata hai jab tak 'clearInterval' se rok na diya jaaye. Yeh timers, notifications, animations banane me use hote hain.",
+  code:`console.log("Step 1: Start");
+
+setTimeout(() => {
+  console.log("Step 2: 2 second baad yeh print hua");
+}, 2000);
+
+let count = 0;
+let interval = setInterval(() => {
+  count++;
+  console.log("Interval tick:", count);
+  if (count === 3) {
+    clearInterval(interval);
+    console.log("Interval rok diya gaya");
+  }
+}, 800);` },
+
+{ title:"Day 24: Promises",
+  explain:"Promise ek object hai jo kisi async operation ke result ko represent karta hai — wo 'pending', 'fulfilled' ya 'rejected' ho sakta hai. '.then()' success case handle karta hai aur '.catch()' error case. Promises callback hell se bachne ke liye banaye gaye the.",
+  code:`function checkAge(age) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (age >= 18) resolve("Aap eligible ho");
+      else reject("Aap eligible nahi ho");
+    }, 1000);
+  });
+}
+
+checkAge(20)
+  .then(result => console.log("Success:", result))
+  .catch(error => console.log("Error:", error));
+
+checkAge(15)
+  .then(result => console.log("Success:", result))
+  .catch(error => console.log("Error:", error));` },
+
+{ title:"Day 25: Async / Await",
+  explain:"async/await Promises ko likhne ka modern aur readable tareeka hai — yeh code ko synchronous jaisa dikhne deta hai. Kisi bhi function ke aage 'async' lagao, aur uske andar Promise ke aage 'await' lagao taaki result aane tak code wahin ruk jaaye.",
+  code:`function getData() {
+  return new Promise(resolve => {
+    setTimeout(() => resolve("Server se data aa gaya!"), 1500);
+  });
+}
+
+async function fetchData() {
+  console.log("Data laane ja rahe hain...");
+  let result = await getData();
+  console.log(result);
+  console.log("Kaam complete!");
+}
+
+fetchData();` },
+
+{ title:"Day 26: Error Handling (try-catch-finally)",
+  explain:"try-catch block ka use unexpected errors ko handle karne ke liye hota hai taaki pura program crash na ho. 'try' me wo code likhte hain jo error de sakta hai, 'catch' me error handle hota hai, aur 'finally' har condition me chalta hai (error aaye ya na aaye).",
+  code:`function divide(a, b) {
+  try {
+    if (b === 0) {
+      throw new Error("Zero se divide nahi kar sakte!");
+    }
+    return a / b;
+  } catch (error) {
+    console.log("Error pakda gaya:", error.message);
+    return null;
+  } finally {
+    console.log("Division ki koshish complete hui");
+  }
+}
+
+console.log("Result 1:", divide(10, 2));
+console.log("Result 2:", divide(10, 0));` },
+
+{ title:"Day 27: JSON (JavaScript Object Notation)",
+  explain:"JSON data ko store aur transfer karne ka standard format hai, APIs me sabse zyada yahi use hota hai. 'JSON.stringify()' JavaScript object ko JSON string me badalta hai, aur 'JSON.parse()' JSON string ko wapas object me badalta hai.",
+  code:`let user = {
+  name: "Kavya",
+  age: 24,
+  skills: ["HTML", "CSS", "JavaScript"]
+};
+
+let jsonString = JSON.stringify(user);
+console.log("JSON String:", jsonString);
+console.log("Type:", typeof jsonString);
+
+let parsedBack = JSON.parse(jsonString);
+console.log("Parsed back object:", parsedBack);
+console.log("Type:", typeof parsedBack);` },
+
+{ title:"Day 28: DOM Basics",
+  explain:"DOM (Document Object Model) browser ka wo system hai jisse JavaScript HTML elements ko padh aur badal sakta hai. 'document.createElement', 'innerHTML', 'appendChild' jaise methods se naye elements page me dynamically add kiye ja sakte hain. Yahan hum isi sandbox page ke andar ek chhota example dekhte hain.",
+  code:`// Yeh code is hi terminal ke peeche chal raha sandbox document use karta hai
+let box = document.createElement("div");
+box.innerHTML = "Yeh ek dynamically banaya gaya DOM element hai!";
+document.body.appendChild(box);
+
+console.log("Naya element page me add ho gaya.");
+console.log("Body ke andar total elements:", document.body.children.length);` },
+
+{ title:"Day 29: Local Storage",
+  explain:"LocalStorage browser ke andar key-value data ko permanently (tab band hone ke baad bhi) store karne ka tareeka hai. 'setItem()' se data save hota hai, 'getItem()' se nikalta hai, aur 'removeItem()' se delete hota hai. Yeh login state, theme preference jaisi cheezen save karne me kaam aata hai.",
+  code:`// Sandbox ke apne localStorage me save/read ho raha hai
+localStorage.setItem("username", "Rohit");
+localStorage.setItem("theme", "dark");
+
+console.log("Saved username:", localStorage.getItem("username"));
+console.log("Saved theme:", localStorage.getItem("theme"));
+
+localStorage.removeItem("theme");
+console.log("Theme delete karne ke baad:", localStorage.getItem("theme"));` },
+
+{ title:"Day 30: Mini Project — To-Do List Logic",
+  explain:"Aaj hum sab kuch combine karenge — arrays, objects, functions aur loops — ek simple To-Do List ka logic banane ke liye. Yeh dikhata hai ki real application kaise chhote-chhote JavaScript concepts ko jod kar banti hai. Code edit karke apne tasks try karo!",
+  code:`let todoList = [];
+
+function addTask(task) {
+  todoList.push({ task: task, done: false });
+  console.log("Task add hua:", task);
+}
+
+function completeTask(index) {
+  if (todoList[index]) {
+    todoList[index].done = true;
+    console.log("Complete hua:", todoList[index].task);
+  }
+}
+
+function showTasks() {
+  console.log("---- To-Do List ----");
+  todoList.forEach((item, i) => {
+    console.log(\`\${i + 1}. [\${item.done ? "✔" : " "}] \${item.task}\`);
+  });
+}
+
+addTask("JavaScript revise karo");
+addTask("Project complete karo");
+addTask("30 Days Challenge khatam karo");
+
+completeTask(0);
+showTasks();` }
+];
+
+/* ============================================================
+   BUILD SIDEBAR
+   ============================================================ */
+const dayList = document.getElementById('dayList');
+daysData.forEach((d, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'day-btn';
+  btn.dataset.index = i;
+  btn.innerHTML = `<span class="num">Day ${i+1}</span><span>${d.title.split(': ')[1] || ''}</span>`;
+  btn.addEventListener('click', () => loadDay(i, true));
+  dayList.appendChild(btn);
+});
+
+/* ============================================================
+   STATE + DOM REFS
+   ============================================================ */
+let currentIndex = 0;
+const editor = document.getElementById('editor');
+const dayHeading = document.getElementById('dayHeading');
+const dayExplain = document.getElementById('dayExplain');
+const currentDayPill = document.getElementById('currentDayPill');
+const terminal = document.getElementById('terminal');
+const sandbox = document.getElementById('sandbox');
+
+function loadDay(index, closeSidebarAfter){
+  currentIndex = index;
+  const d = daysData[index];
+  dayHeading.textContent = d.title;
+  dayExplain.textContent = d.explain;
+  editor.value = d.code;
+  currentDayPill.textContent = `Day ${index+1} selected`;
+  clearTerminal();
+
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.day-btn[data-index="${index}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  if (closeSidebarAfter) closeSidebar();
+}
+
+/* ============================================================
+   SIDEBAR TOGGLE (pinned button)
+   ============================================================ */
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('backdrop');
+const toggleBtn = document.getElementById('toggleSidebar');
+
+function openSidebar(){
+  sidebar.classList.add('open');
+  backdrop.classList.add('show');
+  toggleBtn.classList.add('is-open');
+  toggleBtn.textContent = '✕ Band Karo';
+}
+function closeSidebar(){
+  sidebar.classList.remove('open');
+  backdrop.classList.remove('show');
+  toggleBtn.classList.remove('is-open');
+  toggleBtn.textContent = '📅 Days List';
+}
+toggleBtn.addEventListener('click', () => {
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+backdrop.addEventListener('click', closeSidebar);
+
+/* ============================================================
+   TERMINAL HELPERS
+   ============================================================ */
+function clearTerminal(){
+  terminal.innerHTML = '<div class="ln empty">// output yahin dikhega — Run Code dabao</div>';
+}
+function appendLine(type, text){
+  if (terminal.querySelector('.empty')) terminal.innerHTML = '';
+  const line = document.createElement('div');
+  line.className = 'ln ' + (type || '');
+  line.textContent = text;
+  terminal.appendChild(line);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+/* ============================================================
+   SANDBOXED CODE RUNNER (iframe se isolated, asli page safe rehta hai)
+   ============================================================ */
+window.addEventListener('message', (e) => {
+  if (!e.data || !e.data.__sandboxMsg) return;
+  const { kind, args } = e.data;
+  appendLine(kind, args.join(' '));
+});
+
+function runCode(){
+  clearTerminal();
+  let code = editor.value;
+  code = code.replace(/<\/script>/gi, '<\\/script>');
+
+  const html = `<!DOCTYPE html><html><head></head><body><script>
+    (function(){
+      function send(kind, args){
+        try {
+          parent.postMessage({ __sandboxMsg:true, kind:kind, args: args.map(String) }, '*');
+        } catch(e) {}
+      }
+      console.log = function(){ send('log', Array.prototype.slice.call(arguments)); };
+      console.error = function(){ send('err', Array.prototype.slice.call(arguments)); };
+      console.warn = function(){ send('warn', Array.prototype.slice.call(arguments)); };
+      console.info = function(){ send('info', Array.prototype.slice.call(arguments)); };
+      window.onerror = function(msg){ send('err', ['⚠ ' + msg]); return true; };
+      try {
+        ${code}
+      } catch (e) {
+        send('err', ['⚠ ' + e.message]);
+      }
+    })();
+  <\/script></body></html>`;
+
+  sandbox.srcdoc = html;
+}
+
+document.getElementById('runBtn').addEventListener('click', runCode);
+document.getElementById('resetBtn').addEventListener('click', () => loadDay(currentIndex, false));
+document.getElementById('clearTermBtn').addEventListener('click', clearTerminal);
+
+/* ============================================================
+   COPY / SELECT / DEVTOOLS PROTECTION
+   (100% foolproof nahi hai, par casual copy-paste rok deta hai)
+   ============================================================ */
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('selectstart', e => {
+  if (e.target.tagName !== 'TEXTAREA') e.preventDefault();
+});
+
+document.addEventListener('keydown', (e) => {
+  const k = e.key.toLowerCase();
+  const blockCombo =
+    (e.ctrlKey && (k === 'c' || k === 'u' || k === 's' || k === 'p')) ||
+    (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) ||
+    (k === 'f12');
+  if (blockCombo) e.preventDefault();
+});
+
+/* ============================================================
+   INITIAL LOAD
+   ============================================================ */
+loadDay(0, false);
+</script>
+</body>
+</html>
