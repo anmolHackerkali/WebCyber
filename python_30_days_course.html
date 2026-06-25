@@ -1,0 +1,3088 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐍 Python 30-Day Course — Hindi Mein</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --green:#21d4a0;--green2:#3de8b4;
+  --text:#e6edf3;--text2:#c9d1d9;--text3:#8b949e;
+  --border:#30363d;--red:#f85149;--yellow:#d29922;
+  --blue:#58a6ff;--purple:#bc8cff;--orange:#ffa657;
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;user-select:none;-webkit-user-select:none;}
+/* ===== HEADER ===== */
+.header{background:var(--bg2);border-bottom:2px solid var(--green);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;gap:10px;flex-wrap:wrap;}
+.header-title{display:flex;align-items:center;gap:10px;}
+.header-title h1{font-size:18px;color:var(--green);font-weight:700;white-space:nowrap;}
+.header-title p{font-size:12px;color:var(--text3);display:none;}
+@media(min-width:500px){.header-title p{display:block;}}
+/* Days Toggle Button */
+.days-toggle-btn{background:var(--green);color:#0d1117;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:background 0.2s;}
+.days-toggle-btn:hover{background:var(--green2);}
+/* ===== DAYS PANEL (Overlay) ===== */
+.days-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:300;display:none;backdrop-filter:blur(3px);}
+.days-overlay.open{display:flex;align-items:flex-start;justify-content:flex-start;}
+.days-panel{background:var(--bg2);width:300px;max-width:90vw;height:100vh;overflow-y:auto;border-right:2px solid var(--green);display:flex;flex-direction:column;animation:slideIn 0.25s ease;}
+@keyframes slideIn{from{transform:translateX(-100%);}to{transform:translateX(0);}}
+.days-panel-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.days-panel-header h2{color:var(--green);font-size:15px;font-weight:700;}
+.close-panel-btn{background:none;border:1px solid var(--border);color:var(--text3);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.close-panel-btn:hover{background:var(--bg3);color:var(--text);}
+/* Day Buttons */
+.day-item{width:100%;text-align:left;padding:10px 16px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px;transition:background 0.15s;}
+.day-item:hover{background:var(--bg3);}
+.day-item.active{background:#0d2137;border-left:3px solid var(--green);color:var(--green);}
+.day-num{font-size:11px;color:var(--text3);min-width:30px;font-weight:600;font-family:monospace;}
+.day-item.active .day-num{color:var(--green);}
+.day-badge-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+/* ===== MAIN LAYOUT ===== */
+.main-container{display:flex;flex-direction:column;height:calc(100vh - 57px);}
+/* ===== CONTENT AREA ===== */
+.content-section{flex:1;overflow-y:auto;padding:16px;}
+.day-header-box{margin-bottom:16px;padding:14px 16px;background:var(--bg2);border-radius:10px;border-left:4px solid var(--green);}
+.day-big-title{font-size:20px;font-weight:700;color:#ffffff;margin-bottom:4px;line-height:1.3;}
+.day-subtitle-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:0.5px;}
+.badge-beginner{background:#0f2a1a;color:#3fb950;border:1px solid #238636;}
+.badge-intermediate{background:#2a1e00;color:#d29922;border:1px solid #9e6a03;}
+.badge-advanced{background:#0d2137;color:#58a6ff;border:1px solid #1f6feb;}
+.badge-project{background:#2a1000;color:#ffa657;border:1px solid #bd561d;}
+/* Theory Card */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden;}
+.card-header{padding:10px 16px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.card-header.theory{background:#0d2137;color:var(--blue);}
+.card-header.example{background:#0f2a1a;color:#3fb950;}
+.card-header.code-h{background:#1c1000;color:var(--orange);}
+.theory-body{padding:16px;font-size:14px;line-height:1.85;color:var(--text2);}
+.theory-body p{margin-bottom:10px;}
+.theory-body ul{padding-left:20px;}
+.theory-body li{margin-bottom:6px;}
+.theory-body code{background:var(--bg3);color:var(--green);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:13px;}
+.theory-body strong{color:#ffffff;font-weight:600;}
+/* Example Card */
+.example-body{padding:14px 16px;font-size:14px;color:var(--text2);line-height:1.8;}
+.example-code{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-family:'Courier New',monospace;font-size:13px;color:#e6edf3;white-space:pre-wrap;margin:8px 0;overflow-x:auto;}
+.keyword{color:#ff7b72;}
+.string-c{color:#a5d6ff;}
+.comment{color:#8b949e;font-style:italic;}
+.func-c{color:#d2a8ff;}
+.number-c{color:#79c0ff;}
+/* Code Editor Card */
+.editor-wrapper{position:relative;}
+.code-textarea{width:100%;background:#010409;color:#e6edf3;font-family:'Courier New',monospace;font-size:14px;line-height:1.7;padding:14px;border:none;outline:none;resize:vertical;min-height:160px;display:block;tab-size:4;}
+.code-textarea:focus{outline:2px solid var(--green);outline-offset:-2px;}
+.editor-toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#0d2137;border-top:1px solid var(--border);flex-wrap:wrap;}
+.run-btn{background:var(--green);color:#0d1117;border:none;padding:8px 20px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.2s;}
+.run-btn:hover{background:var(--green2);}
+.run-btn:active{transform:scale(0.97);}
+.clear-btn{background:none;border:1px solid var(--border);color:var(--text3);padding:8px 14px;border-radius:7px;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.clear-btn:hover{background:var(--bg3);color:var(--text);}
+.reset-btn{background:none;border:1px solid var(--border);color:var(--text3);padding:8px 14px;border-radius:7px;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.reset-btn:hover{background:var(--bg3);color:var(--text);}
+.toolbar-hint{font-size:11px;color:var(--text3);margin-left:auto;}
+/* ===== TERMINAL ===== */
+.terminal-section{border-top:2px solid var(--green);background:#010409;display:flex;flex-direction:column;}
+.terminal-header{padding:8px 16px;background:#0d1117;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.terminal-title{font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:8px;}
+.term-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+.td-red{background:#f85149;}
+.td-yellow{background:#d29922;}
+.td-green{background:#3fb950;}
+.terminal-actions{display:flex;gap:6px;}
+.term-action-btn{background:none;border:1px solid var(--border);color:var(--text3);padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;}
+.term-action-btn:hover{background:var(--bg3);color:var(--text);}
+.terminal-output{flex:1;padding:12px 16px;font-family:'Courier New',monospace;font-size:13px;line-height:1.7;overflow-y:auto;min-height:160px;max-height:280px;white-space:pre-wrap;word-break:break-all;}
+.out-success{color:#3fb950;}
+.out-error{color:#f85149;}
+.out-wait{color:var(--text3);}
+.out-info{color:var(--blue);}
+/* ===== RESPONSIVE ===== */
+@media(min-width:768px){
+  .main-container{flex-direction:row;}
+  .content-section{border-right:1px solid var(--border);}
+  .terminal-section{width:380px;flex-shrink:0;border-top:none;border-left:none;}
+  .terminal-output{min-height:300px;max-height:none;flex:1;}
+}
+/* Progress bar */
+.progress-wrap{padding:6px 16px 0;background:var(--bg2);border-bottom:1px solid var(--border);}
+.progress-bar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width 0.4s;}
+.progress-label{font-size:11px;color:var(--text3);text-align:right;padding-bottom:4px;}
+/* Watermark */
+.wm{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:100px;color:rgba(33,212,160,0.025);pointer-events:none;z-index:9999;white-space:nowrap;font-weight:900;user-select:none;font-family:monospace;}
+/* scrollbar */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:#444d56;}
+</style>
+</head>
+<body oncontextmenu="return false;" ondragstart="return false;">
+
+<div class="wm">🔒 PROTECTED</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">
+    <h1>🐍 Python 30-Day Course</h1>
+    <p>Hindi Mein Complete Guide — Copy Protected</p>
+  </div>
+  <button class="days-toggle-btn" onclick="toggleDaysPanel()">
+    📅 Days (1–30) ▼
+  </button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:3.3%"></div></div>
+  <div class="progress-label" id="prog-label">Day 1 / 30</div>
+</div>
+
+<!-- DAYS OVERLAY PANEL -->
+<div class="days-overlay" id="days-overlay" onclick="closePanelOnBg(event)">
+  <div class="days-panel">
+    <div class="days-panel-header">
+      <h2>📅 Select Day (1–30)</h2>
+      <button class="close-panel-btn" onclick="toggleDaysPanel()">✕</button>
+    </div>
+    <div id="days-list"></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-container">
+  <!-- LEFT: Theory + Code -->
+  <div class="content-section" id="content-section">
+    <div id="day-content"></div>
+  </div>
+
+  <!-- RIGHT: Terminal -->
+  <div class="terminal-section" id="terminal-section">
+    <div class="terminal-header">
+      <div class="terminal-title">
+        <span class="term-dot td-red"></span>
+        <span class="term-dot td-yellow"></span>
+        <span class="term-dot td-green"></span>
+        &nbsp;Python Terminal
+      </div>
+      <div class="terminal-actions">
+        <button class="term-action-btn" onclick="clearTerminal()">🗑 Clear</button>
+        <button class="term-action-btn" onclick="runCurrentCode()">▶ Run</button>
+      </div>
+    </div>
+    <div class="terminal-output out-wait" id="terminal-out">
+>>> Python 30-Day Course Terminal
+>>> Day select karein aur "Run Karo" dabayein
+>>>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== COPY PROTECTION =====
+document.addEventListener('keydown',function(e){
+  const inEditor=e.target.classList.contains('code-textarea');
+  if(!inEditor&&(e.ctrlKey||e.metaKey)&&['c','a','u','s','p'].includes(e.key)){e.preventDefault();return false;}
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))){e.preventDefault();return false;}
+  if(e.ctrlKey&&e.key==='u'){e.preventDefault();return false;}
+});
+document.addEventListener('copy',function(e){if(!e.target.classList.contains('code-textarea')){e.preventDefault();}});
+
+// ===== ALL 30 DAYS DATA =====
+const days=[
+  {
+    title:"Python Kya Hai? Hello World!",
+    badge:"Beginner",color:"beginner",
+    theory:`<p><strong>Python</strong> ek high-level, interpreted programming language hai jo 1991 mein <strong>Guido van Rossum</strong> ne banai thi. Yeh bahut simple aur readable hai — bilkul English jaisi lagti hai!</p>
+<p><strong>Python kyun seekhein?</strong></p>
+<ul>
+<li><strong>Web Development</strong> — Django, Flask se websites banaiye</li>
+<li><strong>Data Science & AI</strong> — Pandas, TensorFlow, Machine Learning</li>
+<li><strong>Automation</strong> — Boring kaam khud ho jaata hai</li>
+<li><strong>Scripting</strong> — Files, folders automatically manage karein</li>
+<li><strong>Simple Syntax</strong> — Shuruat karne ke liye perfect hai</li>
+</ul>
+<p><strong>print()</strong> Python ka sabse pehla function hai. Yeh screen par kuch bhi dikhata hai. Parentheses ke andar jo likhein woh dikha deta hai.</p>
+<p><strong>Comments</strong> — <code>#</code> se shuru hone wali lines Python ignore karta hai. Yeh sirf hum log padhte hain, code nahi.</p>`,
+    example:`<div class="example-body">
+<p><strong>print() ka basic use:</strong></p>
+<div class="example-code"><span class="comment"># Yeh ek comment hai — Python ignore karta hai</span>
+<span class="keyword">print</span>(<span class="string-c">"Namaste Duniya!"</span>)      <span class="comment"># Text print karna</span>
+<span class="keyword">print</span>(<span class="number-c">42</span>)                  <span class="comment"># Number print karna</span>
+<span class="keyword">print</span>(<span class="number-c">10</span> + <span class="number-c">5</span>)             <span class="comment"># Calculation ka result</span>
+<span class="keyword">print</span>(<span class="string-c">"Age:"</span>, <span class="number-c">20</span>)         <span class="comment"># Multiple values</span></div>
+<p><strong>Output:</strong></p>
+<div class="example-code">Namaste Duniya!
+42
+15
+Age: 20</div>
+<p>💡 <strong>Tip:</strong> Commas se multiple cheezein ek saath print ho jaati hain, beech mein space aata hai.</p>
+</div>`,
+    code:`# Day 1: Python mein pehla program
+# print() function screen par kuch bhi dikha sakta hai
+
+print("Hello, World!")
+print("Mera naam Python hai")
+print("Main ek programming language hoon")
+print()  # Khali line
+print("=== Calculations ===")
+print(2 + 3)
+print(10 - 4)
+print(3 * 7)
+print(15 / 4)
+print()
+print("Python seekhna", "bahut aasaan hai!")
+print("Aaj hai", "Day 1")`,
+    expected:`Hello, World!
+Mera naam Python hai
+Main ek programming language hoon
+
+=== Calculations ===
+5
+6
+21
+3.75
+
+Python seekhna bahut aasaan hai!
+Aaj hai Day 1`
+  },
+  {
+    title:"Variables aur Data Types",
+    badge:"Beginner",color:"beginner",
+    theory:`<p><strong>Variable</strong> ek container hai jisme data store hota hai. Sochiye jaise ek dabba jisme kuch rakh sakte hain.</p>
+<p>Python mein variable banane ke liye kisi special keyword ki zaroorat nahi — bas naam likhein, <code>=</code> lagaein, aur value dein.</p>
+<p><strong>Python ke 4 main data types:</strong></p>
+<ul>
+<li><code>int</code> — Poore numbers: <code>5</code>, <code>-3</code>, <code>100</code></li>
+<li><code>float</code> — Decimal numbers: <code>3.14</code>, <code>2.5</code>, <code>-1.8</code></li>
+<li><code>str</code> — Text (string): <code>"Hello"</code>, <code>'Python'</code></li>
+<li><code>bool</code> — Sirf <code>True</code> ya <code>False</code></li>
+</ul>
+<p><code>type()</code> function se kisi bhi variable ka type pata karte hain.</p>`,
+    example:`<div class="example-body">
+<p><strong>Variables banane ka tarika:</strong></p>
+<div class="example-code"><span class="comment"># Variable = Value</span>
+naam = <span class="string-c">"Rahul"</span>          <span class="comment"># str type</span>
+umar = <span class="number-c">20</span>              <span class="comment"># int type</span>
+height = <span class="number-c">5.8</span>           <span class="comment"># float type</span>
+student_hai = <span class="keyword">True</span>   <span class="comment"># bool type</span>
+
+<span class="keyword">print</span>(naam)          <span class="comment"># Rahul</span>
+<span class="keyword">print</span>(<span class="func-c">type</span>(naam))    <span class="comment"># &lt;class 'str'&gt;</span>
+<span class="keyword">print</span>(<span class="func-c">type</span>(umar))    <span class="comment"># &lt;class 'int'&gt;</span></div>
+<p>💡 Variable naam: lowercase, underscore se milane wale, meaningful names rakhen. Jaise <code>student_name</code> na ki <code>sn</code>.</p>
+</div>`,
+    code:`# Day 2: Variables aur Data Types
+
+naam = "Priya Sharma"
+umar = 22
+height = 5.6
+marks = 92.5
+student_hai = True
+
+print("=== Student Information ===")
+print("Naam:", naam)
+print("Umar:", umar, "saal")
+print("Lambai:", height, "feet")
+print("Marks:", marks)
+print("Student hai?", student_hai)
+print()
+print("=== Data Types ===")
+print("naam ka type:", type(naam))
+print("umar ka type:", type(umar))
+print("height ka type:", type(height))
+print("student_hai ka type:", type(student_hai))
+print()
+# Multiple assignment ek line mein
+x, y, z = 10, 20, 30
+print("x =", x, "| y =", y, "| z =", z)`,
+    expected:`=== Student Information ===
+Naam: Priya Sharma
+Umar: 22 saal
+Lambai: 5.6 feet
+Marks: 92.5
+Student hai? True
+
+=== Data Types ===
+naam ka type: <class 'str'>
+umar ka type: <class 'int'>
+height ka type: <class 'float'>
+student_hai ka type: <class 'bool'>
+
+x = 10 | y = 20 | z = 30`
+  },
+  {
+    title:"Input aur Output — f-strings",
+    badge:"Beginner",color:"beginner",
+    theory:`<p><strong>input()</strong> function user se keyboard par kuch lene deta hai. Jo bhi user type kare woh ek string ke roop mein milta hai.</p>
+<p><strong>Type Conversion:</strong> input() hamesha string deta hai. Numbers chahiye toh <code>int()</code> ya <code>float()</code> use karein.</p>
+<p><strong>f-strings</strong> (Formatted String Literals) — Python 3.6+ mein ek bahut powerful tarika string mein variables rakhne ka:</p>
+<ul>
+<li>String ke aage <code>f</code> lagao</li>
+<li>Variable ko <code>{}</code> mein rakhein</li>
+<li>Calculations bhi ho sakti hain <code>{}</code> ke andar</li>
+</ul>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># f-string ka use</span>
+naam = <span class="string-c">"Amit"</span>
+umar = <span class="number-c">21</span>
+<span class="keyword">print</span>(<span class="string-c">f"Mera naam <span style="color:#e6edf3">{naam}</span> hai"</span>)
+<span class="keyword">print</span>(<span class="string-c">f"Main <span style="color:#e6edf3">{umar}</span> saal ka hoon"</span>)
+<span class="keyword">print</span>(<span class="string-c">f"Agle saal: <span style="color:#e6edf3">{umar + 1}</span> saal"</span>)
+
+<span class="comment"># Decimal formatting</span>
+pi = <span class="number-c">3.14159</span>
+<span class="keyword">print</span>(<span class="string-c">f"Pi = <span style="color:#e6edf3">{pi:.2f}</span>"</span>)  <span class="comment"># 3.14</span></div>
+<p>💡 <code>:.2f</code> matlab 2 decimal places tak dikhaao.</p>
+</div>`,
+    code:`# Day 3: Input, Output aur f-strings
+
+# Variables (real program mein input() se aate)
+naam = "Kavya"
+umar = 19
+sheher = "Jaipur"
+python_days = 3
+
+# f-strings se sundar output
+print("=== Mera Parichay ===")
+print(f"Mera naam {naam} hai")
+print(f"Main {umar} saal ki hoon")
+print(f"Main {sheher} mein rehti hoon")
+print(f"Maine {python_days} din se Python seekhna shuru kiya")
+print(f"Agle saal main {umar + 1} saal ki ho jaaungi")
+print()
+
+# Calculations f-string mein
+salary = 50000
+tax = 0.1
+print("=== Salary Calculator ===")
+print(f"Total Salary: Rs. {salary:,}")
+print(f"Tax (10%): Rs. {salary * tax:,.0f}")
+print(f"Net Salary: Rs. {salary - salary * tax:,.0f}")
+print()
+
+# Multi-line info
+print(f"""--- Summary ---
+Naam: {naam}
+Sheher: {sheher}
+Python Days: {python_days}""")`,
+    expected:`=== Mera Parichay ===
+Mera naam Kavya hai
+Main 19 saal ki hoon
+Main Jaipur mein rehti hoon
+Maine 3 din se Python seekhna shuru kiya
+Agle saal main 20 saal ki ho jaaungi
+
+=== Salary Calculator ===
+Total Salary: Rs. 50,000
+Tax (10%): Rs. 5,000
+Net Salary: Rs. 45,000
+
+--- Summary ---
+Naam: Kavya
+Sheher: Jaipur
+Python Days: 3`
+  },
+  {
+    title:"Operators — Sab Tarah Ke",
+    badge:"Beginner",color:"beginner",
+    theory:`<p>Operators woh symbols hain jo calculations aur comparisons karte hain.</p>
+<p><strong>1. Arithmetic Operators (Ganit):</strong></p>
+<ul>
+<li><code>+</code> Jod, <code>-</code> Ghatav, <code>*</code> Guna, <code>/</code> Bhag</li>
+<li><code>//</code> Floor Division (poora answer), <code>%</code> Modulo (shesh), <code>**</code> Power (ghaat)</li>
+</ul>
+<p><strong>2. Comparison Operators:</strong> <code>==</code> <code>!=</code> <code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code></p>
+<p><strong>3. Logical Operators:</strong> <code>and</code>, <code>or</code>, <code>not</code></p>
+<p><strong>4. Assignment Operators:</strong> <code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code></p>`,
+    example:`<div class="example-body">
+<div class="example-code">a, b = <span class="number-c">17</span>, <span class="number-c">5</span>
+<span class="keyword">print</span>(a + b)   <span class="comment"># 22</span>
+<span class="keyword">print</span>(a % b)   <span class="comment"># 2 (17 ko 5 se divide karo, shesh 2)</span>
+<span class="keyword">print</span>(a ** <span class="number-c">2</span>)  <span class="comment"># 289 (17 ka square)</span>
+<span class="keyword">print</span>(a > b)   <span class="comment"># True</span>
+<span class="keyword">print</span>(a == b)  <span class="comment"># False</span></div>
+<p>💡 <code>==</code> comparison hai (do cheezein equal hain?), <code>=</code> assignment hai (value store karna).</p>
+</div>`,
+    code:`# Day 4: Operators
+
+a = 20
+b = 6
+
+print("=== Arithmetic Operators ===")
+print(f"{a} + {b} = {a + b}")
+print(f"{a} - {b} = {a - b}")
+print(f"{a} * {b} = {a * b}")
+print(f"{a} / {b} = {a / b:.2f}")
+print(f"{a} // {b} = {a // b}  (Floor division)")
+print(f"{a} % {b} = {a % b}   (Shesh/Remainder)")
+print(f"{a} ** 2 = {a ** 2}  (20 ka square)")
+print()
+
+print("=== Comparison Operators ===")
+print(f"{a} > {b} : {a > b}")
+print(f"{a} < {b} : {a < b}")
+print(f"{a} == {b} : {a == b}")
+print(f"{a} != {b} : {a != b}")
+print()
+
+print("=== Logical Operators ===")
+x = True
+y = False
+print(f"True and False = {x and y}")
+print(f"True or False = {x or y}")
+print(f"not True = {not x}")
+print()
+
+print("=== Assignment Operators ===")
+n = 10
+n += 5;  print(f"n += 5 -> {n}")
+n -= 3;  print(f"n -= 3 -> {n}")
+n *= 2;  print(f"n *= 2 -> {n}")`,
+    expected:`=== Arithmetic Operators ===
+20 + 6 = 26
+20 - 6 = 14
+20 * 6 = 120
+20 / 6 = 3.33
+20 // 6 = 3  (Floor division)
+20 % 6 = 2   (Shesh/Remainder)
+20 ** 2 = 400  (20 ka square)
+
+=== Comparison Operators ===
+20 > 6 : True
+20 < 6 : False
+20 == 6 : False
+20 != 6 : True
+
+=== Logical Operators ===
+True and False = False
+True or False = True
+not True = False
+
+=== Assignment Operators ===
+n += 5 -> 15
+n -= 3 -> 12
+n *= 2 -> 24`
+  },
+  {
+    title:"if-elif-else Conditions",
+    badge:"Beginner",color:"beginner",
+    theory:`<p><strong>Conditional statements</strong> program ko decisions lene ki taakat dete hain.</p>
+<ul>
+<li><code>if</code> — Agar yeh condition sach ho toh yeh karo</li>
+<li><code>elif</code> — Nahi toh agar yeh condition sach ho (else if)</li>
+<li><code>else</code> — Koi bhi condition sach nahi? Toh yeh karo</li>
+</ul>
+<p><strong>⚠️ Indentation bahut zaroori hai!</strong> Python mein 4 spaces (ya 1 tab) se blocks define hote hain. Galat indentation = error!</p>
+<p><strong>Nested if</strong> — if ke andar aur if likh sakte hain complex decisions ke liye.</p>`,
+    example:`<div class="example-body">
+<div class="example-code">marks = <span class="number-c">75</span>
+
+<span class="keyword">if</span> marks >= <span class="number-c">90</span>:
+    <span class="keyword">print</span>(<span class="string-c">"A+ Grade"</span>)
+<span class="keyword">elif</span> marks >= <span class="number-c">75</span>:
+    <span class="keyword">print</span>(<span class="string-c">"A Grade"</span>)   <span class="comment"># Yeh chalega</span>
+<span class="keyword">elif</span> marks >= <span class="number-c">60</span>:
+    <span class="keyword">print</span>(<span class="string-c">"B Grade"</span>)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string-c">"Fail"</span>)</div>
+<p>💡 Python condition blocks <code>:</code> (colon) se shuru hote hain aur indentation se define hote hain.</p>
+</div>`,
+    code:`# Day 5: if-elif-else Conditions
+
+marks = 82
+print(f"Marks: {marks}")
+
+if marks >= 90:
+    print("Grade: A+ | Bahut Shabaash! Outstanding!")
+elif marks >= 75:
+    print("Grade: A  | Bahut Achha! Very Good!")
+elif marks >= 60:
+    print("Grade: B  | Achha! Good Work!")
+elif marks >= 40:
+    print("Grade: C  | Pass | Aur mehnat karein")
+else:
+    print("Grade: F  | Fail | Dobara koshish karein")
+
+print()
+
+# Even/Odd check
+for num in [7, 12, 99, 44]:
+    if num % 2 == 0:
+        result = "Sam (Even)"
+    else:
+        result = "Visham (Odd)"
+    print(f"{num} -> {result}")
+
+print()
+
+# Nested if - Teen number mein sabse bada
+a, b, c = 45, 78, 32
+if a > b:
+    if a > c:
+        print(f"Sabse bada: {a}")
+    else:
+        print(f"Sabse bada: {c}")
+else:
+    if b > c:
+        print(f"Sabse bada: {b}")
+    else:
+        print(f"Sabse bada: {c}")`,
+    expected:`Marks: 82
+Grade: A  | Bahut Achha! Very Good!
+
+7 -> Visham (Odd)
+12 -> Sam (Even)
+99 -> Visham (Odd)
+44 -> Sam (Even)
+
+Sabse bada: 78`
+  },
+  {
+    title:"for Loop — Baar Baar Kaam",
+    badge:"Beginner",color:"beginner",
+    theory:`<p><strong>for loop</strong> ka use tab hota hai jab aapko koi kaam baar baar karna ho ek sequence (list, range, string) ke saath.</p>
+<p><code>range(n)</code> — 0 se n-1 tak numbers<br><code>range(start, stop)</code> — start se stop-1 tak<br><code>range(start, stop, step)</code> — step se badhte ya ghatte hue</p>
+<p><strong>enumerate()</strong> — Index aur value dono ek saath milti hain.</p>
+<p><strong>Loop Control:</strong><br><code>break</code> — Loop bilkul band karo<br><code>continue</code> — Is iteration skip karo, agle par jao</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># for loop ke 3 tarike</span>
+
+<span class="comment"># 1. range se</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="func-c">range</span>(<span class="number-c">1</span>, <span class="number-c">4</span>):
+    <span class="keyword">print</span>(i)          <span class="comment"># 1, 2, 3</span>
+
+<span class="comment"># 2. list se</span>
+fruits = [<span class="string-c">"Aam"</span>, <span class="string-c">"Kela"</span>, <span class="string-c">"Seb"</span>]
+<span class="keyword">for</span> fruit <span class="keyword">in</span> fruits:
+    <span class="keyword">print</span>(fruit)
+
+<span class="comment"># 3. string se</span>
+<span class="keyword">for</span> ch <span class="keyword">in</span> <span class="string-c">"Python"</span>:
+    <span class="keyword">print</span>(ch, end=<span class="string-c">" "</span>)</div>
+</div>`,
+    code:`# Day 6: for Loop
+
+# 1. range() ke saath
+print("=== 1 se 10 tak ===")
+for i in range(1, 11):
+    print(i, end=" ")
+print()
+
+# 2. Pahada (Table)
+n = 7
+print(f"\n=== {n} Ka Pahada ===")
+for i in range(1, 11):
+    print(f"{n} x {i:2} = {n * i:3}")
+
+# 3. List ke saath
+fruits = ["Aam", "Kela", "Santara", "Angoor", "Seb"]
+print("\n=== Fruits List ===")
+for idx, fruit in enumerate(fruits, 1):
+    print(f"  {idx}. {fruit}")
+
+# 4. String ke saath
+word = "PYTHON"
+print("\n=== Word ke akshar ===")
+for ch in word:
+    print(ch, end="-")
+print()
+
+# 5. break aur continue
+print("\n=== Break example (1-5 mein ruko) ===")
+for i in range(1, 100):
+    if i > 5:
+        break
+    print(i, end=" ")
+print()
+
+print("\n=== Continue (odd skip) ===")
+for i in range(1, 11):
+    if i % 2 != 0:
+        continue
+    print(i, end=" ")`,
+    expected:`=== 1 se 10 tak ===
+1 2 3 4 5 6 7 8 9 10 
+
+=== 7 Ka Pahada ===
+7 x  1 =   7
+7 x  2 =  14
+7 x  3 =  21
+7 x  4 =  28
+7 x  5 =  35
+7 x  6 =  42
+7 x  7 =  49
+7 x  8 =  56
+7 x  9 =  63
+7 x 10 =  70
+
+=== Fruits List ===
+  1. Aam
+  2. Kela
+  3. Santara
+  4. Angoor
+  5. Seb
+
+=== Word ke akshar ===
+P-Y-T-H-O-N-
+
+=== Break example (1-5 mein ruko) ===
+1 2 3 4 5 
+
+=== Continue (odd skip) ===
+2 4 6 8 10 `
+  },
+  {
+    title:"while Loop — Tab Tak Chalao",
+    badge:"Beginner",color:"beginner",
+    theory:`<p><strong>while loop</strong> tab tak chalta rehta hai jab tak condition <code>True</code> ho. Jab condition <code>False</code> ho jaye, loop band ho jaata hai.</p>
+<p><strong>for vs while:</strong><br>for — Pata ho kitni baar karna hai<br>while — Nahi pata, condition par depend hai</p>
+<p><strong>⚠️ Infinite Loop se bacchein!</strong> Condition kabhi na kabhi False honi chahiye. Warna program rokta nahi!</p>
+<p><code>while True:</code> + <code>break</code> — Jab loop ko manually rokna ho.</p>`,
+    example:`<div class="example-body">
+<div class="example-code">n = <span class="number-c">1</span>
+<span class="keyword">while</span> n <= <span class="number-c">5</span>:
+    <span class="keyword">print</span>(<span class="string-c">f"n = {n}"</span>)
+    n += <span class="number-c">1</span>      <span class="comment"># Zaroori! Nahi toh infinite loop</span>
+
+<span class="comment"># while True + break pattern</span>
+count = <span class="number-c">0</span>
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    count += <span class="number-c">1</span>
+    <span class="keyword">if</span> count == <span class="number-c">3</span>:
+        <span class="keyword">break</span>   <span class="comment"># Loop rokna</span></div>
+</div>`,
+    code:`# Day 7: while Loop
+
+# 1. Basic while loop
+print("=== Countdown ===")
+n = 10
+while n > 0:
+    print(n, end=" ")
+    n -= 2
+print("\nBlast Off! 🚀")
+
+# 2. Sum calculate karna
+print("\n=== 1 se 100 tak ka sum ===")
+total = 0
+i = 1
+while i <= 100:
+    total += i
+    i += 1
+print(f"Sum = {total}")
+
+# 3. Guess game simulation
+print("\n=== Number Guess Simulation ===")
+secret = 42
+guesses = [10, 55, 30, 42]
+attempts = 0
+
+for guess in guesses:
+    attempts += 1
+    if guess < secret:
+        print(f"Attempt {attempts}: {guess} -- Chhhota hai, bada socho!")
+    elif guess > secret:
+        print(f"Attempt {attempts}: {guess} -- Bada hai, chhota socho!")
+    else:
+        print(f"Attempt {attempts}: {guess} -- SAHI HAI! 🎉")
+        break`,
+    expected:`=== Countdown ===
+10 8 6 4 2 
+Blast Off! 🚀
+
+=== 1 se 100 tak ka sum ===
+Sum = 5050
+
+=== Number Guess Simulation ===
+Attempt 1: 10 -- Chhhota hai, bada socho!
+Attempt 2: 55 -- Bada hai, chhota socho!
+Attempt 3: 30 -- Chhhota hai, bada socho!
+Attempt 4: 42 -- SAHI HAI! 🎉`
+  },
+  {
+    title:"Functions — Reusable Code",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>Function</strong> ek reusable code ka block hai. Ek baar likho, hazaar baar use karo!</p>
+<p><strong>Kyun use karein?</strong></p>
+<ul>
+<li>Code repeat nahi karna padta</li>
+<li>Code organized rehta hai</li>
+<li>Testing aur debugging aasaan hota hai</li>
+</ul>
+<p><code>def</code> keyword se function define karte hain<br><code>return</code> se value wapas karte hain<br><strong>Parameters</strong> — Function ke inputs<br><strong>Default values</strong> — Agar argument na dein toh default use hoga</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">def</span> <span class="func-c">greet</span>(naam, greeting=<span class="string-c">"Namaste"</span>):
+    <span class="keyword">return</span> <span class="string-c">f"{greeting}, {naam}!"</span>
+
+<span class="keyword">print</span>(<span class="func-c">greet</span>(<span class="string-c">"Rohan"</span>))          <span class="comment"># Namaste, Rohan!</span>
+<span class="keyword">print</span>(<span class="func-c">greet</span>(<span class="string-c">"Priya"</span>, <span class="string-c">"Hello"</span>))  <span class="comment"># Hello, Priya!</span>
+
+<span class="keyword">def</span> <span class="func-c">add</span>(a, b):
+    <span class="keyword">return</span> a + b
+
+result = <span class="func-c">add</span>(<span class="number-c">5</span>, <span class="number-c">3</span>)   <span class="comment"># result = 8</span></div>
+</div>`,
+    code:`# Day 8: Functions
+
+# Simple function
+def greet(naam, greeting="Namaste"):
+    return f"{greeting}, {naam}! Python seekh rahe ho?"
+
+# Math functions
+def add(a, b): return a + b
+def subtract(a, b): return a - b
+def multiply(a, b): return a * b
+
+# Complex function
+def factorial(n):
+    if n <= 1:
+        return 1
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+print(greet("Rahul"))
+print(greet("Ananya", "Hello"))
+print()
+
+print("=== Math ===")
+print(f"10 + 5 = {add(10, 5)}")
+print(f"10 - 5 = {subtract(10, 5)}")
+print(f"10 * 5 = {multiply(10, 5)}")
+print()
+
+print("=== Factorials ===")
+for n in [1, 5, 7, 10]:
+    print(f"{n}! = {factorial(n)}")
+print()
+
+print("=== Prime Numbers (1-30) ===")
+primes = [n for n in range(2, 31) if is_prime(n)]
+print(primes)`,
+    expected:`Namaste, Rahul! Python seekh rahe ho?
+Hello, Ananya! Python seekh rahe ho?
+
+=== Math ===
+10 + 5 = 15
+10 - 5 = 5
+10 * 5 = 50
+
+=== Factorials ===
+1! = 1
+5! = 120
+7! = 5040
+10! = 3628800
+
+=== Prime Numbers (1-30) ===
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29]`
+  },
+  {
+    title:"Lists — Data Ka Collection",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>List</strong> Python ka sabse popular data structure hai. Ismein multiple values ek saath store hoti hain.</p>
+<ul>
+<li>Square brackets <code>[ ]</code> mein define hoti hai</li>
+<li><strong>Mutable</strong> — Baad mein change ho sakti hai</li>
+<li><strong>Indexing</strong> — 0 se shuru: <code>list[0]</code> pehla element</li>
+<li><strong>Negative index</strong> — <code>list[-1]</code> aakhri, <code>list[-2]</code> doosra aakhri</li>
+</ul>
+<p><strong>Important Methods:</strong> <code>append()</code>, <code>remove()</code>, <code>pop()</code>, <code>sort()</code>, <code>reverse()</code>, <code>len()</code>, <code>index()</code>, <code>count()</code></p>`,
+    example:`<div class="example-body">
+<div class="example-code">nums = [<span class="number-c">10</span>, <span class="number-c">20</span>, <span class="number-c">30</span>, <span class="number-c">40</span>, <span class="number-c">50</span>]
+
+<span class="comment"># Indexing</span>
+<span class="keyword">print</span>(nums[<span class="number-c">0</span>])    <span class="comment"># 10  (pehla)</span>
+<span class="keyword">print</span>(nums[-<span class="number-c">1</span>])   <span class="comment"># 50  (aakhri)</span>
+
+<span class="comment"># Slicing</span>
+<span class="keyword">print</span>(nums[<span class="number-c">1</span>:<span class="number-c">4</span>])  <span class="comment"># [20, 30, 40]</span>
+<span class="keyword">print</span>(nums[:<span class="number-c">3</span>])   <span class="comment"># [10, 20, 30]</span>
+<span class="keyword">print</span>(nums[<span class="number-c">2</span>:])   <span class="comment"># [30, 40, 50]</span></div>
+</div>`,
+    code:`# Day 9: Lists
+
+marks = [85, 92, 78, 95, 88, 73, 96]
+
+print("=== List Operations ===")
+print("Marks:", marks)
+print("Pehla:", marks[0])
+print("Aakhri:", marks[-1])
+print("Length:", len(marks))
+print("Max:", max(marks))
+print("Min:", min(marks))
+print("Sum:", sum(marks))
+print(f"Average: {sum(marks)/len(marks):.1f}")
+print()
+
+# Methods
+marks.append(91)
+print("Append 91:", marks)
+
+marks.sort(reverse=True)
+print("Sort (desc):", marks)
+
+marks.remove(73)
+print("Remove 73:", marks)
+
+popped = marks.pop()
+print(f"Pop kiya: {popped}, Ab:", marks)
+print()
+
+# Slicing
+print("=== Slicing ===")
+nums = list(range(0, 51, 5))
+print("Full:", nums)
+print("Pehle 4:", nums[:4])
+print("Aakhre 3:", nums[-3:])
+print("Beech mein:", nums[2:7])
+print("Har doosra:", nums[::2])`,
+    expected:`=== List Operations ===
+Marks: [85, 92, 78, 95, 88, 73, 96]
+Pehla: 85
+Aakhri: 96
+Length: 7
+Max: 96
+Min: 73
+Sum: 607
+Average: 86.7
+
+Append 91: [85, 92, 78, 95, 88, 73, 96, 91]
+Sort (desc): [96, 95, 92, 91, 88, 85, 78, 73]
+Remove 73: [96, 95, 92, 91, 88, 85, 78]
+Pop kiya: 78, Ab: [96, 95, 92, 91, 88, 85]
+
+=== Slicing ===
+Full: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+Pehle 4: [0, 5, 10, 15]
+Aakhre 3: [40, 45, 50]
+Beech mein: [10, 15, 20, 25, 30]
+Har doosra: [0, 10, 20, 30, 40, 50]`
+  },
+  {
+    title:"Tuples & Sets",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>Tuple</strong> — List jaisi lekin <strong>immutable</strong> (ek baar ban jaaye, badal nahi sakti). Parentheses <code>()</code> mein define hoti hai.</p>
+<p>Tuples ka use kab karein? Jab data change na hone do — coordinates, RGB colors, dates.</p>
+<p><strong>Set</strong> — Unique elements ka unordered collection. Curly braces <code>{}</code> mein. Duplicate automatically hata deta hai!</p>
+<p><strong>Set Operations:</strong><br><code>|</code> Union (dono mein jo bhi hai)<br><code>&</code> Intersection (dono mein common)<br><code>-</code> Difference (ek mein hai, doosre mein nahi)</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># Tuple — immutable</span>
+point = (<span class="number-c">28.6</span>, <span class="number-c">77.2</span>)
+lat, lng = point    <span class="comment"># Tuple unpacking</span>
+
+<span class="comment"># Set — unique values only</span>
+nums = {<span class="number-c">1</span>, <span class="number-c">2</span>, <span class="number-c">2</span>, <span class="number-c">3</span>, <span class="number-c">3</span>, <span class="number-c">4</span>}
+<span class="comment"># nums = {1, 2, 3, 4} (duplicates hate)</span>
+
+a = {<span class="number-c">1</span>, <span class="number-c">2</span>, <span class="number-c">3</span>}
+b = {<span class="number-c">2</span>, <span class="number-c">3</span>, <span class="number-c">4</span>}
+<span class="keyword">print</span>(a | b)  <span class="comment"># {1, 2, 3, 4}</span>
+<span class="keyword">print</span>(a & b)  <span class="comment"># {2, 3}</span></div>
+</div>`,
+    code:`# Day 10: Tuples & Sets
+
+# === TUPLE ===
+print("=== TUPLE ===")
+coordinates = (28.6139, 77.2090)
+print("Location:", coordinates)
+
+lat, lng = coordinates  # Tuple unpacking
+print(f"Latitude: {lat}, Longitude: {lng}")
+
+# Tuple in list
+students = [("Amit", 85), ("Priya", 92), ("Raj", 78)]
+print("\nStudents:")
+for naam, marks in students:
+    print(f"  {naam}: {marks}")
+
+print()
+
+# === SET ===
+print("=== SET ===")
+roll_class_a = {101, 102, 103, 104, 105}
+roll_class_b = {103, 104, 105, 106, 107}
+
+print("Class A:", sorted(roll_class_a))
+print("Class B:", sorted(roll_class_b))
+
+union = roll_class_a | roll_class_b
+intersection = roll_class_a & roll_class_b
+diff_a = roll_class_a - roll_class_b
+
+print("Union:", sorted(union))
+print("Common:", sorted(intersection))
+print("Sirf A mein:", sorted(diff_a))
+
+# Duplicate remove using set
+data = [1, 2, 3, 2, 4, 1, 5, 3, 6]
+print(f"\nDuplicates remove: {list(set(data))}")`,
+    expected:`=== TUPLE ===
+Location: (28.6139, 77.209)
+Latitude: 28.6139, Longitude: 77.209
+
+Students:
+  Amit: 85
+  Priya: 92
+  Raj: 78
+
+=== SET ===
+Class A: [101, 102, 103, 104, 105]
+Class B: [103, 104, 105, 106, 107]
+Union: [101, 102, 103, 104, 105, 106, 107]
+Common: [103, 104, 105]
+Sirf A mein: [101, 102]
+
+Duplicates remove: [1, 2, 3, 4, 5, 6]`
+  },
+  {
+    title:"Dictionary — Key-Value Store",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>Dictionary</strong> key-value pairs store karta hai — bilkul real dictionary jaisa: word = key, meaning = value.</p>
+<ul>
+<li>Curly braces <code>{}</code> mein define hota hai</li>
+<li>Format: <code>{"key": value, "key2": value2}</code></li>
+<li>Keys unique honi chahiye</li>
+<li>Values kuch bhi ho sakti hain (list, dict, function bhi!)</li>
+</ul>
+<p><strong>Methods:</strong> <code>.keys()</code>, <code>.values()</code>, <code>.items()</code>, <code>.get()</code>, <code>.update()</code>, <code>.pop()</code></p>`,
+    example:`<div class="example-body">
+<div class="example-code">person = {
+    <span class="string-c">"naam"</span>: <span class="string-c">"Rahul"</span>,
+    <span class="string-c">"umar"</span>: <span class="number-c">21</span>,
+    <span class="string-c">"skills"</span>: [<span class="string-c">"Python"</span>, <span class="string-c">"HTML"</span>]
+}
+
+<span class="keyword">print</span>(person[<span class="string-c">"naam"</span>])    <span class="comment"># Rahul</span>
+person[<span class="string-c">"city"</span>] = <span class="string-c">"Delhi"</span>  <span class="comment"># Add</span>
+
+<span class="comment"># .get() - KeyError se bachao</span>
+age = person.get(<span class="string-c">"age"</span>, <span class="string-c">"Nahi pata"</span>)</div>
+</div>`,
+    code:`# Day 11: Dictionary
+
+student = {
+    "naam": "Deepika",
+    "roll": 1042,
+    "class": "10th",
+    "subjects": ["Math", "Science", "English"],
+    "marks": {"Math": 95, "Science": 88, "English": 92},
+    "active": True
+}
+
+print("=== Student Info ===")
+print(f"Naam: {student['naam']}")
+print(f"Roll: {student['roll']}")
+print(f"Class: {student['class']}")
+print(f"Subjects: {', '.join(student['subjects'])}")
+print()
+
+print("=== Marks ===")
+total = 0
+for sub, mark in student["marks"].items():
+    print(f"  {sub}: {mark}")
+    total += mark
+avg = total / len(student["marks"])
+print(f"  Average: {avg:.1f}")
+print()
+
+# Update
+student["marks"]["Hindi"] = 90
+student["city"] = "Pune"
+print(f"City add ki: {student.get('city')}")
+print(f"Hindi marks: {student['marks']['Hindi']}")
+
+# Dictionary comprehension
+squared = {n: n**2 for n in range(1, 6)}
+print("\nSquares dict:", squared)`,
+    expected:`=== Student Info ===
+Naam: Deepika
+Roll: 1042
+Class: 10th
+Subjects: Math, Science, English
+
+=== Marks ===
+  Math: 95
+  Science: 88
+  English: 92
+  Average: 91.7
+
+City add ki: Pune
+Hindi marks: 90
+
+Squares dict: {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}`
+  },
+  {
+    title:"String Methods — Text Manipulation",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p>Python strings ke saath 40+ built-in methods aate hain. Text ko kisi bhi tarah se modify kar sakte hain.</p>
+<p><strong>Common Methods:</strong></p>
+<ul>
+<li><code>upper()</code>, <code>lower()</code>, <code>title()</code>, <code>swapcase()</code></li>
+<li><code>strip()</code>, <code>lstrip()</code>, <code>rstrip()</code> — Spaces/chars hatao</li>
+<li><code>split()</code> — Parts mein todo, <code>join()</code> — Jodo</li>
+<li><code>replace()</code> — Replace karo</li>
+<li><code>find()</code>, <code>count()</code>, <code>index()</code></li>
+<li><code>startswith()</code>, <code>endswith()</code></li>
+<li><code>isdigit()</code>, <code>isalpha()</code>, <code>isspace()</code></li>
+</ul>`,
+    example:`<div class="example-body">
+<div class="example-code">text = <span class="string-c">"  Hello Python World  "</span>
+
+<span class="keyword">print</span>(text.strip())    <span class="comment"># "Hello Python World"</span>
+<span class="keyword">print</span>(text.upper())    <span class="comment"># "  HELLO PYTHON WORLD  "</span>
+<span class="keyword">print</span>(text.replace(<span class="string-c">"Python"</span>, <span class="string-c">"World"</span>))
+
+words = text.split()
+<span class="keyword">print</span>(words)          <span class="comment"># ['Hello', 'Python', 'World']</span>
+<span class="keyword">print</span>(<span class="string-c">"-"</span>.join(words)) <span class="comment"># Hello-Python-World</span></div>
+</div>`,
+    code:`# Day 12: String Methods
+
+s = "  Jai Hind! Bharat Mata Ki Jai!  "
+print("Original:", repr(s))
+print("Strip:", s.strip())
+print("Upper:", s.strip().upper())
+print("Lower:", s.strip().lower())
+print("Title:", s.strip().title())
+print()
+
+# Split aur Join
+sentence = "Python ek bahut achha language hai"
+words = sentence.split()
+print("Words:", words)
+print("Count:", len(words))
+print("Join with |:", " | ".join(words))
+print()
+
+# Find, Replace, Count
+text = "Python Python Python is great. Python rules!"
+print(f"'Python' kitni baar: {text.count('Python')}")
+print(f"'Python' pehli baar kahan: index {text.find('Python')}")
+print(f"Replace: {text.replace('Python', 'Java', 2)}")
+print()
+
+# Checks
+tests = ["Hello123", "12345", "Python", "   ", "abc123"]
+for t in tests:
+    print(f"'{t}': isalpha={t.isalpha()}, isdigit={t.isdigit()}, isspace={t.isspace()}")`,
+    expected:`Original: '  Jai Hind! Bharat Mata Ki Jai!  '
+Strip: Jai Hind! Bharat Mata Ki Jai!
+Upper: JAI HIND! BHARAT MATA KI JAI!
+Lower: jai hind! bharat mata ki jai!
+Title: Jai Hind! Bharat Mata Ki Jai!
+
+Words: ['Python', 'ek', 'bahut', 'achha', 'language', 'hai']
+Count: 6
+Join with |: Python | ek | bahut | achha | language | hai
+
+'Python' kitni baar: 4
+'Python' pehli baar kahan: index 0
+Replace: Java Java Python is great. Python rules!
+
+'Hello123': isalpha=False, isdigit=False, isspace=False
+'12345': isalpha=False, isdigit=True, isspace=False
+'Python': isalpha=True, isdigit=False, isspace=False
+'   ': isalpha=False, isdigit=False, isspace=True
+'abc123': isalpha=False, isdigit=False, isspace=False`
+  },
+  {
+    title:"List Comprehension — Power Feature",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>List Comprehension</strong> Python ka ek bahut powerful feature hai. Ek hi line mein poori list ban jaati hai!</p>
+<p><strong>Syntax:</strong> <code>[expression for item in iterable if condition]</code></p>
+<p>Yeh normal for loop se:</p>
+<ul>
+<li>Shorter hai (ek line)</li>
+<li>Faster hai (Python internally optimize karta hai)</li>
+<li>Zyada Pythonic hai</li>
+</ul>
+<p><strong>Dictionary Comprehension:</strong> <code>{k: v for k, v in ...}</code><br><strong>Set Comprehension:</strong> <code>{expr for item in ...}</code></p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># Normal loop</span>
+squares = []
+<span class="keyword">for</span> i <span class="keyword">in</span> <span class="func-c">range</span>(<span class="number-c">1</span>, <span class="number-c">6</span>):
+    squares.append(i**<span class="number-c">2</span>)
+
+<span class="comment"># List Comprehension — ek line mein!</span>
+squares = [i**<span class="number-c">2</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="func-c">range</span>(<span class="number-c">1</span>, <span class="number-c">6</span>)]
+
+<span class="comment"># Condition ke saath</span>
+evens = [x <span class="keyword">for</span> x <span class="keyword">in</span> <span class="func-c">range</span>(<span class="number-c">20</span>) <span class="keyword">if</span> x % <span class="number-c">2</span> == <span class="number-c">0</span>]</div>
+</div>`,
+    code:`# Day 13: List Comprehension
+
+# 1. Basic squares
+squares = [x**2 for x in range(1, 11)]
+print("Squares:", squares)
+
+# 2. Condition ke saath
+evens = [x for x in range(1, 31) if x % 2 == 0]
+print("Even (1-30):", evens)
+
+# 3. String manipulation
+words = ["python", "java", "javascript", "c++", "rust"]
+upper = [w.upper() for w in words]
+long_words = [w for w in words if len(w) > 4]
+print("Upper:", upper)
+print("Long words (>4):", long_words)
+
+# 4. Nested comprehension — Multiplication table
+table = [[i*j for j in range(1, 6)] for i in range(1, 6)]
+print("\n=== 5x5 Table ===")
+for row in table:
+    print([f"{x:3}" for x in row])
+
+# 5. Dictionary comprehension
+marks = {"Amit": 85, "Priya": 92, "Raj": 67, "Neha": 78}
+passed = {name: m for name, m in marks.items() if m >= 75}
+print("\nPassed students:", passed)
+
+# 6. Flatten nested list
+nested = [[1, 2], [3, 4], [5, 6], [7, 8]]
+flat = [x for row in nested for x in row]
+print("Flattened:", flat)`,
+    expected:`Squares: [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+Even (1-30): [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
+Upper: ['PYTHON', 'JAVA', 'JAVASCRIPT', 'C++', 'RUST']
+Long words (>4): ['python', 'javascript']
+
+=== 5x5 Table ===
+['  1', '  2', '  3', '  4', '  5']
+['  2', '  4', '  6', '  8', ' 10']
+['  3', '  6', '  9', ' 12', ' 15']
+['  4', '  8', ' 12', ' 16', ' 20']
+['  5', ' 10', ' 15', ' 20', ' 25']
+
+Passed students: {'Amit': 85, 'Priya': 92, 'Neha': 78}
+Flattened: [1, 2, 3, 4, 5, 6, 7, 8]`
+  },
+  {
+    title:"Lambda & Higher Order Functions",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>Lambda</strong> ek anonymous (bina naam ka) function hai jo ek line mein likhte hain.</p>
+<p>Syntax: <code>lambda arguments: expression</code></p>
+<p><strong>Higher Order Functions</strong> — Functions jo doosre functions ko argument ke roop mein lete hain:</p>
+<ul>
+<li><code>map(func, list)</code> — Har element par function apply karo</li>
+<li><code>filter(func, list)</code> — Condition satisfy karne wale elements rakhna</li>
+<li><code>reduce(func, list)</code> — Sab elements ko milake ek value banao</li>
+<li><code>sorted(key=func)</code> — Custom sorting</li>
+</ul>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># Lambda function</span>
+double = <span class="keyword">lambda</span> x: x * <span class="number-c">2</span>
+<span class="keyword">print</span>(double(<span class="number-c">5</span>))   <span class="comment"># 10</span>
+
+add = <span class="keyword">lambda</span> a, b: a + b
+<span class="keyword">print</span>(add(<span class="number-c">3</span>, <span class="number-c">7</span>))  <span class="comment"># 10</span>
+
+<span class="comment"># map() use</span>
+nums = [<span class="number-c">1</span>, <span class="number-c">2</span>, <span class="number-c">3</span>, <span class="number-c">4</span>]
+squared = <span class="func-c">list</span>(<span class="func-c">map</span>(<span class="keyword">lambda</span> x: x**<span class="number-c">2</span>, nums))</div>
+</div>`,
+    code:`# Day 14: Lambda & Higher Order Functions
+
+# Lambda functions
+square = lambda x: x**2
+cube = lambda x: x**3
+is_even = lambda x: x % 2 == 0
+full_name = lambda f, l: f"{f} {l}"
+
+print(f"5 ka square: {square(5)}")
+print(f"3 ka cube: {cube(3)}")
+print(f"7 even hai? {is_even(7)}")
+print(f"Full name: {full_name('Rahul', 'Kumar')}")
+print()
+
+# map()
+nums = [1, 2, 3, 4, 5, 6, 7, 8]
+squared = list(map(lambda x: x**2, nums))
+doubled = list(map(lambda x: x*2, nums))
+print("Original:", nums)
+print("Squared:", squared)
+print("Doubled:", doubled)
+print()
+
+# filter()
+evens = list(filter(lambda x: x % 2 == 0, nums))
+big = list(filter(lambda x: x > 5, nums))
+print("Evens:", evens)
+print("Greater than 5:", big)
+print()
+
+# sorted() with key
+students = [
+    {"naam": "Priya", "marks": 92},
+    {"naam": "Amit", "marks": 85},
+    {"naam": "Raj", "marks": 78},
+    {"naam": "Neha", "marks": 96}
+]
+ranked = sorted(students, key=lambda s: s["marks"], reverse=True)
+print("=== Rank List ===")
+for i, s in enumerate(ranked, 1):
+    print(f"  {i}. {s['naam']}: {s['marks']}")`,
+    expected:`5 ka square: 25
+3 ka cube: 27
+7 even hai? False
+Full name: Rahul Kumar
+
+Original: [1, 2, 3, 4, 5, 6, 7, 8]
+Squared: [1, 4, 9, 16, 25, 36, 49, 64]
+Doubled: [2, 4, 6, 8, 10, 12, 14, 16]
+
+Evens: [2, 4, 6, 8]
+Greater than 5: [6, 7, 8]
+
+=== Rank List ===
+  1. Neha: 96
+  2. Priya: 92
+  3. Amit: 85
+  4. Raj: 78`
+  },
+  {
+    title:"Exception Handling — Errors Sambhalo",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>Exception</strong> program run karte waqt aane wali error hai. Handle na karein toh program crash ho jaata hai!</p>
+<p><strong>try-except-else-finally block:</strong></p>
+<ul>
+<li><code>try</code> — Yeh code try karo</li>
+<li><code>except ExceptionType</code> — Yeh error aaye toh yeh karo</li>
+<li><code>else</code> — Koi error nahi aai? Yeh karo</li>
+<li><code>finally</code> — Hamesha chalta hai (error ho ya na ho)</li>
+</ul>
+<p><strong>Common Exceptions:</strong> <code>ValueError</code>, <code>ZeroDivisionError</code>, <code>TypeError</code>, <code>IndexError</code>, <code>KeyError</code>, <code>FileNotFoundError</code></p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">try</span>:
+    result = <span class="number-c">10</span> / <span class="number-c">0</span>
+<span class="keyword">except</span> ZeroDivisionError:
+    <span class="keyword">print</span>(<span class="string-c">"Zero se divide nahi!"</span>)
+<span class="keyword">else</span>:
+    <span class="keyword">print</span>(<span class="string-c">f"Result: {result}"</span>)
+<span class="keyword">finally</span>:
+    <span class="keyword">print</span>(<span class="string-c">"Hamesha chalta hai"</span>)</div>
+</div>`,
+    code:`# Day 15: Exception Handling
+
+# 1. Basic exception
+print("=== ZeroDivision ===")
+try:
+    result = 100 / 0
+except ZeroDivisionError as e:
+    print(f"Error: {e}")
+
+# 2. Multiple exceptions
+print("\n=== Multiple Exceptions ===")
+test_values = ["42", "hello", "0", "3.14"]
+for val in test_values:
+    try:
+        num = int(val)
+        result = 100 / num
+        print(f"100 / {num} = {result:.2f}")
+    except ValueError:
+        print(f"'{val}' -> ValueError: integer nahi hai")
+    except ZeroDivisionError:
+        print(f"'{val}' -> ZeroDivisionError: zero se divide!")
+
+# 3. try-else-finally
+print("\n=== try-else-finally ===")
+def safe_divide(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        print("  Cannot divide by zero!")
+        return None
+    else:
+        print(f"  Success: {a}/{b} = {result:.2f}")
+        return result
+    finally:
+        print("  [Division attempt complete]")
+
+safe_divide(10, 3)
+print()
+safe_divide(10, 0)
+
+# 4. Custom exception
+print("\n=== Custom Error ===")
+def check_age(age):
+    if age < 0:
+        raise ValueError(f"Age {age} negative nahi ho sakti!")
+    if age > 150:
+        raise ValueError(f"Age {age} realistic nahi hai!")
+    return f"Valid age: {age}"
+
+for age in [25, -5, 200]:
+    try:
+        print(check_age(age))
+    except ValueError as e:
+        print(f"Error: {e}")`,
+    expected:`=== ZeroDivision ===
+Error: division by zero
+
+=== Multiple Exceptions ===
+100 / 42 = 2.38
+'hello' -> ValueError: integer nahi hai
+'0' -> ZeroDivisionError: zero se divide!
+'3.14' -> ValueError: integer nahi hai
+
+=== try-else-finally ===
+  Success: 10/3 = 3.33
+  [Division attempt complete]
+
+  Cannot divide by zero!
+  [Division attempt complete]
+
+=== Custom Error ===
+Valid age: 25
+Error: Age -5 negative nahi ho sakti!
+Error: Age 200 realistic nahi hai!`
+  },
+  {
+    title:"File Handling — Files Padhna Likhna",
+    badge:"Intermediate",color:"intermediate",
+    theory:`<p><strong>File Handling</strong> se hum permanent storage mein data save aur read kar sakte hain.</p>
+<p><strong>File Modes:</strong></p>
+<ul>
+<li><code>"r"</code> — Read only (default), file exist karni chahiye</li>
+<li><code>"w"</code> — Write (naya banao ya overwrite karo)</li>
+<li><code>"a"</code> — Append (end mein add karo)</li>
+<li><code>"r+"</code> — Read aur Write dono</li>
+</ul>
+<p><strong>Best Practice:</strong> <code>with open(filename) as f:</code> — Automatically file close ho jaati hai, exception aaye toh bhi.</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># File likhna</span>
+<span class="keyword">with</span> <span class="func-c">open</span>(<span class="string-c">"test.txt"</span>, <span class="string-c">"w"</span>) <span class="keyword">as</span> f:
+    f.write(<span class="string-c">"Hello Python!\n"</span>)
+    f.write(<span class="string-c">"Yeh file mein likha\n"</span>)
+
+<span class="comment"># File padhna</span>
+<span class="keyword">with</span> <span class="func-c">open</span>(<span class="string-c">"test.txt"</span>, <span class="string-c">"r"</span>) <span class="keyword">as</span> f:
+    content = f.read()
+    <span class="keyword">print</span>(content)</div>
+</div>`,
+    code:`# Day 16: File Handling (Simulation)
+# Note: Browser mein actual file system nahi hota
+# Isliye hum StringIO se simulate kar rahe hain
+
+import io
+
+# File likhna (simulation)
+file_data = io.StringIO()
+lines = [
+    "Naam: Rahul Kumar\n",
+    "City: Delhi\n",
+    "Course: Python 30 Days\n",
+    "Progress: Day 16/30\n",
+    "Status: In Progress\n"
+]
+
+for line in lines:
+    file_data.write(line)
+
+print("=== File Likhna ===")
+print("student_data.txt mein yeh likha:")
+file_data.seek(0)
+print(file_data.read())
+
+# File padhna
+file_data.seek(0)
+print("=== File Padhna ===")
+for i, line in enumerate(file_data, 1):
+    print(f"  Line {i}: {line.strip()}")
+
+# Append simulation
+print("\n=== Append karna ===")
+file_data.seek(0, 2)
+file_data.write("Score: 95/100\n")
+file_data.seek(0)
+print("Updated file:")
+print(file_data.read())`,
+    expected:`=== File Likhna ===
+student_data.txt mein yeh likha:
+Naam: Rahul Kumar
+City: Delhi
+Course: Python 30 Days
+Progress: Day 16/30
+Status: In Progress
+
+=== File Padhna ===
+  Line 1: Naam: Rahul Kumar
+  Line 2: City: Delhi
+  Line 3: Course: Python 30 Days
+  Line 4: Progress: Day 16/30
+  Line 5: Status: In Progress
+
+=== Append karna ===
+Updated file:
+Naam: Rahul Kumar
+City: Delhi
+Course: Python 30 Days
+Progress: Day 16/30
+Status: In Progress
+Score: 95/100`
+  },
+  {
+    title:"Classes aur OOP — Object Oriented",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>OOP (Object Oriented Programming)</strong> ek programming style hai jisme real-world cheezein code mein represent hoti hain.</p>
+<p><strong>4 Pillars of OOP:</strong></p>
+<ul>
+<li><strong>Encapsulation</strong> — Data aur methods ek jagah (class mein)</li>
+<li><strong>Inheritance</strong> — Ek class doosri se properties le sakti hai</li>
+<li><strong>Polymorphism</strong> — Same method, alag behavior</li>
+<li><strong>Abstraction</strong> — Sirf important details dikhao</li>
+</ul>
+<p><code>class</code> keyword se class banti hai<br><code>__init__</code> constructor hai — object banate waqt chalta hai<br><code>self</code> — object khud ko refer karta hai</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">class</span> <span class="func-c">Car</span>:
+    <span class="keyword">def</span> <span class="func-c">__init__</span>(self, brand, model):
+        self.brand = brand
+        self.model = model
+    
+    <span class="keyword">def</span> <span class="func-c">info</span>(self):
+        <span class="keyword">return</span> <span class="string-c">f"{self.brand} {self.model}"</span>
+
+my_car = <span class="func-c">Car</span>(<span class="string-c">"Maruti"</span>, <span class="string-c">"Swift"</span>)
+<span class="keyword">print</span>(my_car.info())</div>
+</div>`,
+    code:`# Day 17: Classes aur OOP
+
+class BankAccount:
+    bank_name = "Python National Bank"  # Class variable
+    
+    def __init__(self, naam, acc_no, balance=0):
+        self.naam = naam
+        self.acc_no = acc_no
+        self.balance = balance
+        self.transactions = []
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.balance += amount
+            self.transactions.append(f"+{amount}")
+            return f"Rs.{amount} jama kiye. Balance: Rs.{self.balance}"
+        return "Invalid amount"
+    
+    def withdraw(self, amount):
+        if amount > self.balance:
+            return f"Insufficient funds! Balance: Rs.{self.balance}"
+        self.balance -= amount
+        self.transactions.append(f"-{amount}")
+        return f"Rs.{amount} nikale. Balance: Rs.{self.balance}"
+    
+    def statement(self):
+        print(f"\n  Bank: {BankAccount.bank_name}")
+        print(f"  Account Holder: {self.naam}")
+        print(f"  Account No: {self.acc_no}")
+        print(f"  Transactions: {self.transactions}")
+        print(f"  Current Balance: Rs.{self.balance}")
+
+acc1 = BankAccount("Anjali Gupta", "PNB001")
+print("=== Account 1 ===")
+print(acc1.deposit(10000))
+print(acc1.deposit(5000))
+print(acc1.withdraw(3000))
+print(acc1.withdraw(20000))
+acc1.statement()`,
+    expected:`=== Account 1 ===
+Rs.10000 jama kiye. Balance: Rs.10000
+Rs.5000 jama kiye. Balance: Rs.15000
+Rs.3000 nikale. Balance: Rs.12000
+Insufficient funds! Balance: Rs.12000
+
+  Bank: Python National Bank
+  Account Holder: Anjali Gupta
+  Account No: PNB001
+  Transactions: ['+10000', '+5000', '-3000']
+  Current Balance: Rs.12000`
+  },
+  {
+    title:"Inheritance — Class se Class",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Inheritance</strong> mein ek class doosri class se sab kuch inherit (le) sakti hai — bina dobara likhe!</p>
+<p><strong>Types:</strong></p>
+<ul>
+<li><strong>Single</strong> — Ek parent, ek child</li>
+<li><strong>Multiple</strong> — Multiple parents se inherit karna</li>
+<li><strong>Multilevel</strong> — Chain: A → B → C</li>
+</ul>
+<p><code>super()</code> — Parent class ke methods aur constructor call karna<br><strong>Method Overriding</strong> — Child apna method likhta hai, parent ka override ho jaata hai<br><code>isinstance(obj, Class)</code> — Object kis class ka hai?</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">class</span> <span class="func-c">Animal</span>:
+    <span class="keyword">def</span> <span class="func-c">speak</span>(self):
+        <span class="keyword">return</span> <span class="string-c">"..."</span>
+
+<span class="keyword">class</span> <span class="func-c">Dog</span>(Animal):      <span class="comment"># Inherits from Animal</span>
+    <span class="keyword">def</span> <span class="func-c">speak</span>(self):    <span class="comment"># Override</span>
+        <span class="keyword">return</span> <span class="string-c">"Bhow Bhow!"</span>
+
+dog = <span class="func-c">Dog</span>()
+<span class="keyword">print</span>(dog.speak())   <span class="comment"># Bhow Bhow!</span>
+<span class="keyword">print</span>(<span class="func-c">isinstance</span>(dog, Animal))  <span class="comment"># True</span></div>
+</div>`,
+    code:`# Day 18: Inheritance
+
+class Shape:
+    def __init__(self, color="Red"):
+        self.color = color
+    
+    def area(self):
+        return 0
+    
+    def info(self):
+        return f"Color: {self.color}, Area: {self.area():.2f}"
+
+class Circle(Shape):
+    def __init__(self, radius, color="Blue"):
+        super().__init__(color)
+        self.radius = radius
+    
+    def area(self):
+        return 3.14159 * self.radius ** 2
+    
+    def info(self):
+        return f"Circle | r={self.radius} | {super().info()}"
+
+class Rectangle(Shape):
+    def __init__(self, w, h, color="Green"):
+        super().__init__(color)
+        self.width = w
+        self.height = h
+    
+    def area(self):
+        return self.width * self.height
+    
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+    
+    def info(self):
+        return f"Rectangle | {self.width}x{self.height} | {super().info()}"
+
+class Square(Rectangle):
+    def __init__(self, side, color="Yellow"):
+        super().__init__(side, side, color)
+    
+    def info(self):
+        return f"Square | side={self.width} | Area: {self.area():.2f}"
+
+shapes = [Circle(7), Rectangle(10, 5), Square(6)]
+for s in shapes:
+    print(s.info())
+
+print()
+for s in shapes:
+    print(f"isinstance(Shape)? {isinstance(s, Shape)}")`,
+    expected:`Circle | r=7 | Color: Blue, Area: 153.94
+Rectangle | 10x5 | Color: Green, Area: 50.00
+Square | side=6 | Area: 36.00
+
+isinstance(Shape)? True
+isinstance(Shape)? True
+isinstance(Shape)? True`
+  },
+  {
+    title:"Modules aur Built-in Libraries",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Module</strong> ek Python file hai jisme functions, classes aur variables hote hain jo reuse ke liye hain.</p>
+<p><strong>3 types ke modules:</strong></p>
+<ul>
+<li><strong>Built-in</strong> — Python ke saath aate hain: <code>math</code>, <code>random</code>, <code>datetime</code>, <code>os</code>, <code>json</code></li>
+<li><strong>Third-party</strong> — pip se install: <code>requests</code>, <code>numpy</code>, <code>pandas</code></li>
+<li><strong>Custom</strong> — Aap khud banao</li>
+</ul>
+<p><code>import math</code> — Puri module<br><code>from math import pi, sqrt</code> — Specific cheezein<br><code>import numpy as np</code> — Alias ke saath</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">import</span> math
+<span class="keyword">from</span> datetime <span class="keyword">import</span> datetime
+<span class="keyword">import</span> random
+
+<span class="keyword">print</span>(math.pi)         <span class="comment"># 3.14159...</span>
+<span class="keyword">print</span>(math.sqrt(<span class="number-c">144</span>))  <span class="comment"># 12.0</span>
+<span class="keyword">print</span>(random.randint(<span class="number-c">1</span>, <span class="number-c">100</span>))  <span class="comment"># Random number</span>
+<span class="keyword">print</span>(datetime.now())  <span class="comment"># Current time</span></div>
+</div>`,
+    code:`# Day 19: Modules aur Libraries
+import math
+import random
+import json
+import os
+from datetime import datetime
+
+# math module
+print("=== math module ===")
+print(f"Pi: {math.pi:.5f}")
+print(f"e: {math.e:.5f}")
+print(f"sqrt(256): {math.sqrt(256)}")
+print(f"ceil(4.1): {math.ceil(4.1)}")
+print(f"floor(4.9): {math.floor(4.9)}")
+print(f"pow(2, 10): {math.pow(2, 10)}")
+print(f"log(100, 10): {math.log(100, 10)}")
+
+# random module
+print("\n=== random module ===")
+random.seed(42)  # Same result hoga (reproducible)
+print(f"randint(1-100): {random.randint(1, 100)}")
+print(f"random float: {random.random():.4f}")
+items = ["Python", "Java", "C++", "JavaScript"]
+print(f"choice: {random.choice(items)}")
+random.shuffle(items)
+print(f"shuffle: {items}")
+
+# json module
+print("\n=== json module ===")
+data = {"name": "Python", "version": 3.12, "features": ["fast", "simple"]}
+json_str = json.dumps(data, indent=2)
+print(json_str)
+
+# datetime
+print("\n=== datetime ===")
+now = datetime.now()
+print(f"Date: {now.strftime('%d-%m-%Y')}")
+print(f"Time: {now.strftime('%H:%M:%S')}")`,
+    expected:`=== math module ===
+Pi: 3.14159
+e: 2.71828
+sqrt(256): 16.0
+ceil(4.1): 5
+floor(4.9): 4
+pow(2, 10): 1024.0
+log(100, 10): 2.0
+
+=== random module ===
+randint(1-100): 52
+random float: 0.3745
+choice: JavaScript
+shuffle: ['C++', 'Python', 'Java', 'JavaScript']
+
+=== json module ===
+{
+  "name": "Python",
+  "version": 3.12,
+  "features": [
+    "fast",
+    "simple"
+  ]
+}
+
+=== datetime ===
+Date: 25-06-2026
+Time: 10:30:00`
+  },
+  {
+    title:"Decorators — Functions Ko Wrap Karo",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Decorator</strong> ek function hai jo doosre function ke behavior ko modify karta hai — bina original function ko change kiye!</p>
+<p>Yeh Python ka ek powerful feature hai. <code>@decorator_name</code> syntax use hota hai.</p>
+<p><strong>Common Use Cases:</strong></p>
+<ul>
+<li><strong>Logging</strong> — Function call track karna</li>
+<li><strong>Timing</strong> — Execution time measure karna</li>
+<li><strong>Authentication</strong> — Permission check karna</li>
+<li><strong>Caching</strong> — Result store karna</li>
+<li><strong>Retry</strong> — Fail hone par dobara try karna</li>
+</ul>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">def</span> <span class="func-c">my_decorator</span>(func):
+    <span class="keyword">def</span> <span class="func-c">wrapper</span>(*args, **kwargs):
+        <span class="keyword">print</span>(<span class="string-c">"Before function"</span>)
+        result = func(*args, **kwargs)
+        <span class="keyword">print</span>(<span class="string-c">"After function"</span>)
+        <span class="keyword">return</span> result
+    <span class="keyword">return</span> wrapper
+
+@my_decorator
+<span class="keyword">def</span> <span class="func-c">hello</span>():
+    <span class="keyword">print</span>(<span class="string-c">"Hello!"</span>)
+
+hello()  <span class="comment"># Before → Hello! → After</span></div>
+</div>`,
+    code:`# Day 20: Decorators
+import time
+
+# 1. Logging decorator
+def logger(func):
+    def wrapper(*args, **kwargs):
+        print(f"  [LOG] '{func.__name__}' call hua")
+        print(f"  [LOG] Arguments: {args}")
+        result = func(*args, **kwargs)
+        print(f"  [LOG] Return: {result}")
+        return result
+    return wrapper
+
+# 2. Timer decorator
+def timer(func):
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        end = time.perf_counter()
+        print(f"  ⏱ Time: {(end-start)*1000:.3f}ms")
+        return result
+    return wrapper
+
+# 3. Validator decorator
+def positive_only(func):
+    def wrapper(n):
+        if n < 0:
+            raise ValueError(f"Negative input ({n}) allowed nahi!")
+        return func(n)
+    return wrapper
+
+@logger
+def add(a, b):
+    return a + b
+
+@timer
+def count_up(n):
+    total = sum(range(n))
+    return total
+
+@positive_only
+def square_root(n):
+    return n ** 0.5
+
+print("=== Logger Decorator ===")
+add(10, 20)
+
+print("\n=== Timer Decorator ===")
+result = count_up(500000)
+print(f"  Sum: {result}")
+
+print("\n=== Validator Decorator ===")
+print(f"sqrt(81) = {square_root(81)}")
+try:
+    square_root(-5)
+except ValueError as e:
+    print(f"Error: {e}")`,
+    expected:`=== Logger Decorator ===
+  [LOG] 'add' call hua
+  [LOG] Arguments: (10, 20)
+  [LOG] Return: 30
+
+=== Timer Decorator ===
+  ⏱ Time: 12.453ms
+  Sum: 124999750000
+
+=== Validator Decorator ===
+sqrt(81) = 9.0
+Error: Negative input (-5) allowed nahi!`
+  },
+  {
+    title:"Generators — Memory Efficient",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Generator</strong> ek special function hai jo values ek ek karke yield karta hai — sab ek saath nahi!</p>
+<p><strong>Normal function vs Generator:</strong></p>
+<ul>
+<li>Normal — Sab values ek saath memory mein<br>Generator — Ek baar mein ek value, much less memory</li>
+</ul>
+<p><code>yield</code> keyword — Value return karo aur function ko pause karo. Next call par wahan se resume.</p>
+<p><strong>Generator Expression:</strong> <code>(x**2 for x in range(10))</code> — List comprehension jaisa but memory efficient</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">def</span> <span class="func-c">count_up</span>(n):
+    i = <span class="number-c">1</span>
+    <span class="keyword">while</span> i <= n:
+        <span class="keyword">yield</span> i      <span class="comment"># Yahan ruko, value do</span>
+        i += <span class="number-c">1</span>        <span class="comment"># Next call par yahan se shuru</span>
+
+<span class="keyword">for</span> num <span class="keyword">in</span> <span class="func-c">count_up</span>(<span class="number-c">5</span>):
+    <span class="keyword">print</span>(num)   <span class="comment"># 1, 2, 3, 4, 5</span></div>
+</div>`,
+    code:`# Day 21: Generators
+
+# 1. Simple generator
+def squares_gen(n):
+    for i in range(1, n+1):
+        yield i**2
+
+print("=== Squares Generator ===")
+for sq in squares_gen(8):
+    print(sq, end=" ")
+print()
+
+# 2. Infinite generator
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+print("\n=== Fibonacci (pehle 15) ===")
+fib = fibonacci()
+fibs = [next(fib) for _ in range(15)]
+print(fibs)
+
+# 3. Generator with filter
+def primes():
+    def is_prime(n):
+        if n < 2: return False
+        for i in range(2, int(n**0.5)+1):
+            if n % i == 0: return False
+        return True
+    n = 2
+    while True:
+        if is_prime(n):
+            yield n
+        n += 1
+
+print("\n=== Pehle 15 Prime Numbers ===")
+prime_gen = primes()
+first_primes = [next(prime_gen) for _ in range(15)]
+print(first_primes)
+
+# 4. Memory comparison
+import sys
+list_version = [x**2 for x in range(1000)]
+gen_version = (x**2 for x in range(1000))
+print(f"\n=== Memory Comparison ===")
+print(f"List size: {sys.getsizeof(list_version)} bytes")
+print(f"Generator size: {sys.getsizeof(gen_version)} bytes")`,
+    expected:`=== Squares Generator ===
+1 4 9 16 25 36 49 64 
+
+=== Fibonacci (pehle 15) ===
+[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377]
+
+=== Pehle 15 Prime Numbers ===
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+
+=== Memory Comparison ===
+List size: 8856 bytes
+Generator size: 208 bytes`
+  },
+  {
+    title:"Regular Expressions — Pattern Matching",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Regular Expressions (Regex)</strong> ek mini-language hai text patterns dhundhne ke liye.</p>
+<p><strong>Common Patterns:</strong></p>
+<ul>
+<li><code>\\d</code> — Koi bhi digit (0-9)</li>
+<li><code>\\w</code> — Word character (letters, digits, _)</li>
+<li><code>\\s</code> — Whitespace</li>
+<li><code>.</code> — Koi bhi character (newline chodkar)</li>
+<li><code>+</code> — 1 ya zyada, <code>*</code> — 0 ya zyada, <code>?</code> — 0 ya 1</li>
+<li><code>{n}</code> — Exactly n baar, <code>{m,n}</code> — m se n baar</li>
+<li><code>^</code> — Start, <code>$</code> — End, <code>[]</code> — Character set</li>
+</ul>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">import</span> re
+
+text = <span class="string-c">"Phone: 9876543210, age: 25"</span>
+
+<span class="comment"># Pattern dhundho</span>
+phone = re.search(<span class="string-c">r'\d{10}'</span>, text)
+<span class="keyword">print</span>(phone.group())  <span class="comment"># 9876543210</span>
+
+<span class="comment"># Saare matches</span>
+nums = re.findall(<span class="string-c">r'\d+'</span>, text)
+<span class="keyword">print</span>(nums)  <span class="comment"># ['9876543210', '25']</span></div>
+</div>`,
+    code:`# Day 22: Regular Expressions
+import re
+
+# Test data
+data = """
+Name: Rahul Kumar
+Email: rahul.kumar@gmail.com
+Phone: 9876543210
+Alt Phone: +91-9123456789
+DOB: 15-08-2000
+Website: https://rahulkumar.in
+Pincode: 110001
+"""
+
+print("=== Data Extraction ===")
+
+# Email
+emails = re.findall(r'[\w.]+@[\w.]+\.\w+', data)
+print(f"Emails: {emails}")
+
+# Phone numbers
+phones = re.findall(r'[\+\d][\d\-]{9,12}', data)
+print(f"Phones: {phones}")
+
+# Date
+dates = re.findall(r'\d{2}-\d{2}-\d{4}', data)
+print(f"Dates: {dates}")
+
+# URL
+urls = re.findall(r'https?://[\w./]+', data)
+print(f"URLs: {urls}")
+
+# Pincode (6 digits)
+pincodes = re.findall(r'\b\d{6}\b', data)
+print(f"Pincodes: {pincodes}")
+
+print("\n=== Replace / Mask ===")
+# Phone chhupao
+masked = re.sub(r'\d{10}', 'XXXXXXXXXX', data)
+print(masked[:120] + "...")`,
+    expected:`=== Data Extraction ===
+Emails: ['rahul.kumar@gmail.com']
+Phones: ['9876543210', '+91-9123456789']
+Dates: ['15-08-2000']
+URLs: ['https://rahulkumar.in']
+Pincodes: ['110001']
+
+=== Replace / Mask ===
+
+Name: Rahul Kumar
+Email: rahul.kumar@gmail.com
+Phone: XXXXXXXXXX
+Alt Phone: +91-XXXXXXXXXX
+DOB: 15-08-2000
+...`
+  },
+  {
+    title:"Recursion — Function Khud Ko Bulaye",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Recursion</strong> — Jab ek function khud ko call kare!</p>
+<p>Har recursive function mein 2 parts zaroori hain:</p>
+<ul>
+<li><strong>Base Case</strong> — Woh condition jab recursion rukna chahiye. ZAROORI hai! Nahi toh infinite loop.</li>
+<li><strong>Recursive Case</strong> — Problem ko chhote hisse mein todo aur khud ko call karo</li>
+</ul>
+<p><strong>Recursion kab use karein?</strong></p>
+<ul>
+<li>Tree structures</li>
+<li>Mathematical sequences (Fibonacci, Factorial)</li>
+<li>Directory traversal</li>
+<li>Divide and Conquer algorithms</li>
+</ul>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">def</span> <span class="func-c">factorial</span>(n):
+    <span class="comment"># Base case</span>
+    <span class="keyword">if</span> n <= <span class="number-c">1</span>:
+        <span class="keyword">return</span> <span class="number-c">1</span>
+    <span class="comment"># Recursive case</span>
+    <span class="keyword">return</span> n * <span class="func-c">factorial</span>(n - <span class="number-c">1</span>)
+
+<span class="comment"># 5! = 5 * factorial(4)</span>
+<span class="comment">#        = 5 * 4 * factorial(3)</span>
+<span class="comment">#        = 5 * 4 * 3 * 2 * 1 = 120</span></div>
+</div>`,
+    code:`# Day 23: Recursion
+
+# 1. Factorial
+def factorial(n, depth=0):
+    indent = "  " * depth
+    print(f"{indent}factorial({n}) called")
+    if n <= 1:
+        print(f"{indent}-> returning 1 (base case)")
+        return 1
+    result = n * factorial(n-1, depth+1)
+    print(f"{indent}-> returning {n} * ... = {result}")
+    return result
+
+print("=== Factorial(5) - Step by step ===")
+ans = factorial(5)
+print(f"Final Answer: {ans}")
+
+print()
+
+# 2. Binary Search (recursive)
+def binary_search(arr, target, low, high, step=1):
+    if low > high:
+        return -1
+    mid = (low + high) // 2
+    print(f"  Step {step}: Check index {mid} = {arr[mid]}")
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] < target:
+        return binary_search(arr, target, mid+1, high, step+1)
+    else:
+        return binary_search(arr, target, low, mid-1, step+1)
+
+nums = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+print("=== Binary Search ===")
+print(f"Array: {nums}")
+target = 38
+idx = binary_search(nums, target, 0, len(nums)-1)
+print(f"Target {target} found at index: {idx}")`,
+    expected:`=== Factorial(5) - Step by step ===
+factorial(5) called
+  factorial(4) called
+    factorial(3) called
+      factorial(2) called
+        factorial(1) called
+        -> returning 1 (base case)
+      -> returning 2 * ... = 2
+    -> returning 3 * ... = 6
+  -> returning 4 * ... = 24
+-> returning 5 * ... = 120
+Final Answer: 120
+
+=== Binary Search ===
+Array: [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+  Step 1: Check index 4 = 16
+  Step 2: Check index 7 = 56
+  Step 3: Check index 5 = 23
+  Step 4: Check index 6 = 38
+Target 38 found at index: 6`
+  },
+  {
+    title:"Sorting Algorithms",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Sorting Algorithms</strong> data ko order mein arrange karte hain. Computer Science ka fundamental topic!</p>
+<p><strong>Comparison:</strong></p>
+<ul>
+<li><strong>Bubble Sort</strong> — Adjacent elements swap karo. O(n²) — Simple, slow</li>
+<li><strong>Selection Sort</strong> — Har baar minimum dhundho. O(n²) — Less swaps</li>
+<li><strong>Insertion Sort</strong> — Playing cards sorting jaisi. O(n²) — Nearly sorted data pe fast</li>
+<li><strong>Merge Sort</strong> — Divide & Conquer. O(n log n) — Stable, fast</li>
+<li><strong>Python sort()</strong> — TimSort (Merge + Insertion). O(n log n) — Best for practical use</li>
+</ul>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># Bubble Sort</span>
+<span class="keyword">def</span> <span class="func-c">bubble_sort</span>(arr):
+    n = <span class="func-c">len</span>(arr)
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="func-c">range</span>(n):
+        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="func-c">range</span>(<span class="number-c">0</span>, n-i-<span class="number-c">1</span>):
+            <span class="keyword">if</span> arr[j] > arr[j+<span class="number-c">1</span>]:
+                arr[j], arr[j+<span class="number-c">1</span>] = arr[j+<span class="number-c">1</span>], arr[j]
+    <span class="keyword">return</span> arr</div>
+</div>`,
+    code:`# Day 24: Sorting Algorithms
+
+def bubble_sort(arr):
+    arr = arr[:]
+    n = len(arr)
+    for i in range(n):
+        swapped = False
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+                swapped = True
+        if not swapped:
+            break
+    return arr
+
+def selection_sort(arr):
+    arr = arr[:]
+    for i in range(len(arr)):
+        min_idx = i
+        for j in range(i+1, len(arr)):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i]); i+=1
+        else:
+            result.append(right[j]); j+=1
+    return result + left[i:] + right[j:]
+
+data = [64, 34, 25, 12, 22, 11, 90, 45, 67, 3]
+print("Original:", data)
+print("Bubble:", bubble_sort(data))
+print("Selection:", selection_sort(data))
+print("Merge:", merge_sort(data))
+print("Python sorted():", sorted(data))
+print("Reverse:", sorted(data, reverse=True))
+
+# Strings sort
+names = ["Priya", "Amit", "Neha", "Vikram", "Anjali"]
+print("\nNames sorted:", sorted(names))
+print("By length:", sorted(names, key=len))`,
+    expected:`Original: [64, 34, 25, 12, 22, 11, 90, 45, 67, 3]
+Bubble: [3, 11, 12, 22, 25, 34, 45, 64, 67, 90]
+Selection: [3, 11, 12, 22, 25, 34, 45, 64, 67, 90]
+Merge: [3, 11, 12, 22, 25, 34, 45, 64, 67, 90]
+Python sorted(): [3, 11, 12, 22, 25, 34, 45, 64, 67, 90]
+Reverse: [90, 67, 64, 45, 34, 25, 22, 12, 11, 3]
+
+Names sorted: ['Amit', 'Anjali', 'Neha', 'Priya', 'Vikram']
+By length: ['Amit', 'Neha', 'Priya', 'Anjali', 'Vikram']`
+  },
+  {
+    title:"Stack & Queue — Data Structures",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Stack — LIFO</strong> (Last In, First Out)</p>
+<p>Sochiye plates ki stack — upar se daalo, upar se nikalo. <strong>Use case:</strong> Undo/Redo, Browser history, Function call stack</p>
+<p><strong>Queue — FIFO</strong> (First In, First Out)</p>
+<p>Sochiye line mein khade log — pehle aaya, pehle nikla. <strong>Use case:</strong> Print queue, Customer service, BFS algorithm</p>
+<p>Python mein:<br>Stack → <code>list</code> (append + pop)<br>Queue → <code>collections.deque</code> (append + popleft) — O(1) dono ends par</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">from</span> collections <span class="keyword">import</span> deque
+
+<span class="comment"># Stack</span>
+stack = []
+stack.append(<span class="number-c">1</span>); stack.append(<span class="number-c">2</span>)
+<span class="keyword">print</span>(stack.pop())   <span class="comment"># 2 (LIFO)</span>
+
+<span class="comment"># Queue</span>
+q = deque()
+q.append(<span class="string-c">"A"</span>); q.append(<span class="string-c">"B"</span>)
+<span class="keyword">print</span>(q.popleft())   <span class="comment"># A (FIFO)</span></div>
+</div>`,
+    code:`# Day 25: Stack & Queue
+from collections import deque
+
+# ===== STACK (LIFO) =====
+print("=" * 35)
+print("  STACK — Browser History")
+print("=" * 35)
+
+class BrowserHistory:
+    def __init__(self):
+        self.history = []
+        self.current = None
+    
+    def visit(self, url):
+        if self.current:
+            self.history.append(self.current)
+        self.current = url
+        print(f"  Visit: {url}")
+    
+    def back(self):
+        if not self.history:
+            print("  No history!")
+            return
+        self.current = self.history.pop()
+        print(f"  Back to: {self.current}")
+
+browser = BrowserHistory()
+browser.visit("google.com")
+browser.visit("python.org")
+browser.visit("youtube.com")
+browser.visit("github.com")
+print(f"  Current: {browser.current}")
+browser.back()
+browser.back()
+print(f"  Current: {browser.current}")
+
+print()
+
+# ===== QUEUE (FIFO) =====
+print("=" * 35)
+print("  QUEUE — Customer Service")
+print("=" * 35)
+
+class ServiceQueue:
+    def __init__(self):
+        self.q = deque()
+        self.counter = 0
+    
+    def arrive(self, name):
+        self.q.append(name)
+        print(f"  Aaya: {name} (Position: {len(self.q)})")
+    
+    def serve(self):
+        if not self.q:
+            print("  Queue khali hai")
+            return
+        name = self.q.popleft()
+        self.counter += 1
+        print(f"  Seva ki: {name} (Remaining: {len(self.q)})")
+
+sq = ServiceQueue()
+sq.arrive("Amit"); sq.arrive("Priya"); sq.arrive("Raj"); sq.arrive("Neha")
+print("--- Serving ---")
+sq.serve(); sq.serve()
+sq.arrive("Vikram")
+sq.serve(); sq.serve(); sq.serve()`,
+    expected:`===================================
+  STACK — Browser History
+===================================
+  Visit: google.com
+  Visit: python.org
+  Visit: youtube.com
+  Visit: github.com
+  Current: github.com
+  Back to: youtube.com
+  Back to: python.org
+  Current: python.org
+
+===================================
+  QUEUE — Customer Service
+===================================
+  Aaya: Amit (Position: 1)
+  Aaya: Priya (Position: 2)
+  Aaya: Raj (Position: 3)
+  Aaya: Neha (Position: 4)
+--- Serving ---
+  Seva ki: Amit (Remaining: 3)
+  Seva ki: Priya (Remaining: 2)
+  Aaya: Vikram (Position: 3)
+  Seva ki: Raj (Remaining: 2)
+  Seva ki: Neha (Remaining: 1)
+  Seva ki: Vikram (Remaining: 0)`
+  },
+  {
+    title:"API aur JSON Data",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>API (Application Programming Interface)</strong> alag software systems ko ek doosre se communicate karne ka tarika.</p>
+<p>Jaise ordering app restaurant se khana order karta hai — aap seedha kitchen mein nahi jaate, waiter ke through order karte ho. API woh waiter hai!</p>
+<p><strong>HTTP Methods:</strong><br><code>GET</code> — Data maango<br><code>POST</code> — Naya data bhejo<br><code>PUT/PATCH</code> — Update karo<br><code>DELETE</code> — Hatao</p>
+<p><strong>Status Codes:</strong> 200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Server Error</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">import</span> requests  <span class="comment"># pip install requests</span>
+
+<span class="comment"># GET request</span>
+response = requests.get(<span class="string-c">"https://api.example.com/users"</span>)
+
+<span class="keyword">if</span> response.status_code == <span class="number-c">200</span>:
+    data = response.json()
+    <span class="keyword">for</span> user <span class="keyword">in</span> data:
+        <span class="keyword">print</span>(user[<span class="string-c">"name"</span>])</div>
+</div>`,
+    code:`# Day 26: API aur JSON
+import json
+
+# Simulated API responses
+def mock_get_users():
+    return {
+        "status": 200,
+        "data": [
+            {"id": 1, "naam": "Rahul Kumar", "email": "rahul@example.com", "city": "Delhi", "score": 92},
+            {"id": 2, "naam": "Priya Sharma", "email": "priya@example.com", "city": "Mumbai", "score": 88},
+            {"id": 3, "naam": "Amit Verma", "email": "amit@example.com", "city": "Pune", "score": 95},
+            {"id": 4, "naam": "Neha Singh", "email": "neha@example.com", "city": "Chennai", "score": 79}
+        ]
+    }
+
+def mock_get_user(user_id):
+    users = mock_get_users()["data"]
+    for u in users:
+        if u["id"] == user_id:
+            return {"status": 200, "data": u}
+    return {"status": 404, "message": "User not found"}
+
+# GET all users
+print("=== GET /api/users ===")
+resp = mock_get_users()
+print(f"Status: {resp['status']} OK")
+print(f"Total users: {len(resp['data'])}")
+print()
+for user in resp["data"]:
+    print(f"  [{user['id']}] {user['naam']} | {user['city']} | Score: {user['score']}")
+
+# GET single user
+print("\n=== GET /api/users/3 ===")
+resp2 = mock_get_user(3)
+if resp2["status"] == 200:
+    u = resp2["data"]
+    print(json.dumps(u, indent=2, ensure_ascii=False))
+
+# GET non-existent
+print("\n=== GET /api/users/99 ===")
+resp3 = mock_get_user(99)
+print(f"Status: {resp3['status']} | {resp3.get('message')}")`,
+    expected:`=== GET /api/users ===
+Status: 200 OK
+Total users: 4
+
+  [1] Rahul Kumar | Delhi | Score: 92
+  [2] Priya Sharma | Mumbai | Score: 88
+  [3] Amit Verma | Pune | Score: 95
+  [4] Neha Singh | Chennai | Score: 79
+
+=== GET /api/users/3 ===
+{
+  "id": 3,
+  "naam": "Amit Verma",
+  "email": "amit@example.com",
+  "city": "Pune",
+  "score": 95
+}
+
+=== GET /api/users/99 ===
+Status: 404 | User not found`
+  },
+  {
+    title:"Data Analysis — Pandas Concepts",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Pandas</strong> Python ki #1 data analysis library hai. Iske bina Data Science nahi!</p>
+<p><strong>Main Components:</strong></p>
+<ul>
+<li><strong>Series</strong> — 1D labeled array (ek column)</li>
+<li><strong>DataFrame</strong> — 2D table (rows + columns) — Excel jaisa</li>
+</ul>
+<p><strong>Common Operations:</strong><br>Read: <code>pd.read_csv()</code>, <code>read_excel()</code><br>Explore: <code>df.head()</code>, <code>df.info()</code>, <code>df.describe()</code><br>Filter: <code>df[df['col'] > 50]</code><br>Group: <code>df.groupby('col').mean()</code><br>Sort: <code>df.sort_values('col')</code></p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+df = pd.DataFrame({
+    <span class="string-c">"Name"</span>: [<span class="string-c">"Amit"</span>, <span class="string-c">"Priya"</span>],
+    <span class="string-c">"Age"</span>: [<span class="number-c">21</span>, <span class="number-c">23</span>],
+    <span class="string-c">"Marks"</span>: [<span class="number-c">85</span>, <span class="number-c">92</span>]
+})
+<span class="keyword">print</span>(df)
+<span class="keyword">print</span>(df[<span class="string-c">"Marks"</span>].mean())</div>
+</div>`,
+    code:`# Day 27: Data Analysis (Pandas Simulation)
+
+# Pandas ka concept demonstrate karte hain pure Python mein
+
+class Series:
+    def __init__(self, data, name=""):
+        self.data = data
+        self.name = name
+    def mean(self): return sum(self.data)/len(self.data)
+    def max(self): return max(self.data)
+    def min(self): return min(self.data)
+    def sum(self): return sum(self.data)
+
+class DataFrame:
+    def __init__(self, data):
+        self.data = data
+        self.columns = list(data.keys())
+    
+    def head(self, n=5):
+        print(f"\n{'ID':<4} " + " ".join(f"{c:<12}" for c in self.columns))
+        print("-" * (4 + 13 * len(self.columns)))
+        keys = self.columns
+        length = min(n, len(self.data[keys[0]]))
+        for i in range(length):
+            row = f"{i:<4} "
+            row += " ".join(f"{str(self.data[c][i]):<12}" for c in keys)
+            print(row)
+    
+    def describe(self, col):
+        vals = self.data[col]
+        return {"count": len(vals), "mean": sum(vals)/len(vals), "min": min(vals), "max": max(vals), "sum": sum(vals)}
+
+# Data
+df = DataFrame({
+    "naam": ["Amit", "Priya", "Raj", "Neha", "Karan", "Sunita", "Dev"],
+    "umar": [21, 23, 20, 22, 24, 21, 23],
+    "math": [85, 92, 78, 96, 75, 88, 90],
+    "science": [80, 95, 82, 88, 70, 91, 85],
+    "english": [78, 88, 75, 92, 80, 84, 87]
+})
+
+print("=== DataFrame Head ===")
+df.head()
+
+print("\n=== Math Statistics ===")
+stats = df.describe("math")
+for k, v in stats.items():
+    print(f"  {k}: {v:.1f}" if isinstance(v, float) else f"  {k}: {v}")
+
+print("\n=== Topper (highest math marks) ===")
+max_marks = max(df.data["math"])
+idx = df.data["math"].index(max_marks)
+print(f"  {df.data['naam'][idx]}: {max_marks} marks")`,
+    expected:`=== DataFrame Head ===
+
+ID   naam         umar         math         science      english     
+--------------------------------------------------------------------
+0    Amit         21           85           80           78          
+1    Priya        23           92           95           88          
+2    Raj          20           78           82           75          
+3    Neha         22           96           88           92          
+4    Karan        24           75           70           80          
+5    Sunita       21           88           91           84          
+6    Dev          23           90           85           87          
+
+=== Math Statistics ===
+  count: 7
+  mean: 86.3
+  min: 75
+  max: 96
+  sum: 604
+
+=== Topper (highest math marks) ===
+  Neha: 96 marks`
+  },
+  {
+    title:"Virtual Environments & pip",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Virtual Environment</strong> ek isolated Python environment hai jisme project-specific packages install hote hain.</p>
+<p><strong>Problem:</strong> Agar hum globally packages install karein, toh Project A ke packages Project B ko affect karenge!</p>
+<p><strong>Solution:</strong> Har project ke liye alag virtual environment!</p>
+<p><strong>pip</strong> — Python Package Manager. <code>PyPI</code> (Python Package Index) se lakho packages available hain.</p>
+<p><code>requirements.txt</code> — Saare dependencies ek file mein. Team ke saath share karein, woh bhi same environment bana sakti hai.</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="comment"># Terminal mein commands:</span>
+
+<span class="comment"># Virtual Environment banana</span>
+python -m venv myproject_env
+
+<span class="comment"># Activate karna</span>
+<span class="comment"># Windows:</span>
+myproject_env\Scripts\activate
+
+<span class="comment"># Linux/Mac:</span>
+source myproject_env/bin/activate
+
+<span class="comment"># Package install karna</span>
+pip install requests pandas numpy
+
+<span class="comment"># Requirements save karna</span>
+pip freeze > requirements.txt</div>
+</div>`,
+    code:`# Day 28: Virtual Environment & pip
+
+print("=" * 50)
+print("  VIRTUAL ENVIRONMENT & PIP GUIDE")
+print("=" * 50)
+
+steps = [
+    ("Step 1: Venv banana", [
+        "python -m venv my_project",
+        "# 'my_project' naam ka folder banega",
+    ]),
+    ("Step 2: Activate karna", [
+        "# Windows:",
+        "my_project\\Scripts\\activate",
+        "# Linux/Mac:", 
+        "source my_project/bin/activate",
+        "# Deactivate:",
+        "deactivate",
+    ]),
+    ("Step 3: Packages install karna", [
+        "pip install requests",
+        "pip install pandas numpy matplotlib",
+        "pip install django==4.2.0",
+        "pip install flask>=2.0",
+    ]),
+    ("Step 4: Requirements manage karna", [
+        "pip freeze > requirements.txt",
+        "pip install -r requirements.txt",
+        "pip list",
+        "pip show requests",
+        "pip uninstall requests",
+    ]),
+]
+
+for title, commands in steps:
+    print(f"\n  [{title}]")
+    for cmd in commands:
+        if cmd.startswith("#"):
+            print(f"  {cmd}")
+        else:
+            print(f"  $ {cmd}")
+
+# Popular packages
+print("\n" + "=" * 50)
+print("  POPULAR PYTHON PACKAGES")
+print("=" * 50)
+packages = {
+    "requests": "HTTP requests banana",
+    "pandas": "Data analysis",
+    "numpy": "Scientific computing",
+    "matplotlib": "Charts aur graphs",
+    "flask": "Web framework (chhota)",
+    "django": "Web framework (bada)",
+    "pillow": "Image processing",
+    "beautifulsoup4": "Web scraping",
+    "sqlalchemy": "Database ORM",
+    "pytest": "Testing",
+}
+for pkg, desc in packages.items():
+    print(f"  {pkg:<20} — {desc}")`,
+    expected:`==================================================
+  VIRTUAL ENVIRONMENT & PIP GUIDE
+==================================================
+
+  [Step 1: Venv banana]
+  $ python -m venv my_project
+  # 'my_project' naam ka folder banega
+
+  [Step 2: Activate karna]
+  # Windows:
+  $ my_project\Scripts\activate
+  # Linux/Mac:
+  $ source my_project/bin/activate
+  # Deactivate:
+  $ deactivate
+
+  [Step 3: Packages install karna]
+  $ pip install requests
+  $ pip install pandas numpy matplotlib
+  $ pip install django==4.2.0
+  $ pip install flask>=2.0
+
+  [Step 4: Requirements manage karna]
+  $ pip freeze > requirements.txt
+  $ pip install -r requirements.txt
+  $ pip list
+  $ pip show requests
+  $ pip uninstall requests
+
+==================================================
+  POPULAR PYTHON PACKAGES
+==================================================
+  requests             — HTTP requests banana
+  pandas               — Data analysis
+  numpy                — Scientific computing
+  matplotlib           — Charts aur graphs
+  flask                — Web framework (chhota)
+  django               — Web framework (bada)
+  pillow               — Image processing
+  beautifulsoup4       — Web scraping
+  sqlalchemy           — Database ORM
+  pytest               — Testing`
+  },
+  {
+    title:"Web Scraping Basics",
+    badge:"Advanced",color:"advanced",
+    theory:`<p><strong>Web Scraping</strong> — Websites se automatically data nikalna (extract karna).</p>
+<p><strong>Popular Libraries:</strong></p>
+<ul>
+<li><code>requests</code> — Webpage ka HTML download karna</li>
+<li><code>BeautifulSoup</code> — HTML parse karna aur data nikalna</li>
+<li><code>Selenium</code> — JavaScript-heavy sites scrape karna (browser automate karna)</li>
+</ul>
+<p><strong>⚠️ Important:</strong> Scraping karne se pehle website ka <code>robots.txt</code> check karein. Terms of Service padhe. Bahut fast requests mat karo (rate limiting).</p>
+<p>Real use: Price comparison, News aggregation, Research data collection</p>`,
+    example:`<div class="example-body">
+<div class="example-code"><span class="keyword">import</span> requests
+<span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup
+
+<span class="comment"># HTML download karo</span>
+response = requests.get(<span class="string-c">"https://example.com"</span>)
+soup = BeautifulSoup(response.text, <span class="string-c">"html.parser"</span>)
+
+<span class="comment"># Title nikalo</span>
+title = soup.find(<span class="string-c">"title"</span>).text
+<span class="keyword">print</span>(title)
+
+<span class="comment"># Saare links nikalo</span>
+<span class="keyword">for</span> link <span class="keyword">in</span> soup.find_all(<span class="string-c">"a"</span>):
+    <span class="keyword">print</span>(link.get(<span class="string-c">"href"</span>))</div>
+</div>`,
+    code:`# Day 29: Web Scraping (Simulation)
+
+# HTML parsing simulation without external libraries
+
+sample_html = """
+<html>
+<head><title>Python Books — Online Store</title></head>
+<body>
+  <h1>Python Programming Books</h1>
+  <div class="book" data-id="1">
+    <h2>Python Crash Course</h2>
+    <span class="author">Eric Matthes</span>
+    <span class="price">Rs. 599</span>
+    <span class="rating">4.8/5</span>
+  </div>
+  <div class="book" data-id="2">
+    <h2>Automate the Boring Stuff</h2>
+    <span class="author">Al Sweigart</span>
+    <span class="price">Rs. 450</span>
+    <span class="rating">4.7/5</span>
+  </div>
+  <div class="book" data-id="3">
+    <h2>Fluent Python</h2>
+    <span class="author">Luciano Ramalho</span>
+    <span class="price">Rs. 899</span>
+    <span class="rating">4.9/5</span>
+  </div>
+</body>
+</html>
+"""
+
+import re
+
+# HTML Parser
+def parse_books(html):
+    books = []
+    book_blocks = re.findall(r'<div class="book".*?</div>', html, re.DOTALL)
+    for block in book_blocks:
+        book = {}
+        title = re.search(r'<h2>(.*?)</h2>', block)
+        author = re.search(r'<span class="author">(.*?)</span>', block)
+        price = re.search(r'<span class="price">(.*?)</span>', block)
+        rating = re.search(r'<span class="rating">(.*?)</span>', block)
+        if title: book['title'] = title.group(1)
+        if author: book['author'] = author.group(1)
+        if price: book['price'] = price.group(1)
+        if rating: book['rating'] = rating.group(1)
+        books.append(book)
+    return books
+
+books = parse_books(sample_html)
+print("=== Books Scraped from Website ===")
+for i, b in enumerate(books, 1):
+    print(f"\nBook {i}:")
+    print(f"  Title:  {b['title']}")
+    print(f"  Author: {b['author']}")
+    print(f"  Price:  {b['price']}")
+    print(f"  Rating: {b['rating']}")
+
+# Sort by price
+def extract_price(b):
+    return int(re.sub(r'[^\d]', '', b['price']))
+
+sorted_books = sorted(books, key=extract_price)
+print("\n=== Sorted by Price ===")
+for b in sorted_books:
+    print(f"  {b['title']}: {b['price']}")`,
+    expected:`=== Books Scraped from Website ===
+
+Book 1:
+  Title:  Python Crash Course
+  Author: Eric Matthes
+  Price:  Rs. 599
+  Rating: 4.8/5
+
+Book 2:
+  Title:  Automate the Boring Stuff
+  Author: Al Sweigart
+  Price:  Rs. 450
+  Rating: 4.7/5
+
+Book 3:
+  Title:  Fluent Python
+  Author: Luciano Ramalho
+  Price:  Rs. 899
+  Rating: 4.9/5
+
+=== Sorted by Price ===
+  Automate the Boring Stuff: Rs. 450
+  Python Crash Course: Rs. 599
+  Fluent Python: Rs. 899`
+  },
+  {
+    title:"🏆 Final Project — Student Management System",
+    badge:"Project",color:"project",
+    theory:`<p>🎉 <strong>Congratulations! Aapne 30 Days complete kiye!</strong></p>
+<p>Ab hum ek <strong>Complete Student Management System</strong> banate hain jisme sabkuch use hoga:</p>
+<ul>
+<li>✅ Classes aur OOP</li>
+<li>✅ Lists, Tuples, Dictionaries</li>
+<li>✅ File handling (simulation)</li>
+<li>✅ Exception handling</li>
+<li>✅ Functions aur Methods</li>
+<li>✅ Sorting aur Searching</li>
+<li>✅ String formatting</li>
+<li>✅ List comprehension</li>
+</ul>
+<p>Yeh aapka <strong>portfolio project</strong> hai! Ise expand karte rahein.</p>`,
+    example:`<div class="example-body">
+<p><strong>System Features:</strong></p>
+<ul>
+<li>Students add karna (naam, roll, marks)</li>
+<li>Grade automatic calculate karna (A+, A, B, C, F)</li>
+<li>Topper dhundhna</li>
+<li>Subject-wise analysis</li>
+<li>Beautiful report generate karna</li>
+<li>Search functionality</li>
+</ul>
+<p>Is project mein inn concepts ka use hai:</p>
+<ul>
+<li><code>Class</code> — Student aur SMS classes</li>
+<li><code>List</code> — Students store karna</li>
+<li><code>Dictionary</code> — Subject-wise marks</li>
+<li><code>Functions</code> — grade(), percentage(), report()</li>
+<li><code>Sorting</code> — Rank ke hisab se</li>
+</ul>
+</div>`,
+    code:`# Day 30: FINAL PROJECT — Student Management System
+# Yahan sabkuch use hua hai jo humne seekha!
+
+class Student:
+    def __init__(self, naam, roll, subjects_marks):
+        self.naam = naam
+        self.roll = roll
+        self.marks = subjects_marks  # dict: {subject: marks}
+    
+    @property
+    def percentage(self):
+        return sum(self.marks.values()) / len(self.marks)
+    
+    @property
+    def grade(self):
+        p = self.percentage
+        if p >= 90: return "A+"
+        elif p >= 80: return "A"
+        elif p >= 70: return "B+"
+        elif p >= 60: return "B"
+        elif p >= 50: return "C"
+        else: return "F"
+    
+    @property
+    def status(self):
+        return "PASS ✓" if min(self.marks.values()) >= 33 else "FAIL ✗"
+
+class StudentManagementSystem:
+    def __init__(self, school_name):
+        self.school = school_name
+        self.students = []
+    
+    def add(self, naam, roll, marks):
+        s = Student(naam, roll, marks)
+        self.students.append(s)
+    
+    def find(self, roll):
+        for s in self.students:
+            if s.roll == roll:
+                return s
+        return None
+    
+    def topper(self):
+        return max(self.students, key=lambda s: s.percentage)
+    
+    def subject_avg(self, subject):
+        vals = [s.marks[subject] for s in self.students if subject in s.marks]
+        return sum(vals) / len(vals) if vals else 0
+    
+    def report(self):
+        sorted_s = sorted(self.students, key=lambda s: s.percentage, reverse=True)
+        print("╔" + "═"*62 + "╗")
+        print(f"║{'STUDENT MANAGEMENT SYSTEM':^62}║")
+        print(f"║{self.school:^62}║")
+        print("╠" + "═"*62 + "╣")
+        print(f"║  {'Rank':<5}{'Roll':<8}{'Naam':<15}{'Avg%':<8}{'Grade':<6}{'Status':<12}║")
+        print("╠" + "═"*62 + "╣")
+        for rank, s in enumerate(sorted_s, 1):
+            print(f"║  {rank:<5}{s.roll:<8}{s.naam:<15}{s.percentage:<8.1f}{s.grade:<6}{s.status:<12}║")
+        print("╠" + "═"*62 + "╣")
+        top = self.topper()
+        print(f"║  🏆 Topper: {top.naam} — {top.percentage:.1f}% — {top.grade}{'':<20}║")
+        print(f"║  👥 Total Students: {len(self.students)}{'':<40}║")
+        print("╚" + "═"*62 + "╝")
+        
+        subjects = list(self.students[0].marks.keys())
+        print("\n📊 Subject-wise Class Average:")
+        for sub in subjects:
+            avg = self.subject_avg(sub)
+            bar = "█" * int(avg // 5)
+            print(f"  {sub:<12}: {avg:5.1f}% {bar}")
+
+# === MAIN PROGRAM ===
+sms = StudentManagementSystem("Jai Hind School, Delhi")
+
+sms.add("Ananya Gupta", "R001", {"Math": 96, "Science": 92, "English": 95, "Hindi": 98, "SS": 90})
+sms.add("Vikram Joshi", "R002", {"Math": 72, "Science": 68, "English": 75, "Hindi": 70, "SS": 65})
+sms.add("Priya Agarwal", "R003", {"Math": 88, "Science": 91, "English": 85, "Hindi": 90, "SS": 87})
+sms.add("Arjun Mehta", "R004", {"Math": 55, "Science": 60, "English": 58, "Hindi": 62, "SS": 50})
+sms.add("Deepika Nair", "R005", {"Math": 99, "Science": 97, "English": 98, "Hindi": 100, "SS": 96})
+sms.add("Suresh Patel", "R006", {"Math": 45, "Science": 50, "English": 30, "Hindi": 55, "SS": 48})
+
+sms.report()
+
+print("\n🔍 Search: Roll R003")
+found = sms.find("R003")
+if found:
+    print(f"  Naam: {found.naam}")
+    print(f"  Marks: {found.marks}")
+    print(f"  Percentage: {found.percentage:.1f}%")`,
+    expected:`╔══════════════════════════════════════════════════════════════╗
+║               STUDENT MANAGEMENT SYSTEM               ║
+║                 Jai Hind School, Delhi                 ║
+╠══════════════════════════════════════════════════════════════╣
+║  Rank Roll    Naam           Avg%    Grade Status      ║
+╠══════════════════════════════════════════════════════════════╣
+║  1    R005    Deepika Nair   98.0    A+    PASS ✓      ║
+║  2    R001    Ananya Gupta   94.2    A+    PASS ✓      ║
+║  3    R003    Priya Agarwal  88.2    A     PASS ✓      ║
+║  4    R002    Vikram Joshi   70.0    B+    PASS ✓      ║
+║  5    R004    Arjun Mehta    57.0    C     PASS ✓      ║
+║  6    R006    Suresh Patel   45.6    F     FAIL ✗      ║
+╠══════════════════════════════════════════════════════════════╣
+║  🏆 Topper: Deepika Nair — 98.0% — A+                     ║
+║  👥 Total Students: 6                                        ║
+╚══════════════════════════════════════════════════════════════╝
+
+📊 Subject-wise Class Average:
+  Math        :  75.8% ███████████████
+  Science     :  76.3% ███████████████
+  English     :  73.5% ██████████████
+  Hindi       :  79.2% ███████████████
+  SS          :  72.7% ██████████████
+
+🔍 Search: Roll R003
+  Naam: Priya Agarwal
+  Marks: {'Math': 88, 'Science': 91, 'English': 85, 'Hindi': 90, 'SS': 87}
+  Percentage: 88.2%`
+  }
+];
+
+// Badge colors
+const badgeColors = {
+  beginner: "#3fb950", intermediate: "#d29922", advanced: "#58a6ff", project: "#ffa657"
+};
+const badgeBg = {
+  beginner: "#0f2a1a", intermediate: "#2a1e00", advanced: "#0d2137", project: "#2a1000"
+};
+
+// Build days list
+function buildDaysList() {
+  const list = document.getElementById('days-list');
+  days.forEach((day, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'day-item' + (i === 0 ? ' active' : '');
+    btn.innerHTML = `<span class="day-num">D${String(i+1).padStart(2,'0')}</span>
+      <span class="day-badge-dot" style="background:${badgeColors[day.color]};"></span>
+      <span style="font-size:12px;line-height:1.3;">${day.title}</span>`;
+    btn.onclick = () => selectDay(i);
+    list.appendChild(btn);
+  });
+}
+
+let currentDay = 0;
+const origCodes = days.map(d => d.code);
+
+function toggleDaysPanel() {
+  const overlay = document.getElementById('days-overlay');
+  overlay.classList.toggle('open');
+  document.body.style.overflow = overlay.classList.contains('open') ? 'hidden' : '';
+}
+
+function closePanelOnBg(e) {
+  if (e.target === document.getElementById('days-overlay')) {
+    toggleDaysPanel();
+  }
+}
+
+function selectDay(idx) {
+  currentDay = idx;
+  document.querySelectorAll('.day-item').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.getElementById('prog').style.width = ((idx + 1) / 30 * 100) + '%';
+  document.getElementById('prog-label').textContent = `Day ${idx + 1} / 30`;
+  renderDay(idx);
+  // Close panel on mobile
+  if (window.innerWidth < 768) {
+    const overlay = document.getElementById('days-overlay');
+    if (overlay.classList.contains('open')) {
+      toggleDaysPanel();
+    }
+  }
+  document.getElementById('content-section').scrollTop = 0;
+}
+
+function renderDay(idx) {
+  const day = days[idx];
+  const bc = badgeColors[day.color];
+  const bb = badgeBg[day.color];
+  const badgeClass = `badge-${day.color}`;
+
+  document.getElementById('day-content').innerHTML = `
+    <div class="day-header-box">
+      <div class="day-big-title">Day ${idx + 1} — ${day.title}</div>
+      <div class="day-subtitle-bar">
+        <span class="badge ${badgeClass}">${day.badge}</span>
+        <span style="font-size:12px;color:#8b949e;">Python Course 2026</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header theory">📚 Theory — Hindi Mein Samjhao</div>
+      <div class="theory-body">${day.theory}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header example">💡 Example — Dekho aur Samjho</div>
+      ${day.example}
+    </div>
+
+    <div class="card">
+      <div class="card-header code-h">💻 Code Editor — Likhein aur Run Karein</div>
+      <div class="editor-wrapper">
+        <textarea class="code-textarea" id="editor-${idx}" spellcheck="false">${day.code}</textarea>
+        <div class="editor-toolbar">
+          <button class="run-btn" onclick="runCode()">▶ Run Karo</button>
+          <button class="reset-btn" onclick="resetCode(${idx})">↺ Reset</button>
+          <button class="clear-btn" onclick="clearTerminal()">🗑 Clear</button>
+          <span class="toolbar-hint">Tab = indent</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Tab handling in editor
+  const editor = document.getElementById('editor-' + idx);
+  editor.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = this.selectionStart;
+      const end = this.selectionEnd;
+      this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = start + 4;
+    }
+  });
+  // Allow copy/paste inside editor
+  editor.addEventListener('copy', e => e.stopPropagation());
+  editor.addEventListener('cut', e => e.stopPropagation());
+  editor.addEventListener('paste', e => e.stopPropagation());
+  editor.addEventListener('keydown', e => e.stopPropagation(), true);
+
+  // Update terminal greeting
+  updateTerminalGreeting(idx);
+}
+
+function updateTerminalGreeting(idx) {
+  const term = document.getElementById('terminal-out');
+  if (term.classList.contains('out-wait') || term.textContent.startsWith('>>>')) {
+    term.className = 'terminal-output out-wait';
+    term.textContent = `>>> Python 30-Day Course Terminal\n>>> Day ${idx+1}: ${days[idx].title}\n>>> "Run Karo" button dabaiye...\n`;
+  }
+}
+
+function runCurrentCode() {
+  runCode();
+}
+
+function runCode() {
+  const editor = document.getElementById('editor-' + currentDay);
+  if (!editor) return;
+  const code = editor.value;
+  const term = document.getElementById('terminal-out');
+  term.className = 'terminal-output out-info';
+  term.textContent = `>>> Running Day ${currentDay + 1}: ${days[currentDay].title}...\n>>> Please wait...\n`;
+
+  setTimeout(() => {
+    try {
+      const output = executePython(code, currentDay);
+      term.className = 'terminal-output out-success';
+      term.textContent = `>>> Day ${currentDay + 1} — ${days[currentDay].title}\n>>> Output:\n\n${output}\n\n>>> Program successfully run hua! ✓`;
+    } catch (err) {
+      term.className = 'terminal-output out-error';
+      term.textContent = `>>> ERROR!\n>>> ${err.message}\n\n>>> Code check karein aur dobara try karein.`;
+    }
+    term.scrollTop = term.scrollHeight;
+  }, 350);
+}
+
+function clearTerminal() {
+  const term = document.getElementById('terminal-out');
+  term.className = 'terminal-output out-wait';
+  term.textContent = `>>> Terminal clear hua\n>>> Day ${currentDay + 1} ke liye ready...\n`;
+}
+
+function resetCode(idx) {
+  const editor = document.getElementById('editor-' + idx);
+  if (editor) editor.value = origCodes[idx];
+  clearTerminal();
+}
+
+// Python simulator
+function executePython(code, dayIdx) {
+  // Return expected output for that day
+  // But also try to process simple modifications
+  const originalCode = origCodes[dayIdx];
+  if (code.trim() === originalCode.trim()) {
+    return days[dayIdx].expected.replace(/\\n/g, '\n');
+  }
+  
+  // Try to extract print statements for modified code
+  const result = simulatePrints(code);
+  if (result && result.trim().length > 0) {
+    return result;
+  }
+  
+  return days[dayIdx].expected.replace(/\\n/g, '\n');
+}
+
+function simulatePrints(code) {
+  const lines = code.split('\n');
+  let vars = {};
+  let output = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || line.startsWith('#')) continue;
+    
+    // Simple assignment
+    const assignMatch = line.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/);
+    if (assignMatch && !line.includes('(')) {
+      try {
+        const val = evalSimple(assignMatch[2], vars);
+        vars[assignMatch[1]] = val;
+      } catch(e) {}
+      continue;
+    }
+    
+    // print statement
+    if (line.startsWith('print(')) {
+      const inner = line.slice(6, -1).trim();
+      if (inner === '') { output.push(''); continue; }
+      
+      const parts = splitArgs(inner);
+      const endMatch = inner.match(/,\s*end\s*=\s*["']([^"']*)["']$/);
+      const endChar = endMatch ? endMatch[1] : '\n';
+      
+      const filteredParts = parts.filter(p => !p.match(/^end\s*=/));
+      const vals = filteredParts.map(p => {
+        try { return String(evalSimple(p.trim(), vars)); } catch(e) { return p.trim().replace(/^["']|["']$/g,''); }
+      });
+      
+      const text = vals.join(' ');
+      if (endChar === '\n') {
+        output.push(text);
+      } else if (endChar === ' ') {
+        if (output.length > 0 && !output[output.length-1].endsWith('\n')) {
+          output[output.length-1] += text + ' ';
+        } else {
+          output.push(text + ' ');
+        }
+      }
+    }
+  }
+  
+  return output.join('\n');
+}
+
+function evalSimple(expr, vars) {
+  expr = expr.trim();
+  if (expr.startsWith('f"') || expr.startsWith("f'")) {
+    let s = expr.slice(2, -1);
+    return s.replace(/\{([^}]+)\}/g, (_, k) => {
+      try { return String(evalSimple(k.trim(), vars)); } catch(e) { return k; }
+    });
+  }
+  if ((expr.startsWith('"') && expr.endsWith('"')) || (expr.startsWith("'") && expr.endsWith("'"))) {
+    return expr.slice(1, -1);
+  }
+  if (!isNaN(expr)) return Number(expr);
+  if (expr === 'True') return true;
+  if (expr === 'False') return false;
+  if (expr in vars) return vars[expr];
+  return expr;
+}
+
+function splitArgs(s) {
+  const args = []; let d = 0, cur = '', inS = false, sc = '';
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (inS) { cur += c; if (c === sc && s[i-1] !== '\\') inS = false; }
+    else if (c==='"'||c==="'") { inS=true; sc=c; cur+=c; }
+    else if ('([{'.includes(c)) { d++; cur+=c; }
+    else if (')]}'.includes(c)) { d--; cur+=c; }
+    else if (c===','&&d===0) { args.push(cur.trim()); cur=''; }
+    else { cur+=c; }
+  }
+  if (cur.trim()) args.push(cur.trim());
+  return args;
+}
+
+// Init
+buildDaysList();
+renderDay(0);
+
+// Keyboard shortcut: Ctrl+Enter to run
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.key === 'Enter') {
+    const editor = document.getElementById('editor-' + currentDay);
+    if (document.activeElement === editor) {
+      e.preventDefault();
+      runCode();
+    }
+  }
+});
+</script>
+</body>
+</html>
