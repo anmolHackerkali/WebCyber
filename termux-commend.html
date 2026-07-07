@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERMUX_MASTERCLASS // Complete Command Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a08;
+    --bg-panel:#0d130f;
+    --bg-card:#0f1712;
+    --green:#39ff88;
+    --green-dim:#1f8f52;
+    --green-faint:#0f3d24;
+    --amber:#ffb84d;
+    --red:#ff5f56;
+    --text:#c9d6ca;
+    --text-dim:#6f8377;
+    --border:#173a26;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'JetBrains Mono', monospace;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.brand,.chip,.section-title{font-family:'Chakra Petch',sans-serif;}
+
+  /* subtle scanline / grid backdrop */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(57,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  a{color:var(--green);}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(7,10,8,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    max-width:1200px; margin:0 auto;
+    padding:14px 20px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight:700; font-size:20px; color:var(--green);
+    letter-spacing:1px;
+  }
+  .brand .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--green); box-shadow:0 0 10px var(--green);
+    animation:blink 1.4s infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .search-wrap{flex:1; min-width:200px; max-width:420px; margin-left:auto;}
+  #search{
+    width:100%;
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    color:var(--green);
+    font-family:'JetBrains Mono',monospace;
+    padding:10px 14px;
+    border-radius:4px;
+    outline:none;
+    font-size:14px;
+  }
+  #search::placeholder{color:var(--text-dim);}
+  #search:focus{border-color:var(--green-dim); box-shadow:0 0 0 3px rgba(57,255,136,0.1);}
+
+  .nav-chips{
+    display:flex; gap:8px; overflow-x:auto;
+    max-width:1200px; margin:0 auto;
+    padding:0 20px 14px 20px;
+    scrollbar-width:thin;
+  }
+  .nav-chips::-webkit-scrollbar{height:5px;}
+  .nav-chips::-webkit-scrollbar-thumb{background:var(--green-faint); border-radius:10px;}
+  .chip{
+    white-space:nowrap;
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    padding:7px 14px;
+    border-radius:20px;
+    font-size:13px;
+    text-decoration:none;
+    transition:.2s;
+  }
+  .chip:hover, .chip.active{
+    color:var(--bg);
+    background:var(--green);
+    border-color:var(--green);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    max-width:1200px; margin:0 auto;
+    padding:50px 20px 30px;
+    z-index:1;
+  }
+  .ascii{
+    color:var(--green);
+    font-size:10px;
+    line-height:1.15;
+    white-space:pre;
+    overflow-x:auto;
+    text-shadow:0 0 8px rgba(57,255,136,0.35);
+    margin-bottom:20px;
+  }
+  .hero h1{
+    font-size:clamp(22px,4vw,34px);
+    color:var(--text);
+    margin:0 0 10px;
+  }
+  .hero h1 span{color:var(--green);}
+  .hero p{
+    color:var(--text-dim);
+    max-width:760px;
+    font-size:14.5px;
+  }
+  .badge-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+  .badge{
+    font-size:12px; padding:5px 10px; border-radius:4px;
+    border:1px solid var(--border); color:var(--text-dim);
+  }
+  .badge.warn{border-color:#5c3d12; color:var(--amber);}
+
+  /* ---------- MAIN ---------- */
+  main{max-width:1200px; margin:0 auto; padding:10px 20px 80px; position:relative; z-index:1;}
+  section{margin-top:52px; scroll-margin-top:150px;}
+  .section-head{
+    display:flex; align-items:baseline; gap:14px; margin-bottom:6px;
+    border-bottom:1px solid var(--border); padding-bottom:12px;
+  }
+  .section-num{color:var(--green-dim); font-size:13px;}
+  .section-title{font-size:22px; color:var(--green); margin:0;}
+  .section-desc{color:var(--text-dim); font-size:13.5px; margin:10px 0 22px;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
+    gap:16px;
+  }
+
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:16px;
+    transition:border-color .2s, transform .15s;
+  }
+  .card:hover{border-color:var(--green-dim); transform:translateY(-2px);}
+  .card.hidden{display:none;}
+  .card.important{border-color:#5c3d12;}
+  .card.important:hover{border-color:var(--amber);}
+
+  .cmd-row{
+    display:flex; align-items:center; gap:8px;
+    background:#050705;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:9px 10px;
+    margin-bottom:10px;
+  }
+  .cmd-row code{
+    color:var(--green);
+    font-size:13.5px;
+    overflow-x:auto;
+    white-space:pre;
+    flex:1;
+  }
+  .copy-btn{
+    background:var(--green-faint);
+    color:var(--green);
+    border:1px solid var(--green-dim);
+    border-radius:4px;
+    padding:5px 9px;
+    font-size:11px;
+    cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+    flex-shrink:0;
+    transition:.15s;
+  }
+  .copy-btn:hover{background:var(--green); color:var(--bg);}
+  .copy-btn.copied{background:var(--green); color:var(--bg);}
+
+  .card h4{
+    margin:0 0 6px; font-size:14.5px; color:var(--text);
+    font-family:'Chakra Petch',sans-serif;
+  }
+  .card .tag{
+    display:inline-block; font-size:10px; color:var(--amber);
+    border:1px solid #5c3d12; padding:1px 6px; border-radius:3px;
+    margin-left:6px; vertical-align:middle;
+  }
+  .card p.desc{margin:0 0 8px; font-size:13px; color:var(--text-dim);}
+  .card .usage-label{font-size:11px; color:var(--green-dim); margin-top:8px; display:block;}
+
+  .note{
+    background:#0c1410;
+    border-left:3px solid var(--amber);
+    padding:12px 16px;
+    font-size:13px;
+    color:var(--text-dim);
+    margin:20px 0;
+    border-radius:0 4px 4px 0;
+  }
+  .note b{color:var(--amber);}
+
+  footer{
+    border-top:1px solid var(--border);
+    text-align:center;
+    padding:30px 20px 60px;
+    color:var(--text-dim);
+    font-size:12.5px;
+  }
+
+  #back-top{
+    position:fixed; bottom:22px; right:22px;
+    background:var(--green); color:var(--bg);
+    border:none; border-radius:50%;
+    width:44px; height:44px;
+    font-size:18px; cursor:pointer;
+    display:none; align-items:center; justify-content:center;
+    box-shadow:0 4px 14px rgba(57,255,136,0.35);
+    z-index:60;
+  }
+
+  @media (max-width:640px){
+    .ascii{font-size:6px;}
+    .header-inner{gap:10px;}
+    .search-wrap{max-width:100%;}
+    section{scroll-margin-top:190px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand"><span class="dot"></span> TERMUX_MASTERCLASS</div>
+    <div class="search-wrap">
+      <input id="search" type="text" placeholder="$ search command... (e.g. nmap, pkg, cd)" autocomplete="off">
+    </div>
+  </div>
+  <nav class="nav-chips" id="chipNav">
+    <a class="chip" href="#basics">01_Basics</a>
+    <a class="chip" href="#files">02_Files</a>
+    <a class="chip" href="#packages">03_Packages</a>
+    <a class="chip" href="#network">04_Network</a>
+    <a class="chip" href="#termux-api">05_Termux-API</a>
+    <a class="chip" href="#ethical">06_Ethical_Hacking</a>
+    <a class="chip" href="#advanced">07_Advanced/Secret</a>
+    <a class="chip" href="#textproc">08_Text_Processing</a>
+    <a class="chip" href="#sysproc">09_Process/System</a>
+    <a class="chip" href="#gitcmds">10_Git</a>
+    <a class="chip" href="#vimcmds">11_Vim_Editor</a>
+    <a class="chip" href="#shellscript">12_Shell/Env</a>
+    <a class="chip" href="#archive">13_Compression</a>
+    <a class="chip" href="#media">14_Media/Downloads</a>
+    <a class="chip" href="#tips">15_Pro_Tips</a>
+  </nav>
+</header>
+
+<div class="hero">
+<pre class="ascii">
+ ████████╗███████╗██████╗ ███╗   ███╗██╗   ██╗██╗  ██╗
+ ╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║   ██║╚██╗██╔╝
+    ██║   █████╗  ██████╔╝██╔████╔██║██║   ██║ ╚███╔╝ 
+    ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║   ██║ ██╔██╗ 
+    ██║   ███████╗██║  ██║██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗
+    ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝
+</pre>
+<h1>Termux <span>Complete Command Guide</span> — Basic se Advance tak</h1>
+<p>Yeh page Termux ke sabhi zaruri commands ko step-by-step, detail ke saath cover karta hai — kya karta hai, kaise use hota hai, aur real syntax kya hai. Har command ke saamne ek <b>Copy</b> button hai. Search box me type karke turant command dhoondh sakte ho.</p>
+<div class="badge-row">
+  <span class="badge">📱 Mobile + 🖥️ PC dono ke liye responsive</span>
+  <span class="badge">📋 One-click copy</span>
+  <span class="badge">🔥 200+ commands, basic se advance tak</span>
+  <span class="badge warn">⚠️ Ethical use only</span>
+</div>
+</div>
+
+<main>
+
+<!-- ================= 01 BASICS ================= -->
+<section id="basics">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Basic Commands</h2>
+  </div>
+  <p class="section-desc">Yeh wo pehle commands hain jo har Termux user ko sabse pehle seekhne chahiye — file system me ghumna, dekhna, banana, delete karna.</p>
+  <div class="grid" data-section="basics">
+
+    <div class="card">
+      <h4>pwd <span class="tag">basic</span></h4>
+      <div class="cmd-row"><code>pwd</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Present Working Directory — batata hai ki abhi aap kis folder me ho. Jab confuse ho jao ki kaha ho, yeh command chalao.</p>
+    </div>
+
+    <div class="card">
+      <h4>ls</h4>
+      <div class="cmd-row"><code>ls</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>ls -la</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Current folder ki files aur folders list karta hai. <code>-la</code> lagane se hidden files (jo "." se start hoti hain) aur detail (permission, size, date) bhi dikhta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>cd</h4>
+      <div class="cmd-row"><code>cd foldername</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>cd ..</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>cd ~</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Change Directory — ek folder se dusre folder me jaane ke liye. <code>cd ..</code> se ek folder peeche jaate hain, <code>cd ~</code> se seedha home folder me.</p>
+    </div>
+
+    <div class="card">
+      <h4>mkdir</h4>
+      <div class="cmd-row"><code>mkdir myfolder</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Make Directory — naya folder banata hai. Multiple folders banane ke liye: <code>mkdir folder1 folder2</code></p>
+    </div>
+
+    <div class="card">
+      <h4>touch</h4>
+      <div class="cmd-row"><code>touch file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Empty (khaali) file banata hai. Agar file already ho to sirf uski "last modified" time update karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>rm / rm -r</h4>
+      <div class="cmd-row"><code>rm file.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>rm -rf foldername</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Remove — file delete karta hai. <code>-r</code> se folder (recursively andar ki sab files) delete hota hai, <code>-f</code> se bina confirmation ke force delete. <b>Ise dhyan se use karo, delete hone ke baad recover nahi hota.</b></p>
+    </div>
+
+    <div class="card">
+      <h4>cp</h4>
+      <div class="cmd-row"><code>cp source.txt destination.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>cp -r folder1 folder2</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Copy — file ya folder (with <code>-r</code>) ko ek jagah se dusri jagah copy karta hai, original wahi rehta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>mv</h4>
+      <div class="cmd-row"><code>mv file.txt newname.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>mv file.txt /sdcard/</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Move — file/folder ko ek jagah se dusri jagah move karta hai, ya rename bhi karta hai agar sirf naam badla jaye.</p>
+    </div>
+
+    <div class="card">
+      <h4>cat</h4>
+      <div class="cmd-row"><code>cat file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ka poora content terminal me print karta hai. Chote files padhne ke liye useful, badi files ke liye <code>less</code> use karo.</p>
+    </div>
+
+    <div class="card">
+      <h4>nano</h4>
+      <div class="cmd-row"><code>nano file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Terminal ke andar text editor open karta hai jisme file edit kar sakte ho. Save karne ke liye <code>CTRL+O</code> phir <code>Enter</code>, exit ke liye <code>CTRL+X</code>.</p>
+    </div>
+
+    <div class="card">
+      <h4>clear</h4>
+      <div class="cmd-row"><code>clear</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Terminal screen ko saaf kar deta hai, purani commands hat jaati hain (delete nahi hoti, bas screen se hat jaati hain).</p>
+    </div>
+
+    <div class="card">
+      <h4>exit</h4>
+      <div class="cmd-row"><code>exit</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Current terminal session ko band kar deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>history</h4>
+      <div class="cmd-row"><code>history</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Aapne ab tak jo bhi commands type ki hain unki list dikhata hai — purani command dobara dhoondhne ke liye kaam aata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>man</h4>
+      <div class="cmd-row"><code>man ls</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Manual — kisi bhi command ka poora official documentation dikhata hai (kya options hain, kaise use hota hai). Exit karne ke liye <code>q</code> dabao.</p>
+    </div>
+
+    <div class="card">
+      <h4>echo</h4>
+      <div class="cmd-row"><code>echo "Hello World"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Screen par text print karta hai. Scripts me variable ki value dikhane ke liye bhi use hota hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>whoami</h4>
+      <div class="cmd-row"><code>whoami</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Batata hai ki abhi kaunsa user logged in hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>date & cal</h4>
+      <div class="cmd-row"><code>date</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>cal</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>date</code> current date-time dikhata hai, <code>cal</code> current month ka calendar terminal me print karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>uname -a</h4>
+      <div class="cmd-row"><code>uname -a</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">System/kernel ki puri information dikhata hai — OS type, kernel version, architecture (arm64 etc.). Debugging ke waqt useful.</p>
+    </div>
+
+    <div class="card">
+      <h4>hostname</h4>
+      <div class="cmd-row"><code>hostname</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Device ka network hostname (naam) dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>which / type</h4>
+      <div class="cmd-row"><code>which python</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>type cd</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>which</code> batata hai ki koi command ki actual file kaha installed hai. <code>type</code> batata hai ki wo command, alias hai, function hai, ya built-in.</p>
+    </div>
+
+    <div class="card">
+      <h4>less / more</h4>
+      <div class="cmd-row"><code>less file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Badi files ko scroll karke page-by-page padhne ke liye — <code>cat</code> jaisa poora print nahi karta. Exit ke liye <code>q</code> dabao.</p>
+    </div>
+
+    <div class="card">
+      <h4>ln (symlink)</h4>
+      <div class="cmd-row"><code>ln -s /path/original /path/shortcut</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek file/folder ka shortcut (symbolic link) banata hai jo original file ki taraf point karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>stat</h4>
+      <div class="cmd-row"><code>stat file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ki detailed information dikhata hai — size, permissions, last access/modify time, inode number.</p>
+    </div>
+
+    <div class="card">
+      <h4>file</h4>
+      <div class="cmd-row"><code>file document.pdf</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Batata hai ki koi file actually kis type ki hai (text, image, executable, archive) — extension galat ho tab bhi asli type detect karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>basename / dirname</h4>
+      <div class="cmd-row"><code>basename /sdcard/photo.jpg</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>dirname /sdcard/photo.jpg</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>basename</code> path se sirf file ka naam nikalta hai, <code>dirname</code> sirf folder ka path nikalta hai — scripting me bahut kaam aata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>printf</h4>
+      <div class="cmd-row"><code>printf "Name: %s Age: %d\n" "Raj" 21</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>echo</code> jaisa hi, par formatted output ke liye zyada powerful — variables ko specific type (%s string, %d number) me print karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>reset</h4>
+      <div class="cmd-row"><code>reset</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Terminal agar corrupt/garbled ho jaye (jaise binary file cat karne ke baad), to terminal ki settings poori tarah reset kar deta hai.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 02 FILES ================= -->
+<section id="files">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2 class="section-title">File & Storage Management</h2>
+  </div>
+  <p class="section-desc">Phone ki storage access karna, permissions set karna, files search karna.</p>
+  <div class="grid" data-section="files">
+
+    <div class="card">
+      <h4>termux-setup-storage</h4>
+      <div class="cmd-row"><code>termux-setup-storage</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ki internal storage (Photos, Downloads, DCIM) ko Termux se access karne ki permission deta hai. Run karne ke baad home folder me ek <code>storage</code> folder ban jaata hai jisse gallery, downloads, etc. access ho jaati hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>chmod</h4>
+      <div class="cmd-row"><code>chmod +x script.sh</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>chmod 755 file</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ki permissions (read/write/execute) change karta hai. <code>+x</code> se file ko executable (chalane layak) banate hain — scripts run karne se pehle zaruri hota hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>find</h4>
+      <div class="cmd-row"><code>find . -name "*.txt"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Files ko naam ya pattern se search karta hai. Yeh command current folder aur uske andar ke sab sub-folders me dhoondhta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>du</h4>
+      <div class="cmd-row"><code>du -sh foldername</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Disk Usage — batata hai ki koi folder kitni storage (MB/GB) le raha hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>df</h4>
+      <div class="cmd-row"><code>df -h</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Poore device ki total aur free storage space dikhata hai, human-readable format (GB/MB) me.</p>
+    </div>
+
+    <div class="card">
+      <h4>tar (zip/unzip)</h4>
+      <div class="cmd-row"><code>tar -czvf backup.tar.gz foldername/</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>tar -xzvf backup.tar.gz</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Files/folders ko compress (<code>-czvf</code>) ya extract (<code>-xzvf</code>) karta hai — backup banane ke liye useful.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-setup-storage (shared)</h4>
+      <div class="cmd-row"><code>ls ~/storage/shared/</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>ls ~/storage/downloads/</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Setup-storage chalane ke baad phone ki shared storage aur downloads folder yaha se access hoti hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>rmdir</h4>
+      <div class="cmd-row"><code>rmdir emptyfolder</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Sirf khaali (empty) folder ko delete karta hai. Agar folder me files hain to error dega — us case me <code>rm -r</code> use karo.</p>
+    </div>
+
+    <div class="card">
+      <h4>cp -v / mv -v (verbose)</h4>
+      <div class="cmd-row"><code>cp -rv folder1 folder2</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>-v</code> (verbose) lagane se copy/move hote hue har file ka naam terminal me print hota hai — bade operations track karne ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>rsync</h4>
+      <div class="cmd-row"><code>pkg install rsync</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>rsync -avh source/ destination/</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>cp</code> se zyada smart — sirf changed/new files hi copy karta hai, badi backups ke liye time aur data dono bachata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>zip / unzip</h4>
+      <div class="cmd-row"><code>pkg install zip unzip</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>zip -r archive.zip folder/</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>unzip archive.zip</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Windows-compatible <code>.zip</code> files banane aur extract karne ke liye — sabse common archive format.</p>
+    </div>
+
+    <div class="card">
+      <h4>readlink</h4>
+      <div class="cmd-row"><code>readlink -f file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ka full/absolute path nikalta hai, symlink ho to uska original target bhi dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>truncate</h4>
+      <div class="cmd-row"><code>truncate -s 10M testfile</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek fixed size ki dummy/test file turant bana deta hai (yaha 10MB) — bina actual data likhe.</p>
+    </div>
+
+    <div class="card">
+      <h4>md5sum / sha256sum</h4>
+      <div class="cmd-row"><code>sha256sum file.zip</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ka unique hash/checksum nikalta hai — download ki file corrupt/tamper to nahi hui, yeh verify karne ke liye.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 03 PACKAGES ================= -->
+<section id="packages">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Package Management</h2>
+  </div>
+  <p class="section-desc">Termux me naye tools/software install karne, update karne aur remove karne ke commands.</p>
+  <div class="grid" data-section="packages">
+
+    <div class="card important">
+      <h4>pkg update && pkg upgrade <span class="tag">must run first</span></h4>
+      <div class="cmd-row"><code>pkg update && pkg upgrade -y</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Sabse pehla command jo naya Termux install karne ke baad chalana chahiye. Yeh sabhi packages ki latest list fetch karta hai aur unhe update karta hai. <code>-y</code> se sab confirmation auto "yes" ho jaate hain.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkg install</h4>
+      <div class="cmd-row"><code>pkg install packagename</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Naya package/software install karta hai. Example: <code>pkg install python</code>, <code>pkg install git</code>.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkg uninstall</h4>
+      <div class="cmd-row"><code>pkg uninstall packagename</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi installed package ko remove kar deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkg list-installed</h4>
+      <div class="cmd-row"><code>pkg list-installed</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Abhi tak jitne bhi packages install hain unki poori list dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkg search</h4>
+      <div class="cmd-row"><code>pkg search keyword</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi keyword se related available packages search karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>apt (alternative)</h4>
+      <div class="cmd-row"><code>apt update && apt upgrade</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>pkg</code> asal me <code>apt</code> ka hi ek simplified wrapper hai — dono kaam same karte hain, <code>pkg</code> beginners ke liye easier hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>python & pip</h4>
+      <div class="cmd-row"><code>pkg install python</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>pip install requests</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Python install karta hai, aur <code>pip</code> se Python libraries install ki jaati hain.</p>
+    </div>
+
+    <div class="card">
+      <h4>git</h4>
+      <div class="cmd-row"><code>pkg install git</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>git clone https://github.com/user/repo.git</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Git version control install karta hai, aur <code>git clone</code> se GitHub se koi bhi public project directly Termux me download hota hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>clang / nodejs</h4>
+      <div class="cmd-row"><code>pkg install clang nodejs</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">C/C++ compiler aur Node.js install karta hai — programming/coding karne ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkg show</h4>
+      <div class="cmd-row"><code>pkg show packagename</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi package ki details (version, dependencies, size, description) install kiye bina hi dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkg files</h4>
+      <div class="cmd-row"><code>pkg files packagename</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek installed package ke andar kaunsi files/binaries aayi hain, unki list dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkg clean / autoclean</h4>
+      <div class="cmd-row"><code>pkg clean</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Downloaded package cache files (jo install ke baad kaam ke nahi rehte) delete karke storage space free karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>dpkg -l</h4>
+      <div class="cmd-row"><code>dpkg -l</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Low-level package manager command — sabhi installed packages ki detailed list version ke saath dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-change-repo</h4>
+      <div class="cmd-row"><code>termux-change-repo</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Package download servers (mirrors) badalne ke liye — agar default repo slow ho ya kaam na kare to nearest/fastest mirror choose kar sakte ho.</p>
+    </div>
+
+    <div class="card">
+      <h4>ruby / perl / golang</h4>
+      <div class="cmd-row"><code>pkg install ruby perl golang</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ruby, Perl aur Go programming languages install karta hai, agar in languages me code likhna/chalana ho.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 04 NETWORK ================= -->
+<section id="network">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Networking Commands</h2>
+  </div>
+  <p class="section-desc">Internet, IP address aur connections check karne ke liye commands.</p>
+  <div class="grid" data-section="network">
+
+    <div class="card">
+      <h4>ping</h4>
+      <div class="cmd-row"><code>ping google.com</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Check karta hai ki koi website/server reachable hai ya nahi, aur response time (latency) dikhata hai. Rokne ke liye <code>CTRL+C</code>.</p>
+    </div>
+
+    <div class="card">
+      <h4>curl</h4>
+      <div class="cmd-row"><code>curl https://example.com</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>curl -O https://example.com/file.zip</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi bhi URL se data fetch/download karta hai. <code>-O</code> se file ko usi naam se save kar deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>wget</h4>
+      <div class="cmd-row"><code>wget https://example.com/file.zip</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Internet se seedha file download karta hai — <code>curl</code> jaisa hi, par downloads ke liye zyada common.</p>
+    </div>
+
+    <div class="card">
+      <h4>ifconfig / ip addr</h4>
+      <div class="cmd-row"><code>pkg install net-tools</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>ifconfig</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Device ka IP address aur network interfaces dikhata hai. Pehle <code>net-tools</code> install karna padta hai kyuki yeh Termux me by default nahi aata.</p>
+    </div>
+
+    <div class="card">
+      <h4>ssh</h4>
+      <div class="cmd-row"><code>pkg install openssh</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>ssh username@ip_address</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi doosre server/device se securely remote connect karne ke liye. Termux khud ek SSH server bhi ban sakta hai (<code>sshd</code> start karke) taaki PC se apne phone ko control kar sako.</p>
+    </div>
+
+    <div class="card">
+      <h4>speedtest-cli</h4>
+      <div class="cmd-row"><code>pip install speedtest-cli</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>speedtest-cli</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Internet ki download/upload speed terminal se hi check karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>traceroute / tracepath</h4>
+      <div class="cmd-row"><code>pkg install traceroute</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>traceroute google.com</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Data packet apni manzil (destination) tak pahunchne se pehle kin-kin servers (hops) se guzarta hai, yeh route dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>dig / nslookup</h4>
+      <div class="cmd-row"><code>pkg install dnsutils</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>dig google.com</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi domain name ka DNS record (IP address, mail server, etc.) query karta hai — DNS debugging ke liye standard tool.</p>
+    </div>
+
+    <div class="card">
+      <h4>whois</h4>
+      <div class="cmd-row"><code>pkg install whois</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>whois example.com</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi domain ki registration details (owner, registrar, expiry date) fetch karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>netstat / ss</h4>
+      <div class="cmd-row"><code>pkg install net-tools</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>netstat -tulnp</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Device par konse network ports open hain aur kaunsi services unpar listen kar rahi hain, yeh dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>scp</h4>
+      <div class="cmd-row"><code>scp file.txt user@ip:/path/</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Secure Copy — SSH ke through ek device se doosre device me files transfer karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>rclone</h4>
+      <div class="cmd-row"><code>pkg install rclone</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>rclone config</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Google Drive, Dropbox jaisi cloud storage services ke saath files sync/upload/download karne ke liye command-line tool.</p>
+    </div>
+
+    <div class="card">
+      <h4>python -m http.server</h4>
+      <div class="cmd-row"><code>python -m http.server 8080</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Current folder ko turant ek simple web server bana deta hai — files ko local network me share karne ka fastest tarika.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 05 TERMUX API ================= -->
+<section id="termux-api">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Termux:API Commands</h2>
+  </div>
+  <p class="section-desc">Yeh commands phone ke hardware/features (camera, battery, location, SMS) ko control karte hain. Inke liye Play Store se alag se <b>"Termux:API"</b> app install karni padti hai + <code>pkg install termux-api</code> chalana padta hai.</p>
+  <div class="grid" data-section="termux-api">
+
+    <div class="card">
+      <h4>termux-api setup <span class="tag">required</span></h4>
+      <div class="cmd-row"><code>pkg install termux-api</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Yeh package install karo aur saath me Termux:API app bhi install karo, tabhi neeche wale commands kaam karenge.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-battery-status</h4>
+      <div class="cmd-row"><code>termux-battery-status</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Battery percentage, temperature aur charging status JSON format me dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-camera-photo</h4>
+      <div class="cmd-row"><code>termux-camera-photo -c 0 photo.jpg</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Camera se photo click karta hai. <code>-c 0</code> back camera, <code>-c 1</code> front camera ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-location</h4>
+      <div class="cmd-row"><code>termux-location</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Device ki current GPS location (latitude/longitude) fetch karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-clipboard-get/set</h4>
+      <div class="cmd-row"><code>termux-clipboard-set "Hello"</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>termux-clipboard-get</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ke clipboard me text copy karta hai ya usse read karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-toast</h4>
+      <div class="cmd-row"><code>termux-toast "Hello from Termux"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Screen par ek chhota popup message (toast) dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-vibrate</h4>
+      <div class="cmd-row"><code>termux-vibrate -d 1000</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ko vibrate karata hai, <code>-d</code> se duration milliseconds me set hoti hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-notification</h4>
+      <div class="cmd-row"><code>termux-notification --title "Alert" --content "Task done"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Notification bar me custom notification bhejta hai — scripts complete hone par alert dene ke liye useful.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-wake-lock</h4>
+      <div class="cmd-row"><code>termux-wake-lock</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ko sleep/lock hone se rokta hai taaki background me chal rahi script band na ho.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-wake-unlock</h4>
+      <div class="cmd-row"><code>termux-wake-unlock</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>termux-wake-lock</code> ko wapas hata deta hai taaki phone normally sleep kar sake.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-sms-list</h4>
+      <div class="cmd-row"><code>termux-sms-list</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ke SMS inbox ke messages JSON format me list karta hai (permission maangega).</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-sms-send</h4>
+      <div class="cmd-row"><code>termux-sms-send -n 9999999999 "Hello"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Terminal se directly kisi number par SMS bhej deta hai — automation scripts ke liye useful.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-telephony-call</h4>
+      <div class="cmd-row"><code>termux-telephony-call 9999999999</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Terminal command se hi phone call dial kar deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-telephony-deviceinfo</h4>
+      <div class="cmd-row"><code>termux-telephony-deviceinfo</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">SIM/network operator, signal strength jaisi telephony details JSON me dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-contact-list</h4>
+      <div class="cmd-row"><code>termux-contact-list</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ki saari contacts ki list JSON format me nikalta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-volume</h4>
+      <div class="cmd-row"><code>termux-volume music 10</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ke volume streams (music, ring, alarm etc.) ko control karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-torch</h4>
+      <div class="cmd-row"><code>termux-torch on</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>termux-torch off</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone ki flashlight (torch) ko on/off karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-brightness</h4>
+      <div class="cmd-row"><code>termux-brightness 150</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Screen brightness ko terminal se set karta hai (0-255 ke beech value).</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-wifi-connectioninfo</h4>
+      <div class="cmd-row"><code>termux-wifi-connectioninfo</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Connected WiFi network ka naam, signal strength aur link speed dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-tts-speak</h4>
+      <div class="cmd-row"><code>termux-tts-speak "Hello Termux"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Text-to-Speech — diya gaya text phone se bolwa deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-dialog</h4>
+      <div class="cmd-row"><code>termux-dialog text -t "Enter name"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Scripts ke liye popup input box (text, checkbox, spinner, date-picker etc.) dikhata hai — user se input lene ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-share</h4>
+      <div class="cmd-row"><code>termux-share file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Android ke normal "Share" menu ke through kisi file ko doosri apps me bhej deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-open</h4>
+      <div class="cmd-row"><code>termux-open file.pdf</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ya URL ko default associated app me open kar deta hai (jaise PDF ko PDF reader me).</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-fingerprint</h4>
+      <div class="cmd-row"><code>termux-fingerprint</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Fingerprint sensor se authentication prompt dikhata hai — secure scripts banane ke liye.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 06 ETHICAL HACKING ================= -->
+<section id="ethical">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Ethical Hacking / Cybersecurity Tools</h2>
+  </div>
+  <div class="note">
+    <b>Zaroori disclaimer:</b> Yeh tools sirf apni khud ki devices/networks par, ya jinke liye aapke paas likhit (written) permission ho, unhi par test karo. Bina permission kisi doosre ke system/network par inhe use karna apne country ke cyber-laws (jaise IT Act) ke under illegal hai aur ismein jail bhi ho sakti hai. Yeh section sirf sikhne aur apne systems secure karne ke liye hai.
+  </div>
+  <div class="grid" data-section="ethical">
+
+    <div class="card important">
+      <h4>nmap <span class="tag">network scanner</span></h4>
+      <div class="cmd-row"><code>pkg install nmap</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>nmap 192.168.1.1</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>nmap -sV 192.168.1.0/24</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Network Mapper — apne network me kaunse devices connected hain aur unpar kaunse ports/services open hain, yeh check karta hai. <code>-sV</code> se services ka version bhi milta hai. Security audits ke liye industry-standard tool.</p>
+    </div>
+
+    <div class="card important">
+      <h4>hydra <span class="tag">login tester</span></h4>
+      <div class="cmd-row"><code>pkg install hydra</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Apne khud ke router/server ke login ki password strength test karne ke liye use hota hai (brute-force testing tool). Sirf apni devices par hi use karo — kisi aur ke account par use karna cyber-crime hai.</p>
+    </div>
+
+    <div class="card important">
+      <h4>sqlmap <span class="tag">web security</span></h4>
+      <div class="cmd-row"><code>pkg install python git</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>git clone https://github.com/sqlmapproject/sqlmap.git</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Apni khud ki website/web-app me SQL injection vulnerabilities check karne ke liye popular open-source tool. Sirf apni owned website par test karo.</p>
+    </div>
+
+    <div class="card">
+      <h4>proot-distro (Kali/Ubuntu)</h4>
+      <div class="cmd-row"><code>pkg install proot-distro</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>proot-distro install kali</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>proot-distro login kali</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Termux ke andar puri Kali Linux ya Ubuntu jaisi OS chala sakte ho — advanced pentesting tools iske andar available hote hain jo normal Termux me directly nahi milte.</p>
+    </div>
+
+    <div class="card">
+      <h4>tor + proxychains</h4>
+      <div class="cmd-row"><code>pkg install tor proxychains-ng</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Apni internet browsing/traffic ko anonymize/route karne ke liye — privacy research aur anonymous testing labs setup karne ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>wireshark alternative: tcpdump</h4>
+      <div class="cmd-row"><code>pkg install tcpdump</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>tcpdump -i any</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Apne network interface se guzarne wale packets ko capture/analyze karta hai — network traffic samajhne ke liye.</p>
+    </div>
+
+    <div class="card important">
+      <h4>metasploit-framework</h4>
+      <div class="cmd-row"><code>pkg install unstable-repo</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>pkg install metasploit</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Duniya ka sabse popular penetration-testing framework — apne khud ke test-lab systems par vulnerabilities check karne ke liye. Bina permission use karna strictly illegal hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>nikto</h4>
+      <div class="cmd-row"><code>pkg install nikto</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>nikto -h https://apnasite.com</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Apni khud ki website par common misconfigurations aur outdated software scan karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>john the ripper</h4>
+      <div class="cmd-row"><code>pkg install john</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Password strength test karne ke liye password-cracking/audit tool — sirf apni khud ki files/accounts par test karo.</p>
+    </div>
+
+    <div class="card">
+      <h4>fail2ban</h4>
+      <div class="cmd-row"><code>pkg install fail2ban</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Baar-baar galat login attempts karne wale IPs ko automatically block karta hai — apne SSH server ko brute-force se bachane ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>openssl</h4>
+      <div class="cmd-row"><code>openssl genrsa -out key.pem 2048</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>openssl s_client -connect example.com:443</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Encryption keys generate karne aur kisi website ke SSL/TLS certificate ki details check karne ke liye standard tool.</p>
+    </div>
+
+    <div class="card">
+      <h4>aircrack-ng</h4>
+      <div class="cmd-row"><code>pkg install root-repo</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>pkg install aircrack-ng</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">WiFi security research ke liye tool-suite — sirf apne khud ke router par security test karne ke liye (rooted device aur monitor-mode support wale WiFi adapter ki zarurat padti hai).</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 07 ADVANCED / SECRET ================= -->
+<section id="advanced">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2 class="section-title">Advanced & "Secret" Power-User Commands</h2>
+  </div>
+  <p class="section-desc">Yeh wo commands hain jo zyadatar naye users ko pata nahi hote — Termux ko real power-tool banane ke liye.</p>
+  <div class="grid" data-section="advanced">
+
+    <div class="card">
+      <h4>alias</h4>
+      <div class="cmd-row"><code>alias update="pkg update && pkg upgrade -y"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Lambi commands ka short naam bana sakte ho. Permanent karne ke liye ise <code>~/.bashrc</code> file me daal do.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-reload-settings</h4>
+      <div class="cmd-row"><code>termux-reload-settings</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Termux ki <code>termux.properties</code> file me kiye gaye changes (jaise font, extra keys) ko bina app restart kiye apply karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-services (sv)</h4>
+      <div class="cmd-row"><code>pkg install termux-services</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>sv-enable sshd</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Background services (jaise SSH server) ko manage karta hai taaki wo Termux band hone par bhi automatically restart ho jaayein.</p>
+    </div>
+
+    <div class="card">
+      <h4>&& , ; , | (chaining)</h4>
+      <div class="cmd-row"><code>pkg update && pkg upgrade</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>ls | grep ".txt"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>&&</code> se do commands ek ke baad ek chalti hain (agar pehli success ho). <code>|</code> (pipe) se ek command ka output doosri command ko input ki tarah diya jaata hai — bahut powerful trick.</p>
+    </div>
+
+    <div class="card">
+      <h4>crontab / termux-job-scheduler</h4>
+      <div class="cmd-row"><code>pkg install cronie</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Commands/scripts ko ek fix time par automatically run karwane ke liye scheduling tool.</p>
+    </div>
+
+    <div class="card">
+      <h4>screen / tmux</h4>
+      <div class="cmd-row"><code>pkg install tmux</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>tmux</code></div>
+      <p class="desc">Multiple terminal sessions ko ek hi window me split karke chalane deta hai, aur session ko background me chalta rehne deta hai chahe app band ho jaye.</p>
+    </div>
+
+    <div class="card">
+      <h4>figlet + lolcat (fun/style)</h4>
+      <div class="cmd-row"><code>pkg install figlet lolcat</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>figlet "HACKER" | lolcat</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Terminal me bade colorful ASCII-art letters print karta hai — hacker-style intro banane ke liye popular trick.</p>
+    </div>
+
+    <div class="card">
+      <h4>.bashrc customization</h4>
+      <div class="cmd-row"><code>nano ~/.bashrc</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Yeh file har baar Termux open hote hi run hoti hai — ismein alias, custom prompt color, welcome message set kar sakte ho.</p>
+    </div>
+
+    <div class="card">
+      <h4>top / htop</h4>
+      <div class="cmd-row"><code>pkg install htop</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>htop</code></div>
+      <p class="desc">Live me CPU, RAM aur running processes ka usage dikhata hai — Task Manager jaisa terminal version.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-boot (auto-start scripts)</h4>
+      <div class="cmd-row"><code>pkg install termux-boot</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Phone restart hote hi apne scripts ko <code>~/.termux/boot/</code> folder se automatically run karwane deta hai (Termux:Boot app bhi chahiye).</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-style (fonts & colors)</h4>
+      <div class="cmd-row"><code>termux-setup-storage && termux-reload-settings</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>~/.termux/font.ttf</code> aur <code>~/.termux/colors.properties</code> files daal kar terminal ka font aur color-theme fully customize kar sakte ho.</p>
+    </div>
+
+    <div class="card">
+      <h4>function (bash function)</h4>
+      <div class="cmd-row"><code>greet() { echo "Hello $1"; }</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Chhote reusable code-blocks banane ke liye — <code>alias</code> se zyada powerful, isme arguments (<code>$1</code>, <code>$2</code>) bhi le sakte ho.</p>
+    </div>
+
+    <div class="card">
+      <h4>chsh (change shell)</h4>
+      <div class="cmd-row"><code>pkg install zsh</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>chsh -s zsh</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Default shell ko bash se zsh (ya fish) me switch karta hai — better autocomplete aur themes ke liye popular.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-api (widget shortcuts)</h4>
+      <div class="cmd-row"><code>pkg install termux-widget</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Home-screen par tap-to-run shortcuts banata hai apne <code>~/.shortcuts/</code> folder ke scripts ke liye.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 08 TEXT PROCESSING ================= -->
+<section id="textproc">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2 class="section-title">Text Processing & Filters</h2>
+  </div>
+  <p class="section-desc">Files/output ke text ko search, filter, sort aur transform karne ke commands — scripting aur log-analysis me sabse zyada use hote hain.</p>
+  <div class="grid" data-section="textproc">
+
+    <div class="card">
+      <h4>grep</h4>
+      <div class="cmd-row"><code>grep "error" logfile.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>grep -ri "error" logfile.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi file/output me ek specific word ya pattern dhoondh kar us line ko print karta hai. <code>-i</code> case-ignore, <code>-r</code> folder ke andar recursively search.</p>
+    </div>
+
+    <div class="card">
+      <h4>sed</h4>
+      <div class="cmd-row"><code>sed 's/old/new/g' file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Stream Editor — file ke andar text ko find-and-replace karta hai bina file ko manually khole. <code>g</code> se puri line me sab occurrences replace hote hain.</p>
+    </div>
+
+    <div class="card">
+      <h4>awk</h4>
+      <div class="cmd-row"><code>awk '{print $1}' file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Columns/fields wale data ko process karne ke liye powerful language — yaha har line ka pehla column print ho raha hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>sort</h4>
+      <div class="cmd-row"><code>sort file.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>sort -nr numbers.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ki lines ko alphabetically sort karta hai. <code>-n</code> numeric sort, <code>-r</code> reverse order ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>uniq</h4>
+      <div class="cmd-row"><code>sort file.txt | uniq</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>sort file.txt | uniq -c</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Duplicate (repeated) lines ko hata deta hai. <code>-c</code> se har unique line kitni baar aayi, uska count bhi milta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>wc</h4>
+      <div class="cmd-row"><code>wc -l file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Word Count — file ki lines (<code>-l</code>), words (<code>-w</code>), ya characters (<code>-c</code>) ginta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>head / tail</h4>
+      <div class="cmd-row"><code>head -n 10 file.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>tail -f log.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">File ka shuru (<code>head</code>) ya end (<code>tail</code>) print karta hai. <code>tail -f</code> se live log file ko real-time follow kar sakte ho.</p>
+    </div>
+
+    <div class="card">
+      <h4>cut</h4>
+      <div class="cmd-row"><code>cut -d: -f1 /etc/passwd</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi delimiter (yaha <code>:</code>) ke basis par har line se ek specific column nikalta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>tr</h4>
+      <div class="cmd-row"><code>echo "hello" | tr 'a-z' 'A-Z'</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Translate — characters ko replace/delete karta hai. Yaha lowercase text ko uppercase me convert kar raha hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>diff</h4>
+      <div class="cmd-row"><code>diff file1.txt file2.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Do files ke beech ka difference (kaunsi lines alag hain) dikhata hai — code/config compare karne ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>xargs</h4>
+      <div class="cmd-row"><code>find . -name "*.log" | xargs rm</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek command ka output doosri command ke arguments ki tarah pass karta hai — yaha saari <code>.log</code> files ek saath delete ho rahi hain.</p>
+    </div>
+
+    <div class="card">
+      <h4>tee</h4>
+      <div class="cmd-row"><code>ls | tee output.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Command ka output screen par bhi dikhata hai aur ek file me bhi save kar deta hai, same time par.</p>
+    </div>
+
+    <div class="card">
+      <h4>jq (JSON parsing)</h4>
+      <div class="cmd-row"><code>pkg install jq</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>cat data.json | jq '.name'</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">JSON data ko command-line se hi filter/format karne ke liye — APIs (jaise <code>termux-battery-status</code>) ke output ko process karne ke liye bahut useful.</p>
+    </div>
+
+    <div class="card">
+      <h4>column</h4>
+      <div class="cmd-row"><code>column -t file.csv</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Space/tab se separated text ko neat, aligned table jaisa format me terminal me print karta hai.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 09 PROCESS/SYSTEM ================= -->
+<section id="sysproc">
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2 class="section-title">Process & System Management</h2>
+  </div>
+  <p class="section-desc">Running programs (processes) ko dekhna, control karna aur system ki health check karne ke commands.</p>
+  <div class="grid" data-section="sysproc">
+
+    <div class="card">
+      <h4>ps</h4>
+      <div class="cmd-row"><code>ps aux</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Abhi kaunse processes/programs chal rahe hain, unki poori list (PID, CPU/memory usage sahit) dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>kill</h4>
+      <div class="cmd-row"><code>kill 1234</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>kill -9 1234</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Process ID (PID) se kisi program ko force-stop karta hai. <code>-9</code> se turant/forcefully band hota hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>pkill / pgrep</h4>
+      <div class="cmd-row"><code>pkill node</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">PID yaad rakhne ki jagah process ke naam se hi use kar/dhoondh sakte ho — <code>pkill</code> stop karta hai, <code>pgrep</code> sirf PID dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>jobs, bg, fg</h4>
+      <div class="cmd-row"><code>jobs</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>command &</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>fg %1</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>&</code> lagane se command background me chalti hai, <code>jobs</code> unhe list karta hai, <code>fg</code> wapas foreground me le aata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>nohup</h4>
+      <div class="cmd-row"><code>nohup python script.py &</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Terminal band hone ke baad bhi script/process chalta rehta hai — long-running scripts ke liye zaruri.</p>
+    </div>
+
+    <div class="card">
+      <h4>free</h4>
+      <div class="cmd-row"><code>free -h</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">RAM ka total, used aur free memory human-readable format (GB/MB) me dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>uptime</h4>
+      <div class="cmd-row"><code>uptime</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Device/session kitni der se on/running hai, aur average system load dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-info</h4>
+      <div class="cmd-row"><code>termux-info</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Termux version, Android version, architecture jaisi puri debug-info ek saath dikhata hai — bug-report share karte waqt useful.</p>
+    </div>
+
+    <div class="card">
+      <h4>id / groups</h4>
+      <div class="cmd-row"><code>id</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Current user ka user-ID, group-ID aur konse groups me hai, yeh dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>watch</h4>
+      <div class="cmd-row"><code>pkg install procps</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>watch -n 2 free -h</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi command ko har kuch second (yaha 2 sec) me automatically re-run karke live output dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>termux-chroot / tsu</h4>
+      <div class="cmd-row"><code>pkg install tsudo</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Rooted devices par root-level access (superuser) commands chalane ke liye — non-rooted phones par kaam nahi karta.</p>
+    </div>
+
+    <div class="card">
+      <h4>time</h4>
+      <div class="cmd-row"><code>time ls -la</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Koi bhi command chalane me kitna time laga, wo measure karke dikhata hai — scripts optimize karne ke liye useful.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 10 GIT ================= -->
+<section id="gitcmds">
+  <div class="section-head">
+    <span class="section-num">10</span>
+    <h2 class="section-title">Git Version Control</h2>
+  </div>
+  <p class="section-desc">Code ka version-history maintain karne aur GitHub/GitLab ke saath kaam karne ke commands.</p>
+  <div class="grid" data-section="gitcmds">
+
+    <div class="card important">
+      <h4>git config <span class="tag">first time setup</span></h4>
+      <div class="cmd-row"><code>git config --global user.name "Your Name"</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>git config --global user.email "you@example.com"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Git use karne se pehle apna naam aur email set karna zaruri hai — yeh har commit ke saath attach hota hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git init</h4>
+      <div class="cmd-row"><code>git init</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Current folder ko ek naya Git repository bana deta hai — version tracking yahi se shuru hoti hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git clone</h4>
+      <div class="cmd-row"><code>git clone https://github.com/user/repo.git</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">GitHub/GitLab par maujood kisi bhi repository ko poori history ke saath apne device me download karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git status</h4>
+      <div class="cmd-row"><code>git status</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Batata hai ki kaunsi files change hui hain, kaunsi staged hain, aur kaunsi track hi nahi ho rahi.</p>
+    </div>
+
+    <div class="card">
+      <h4>git add</h4>
+      <div class="cmd-row"><code>git add file.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>git add .</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Changes ko "staging area" me daalta hai — <code>.</code> se saari changed files ek saath add ho jaati hain.</p>
+    </div>
+
+    <div class="card">
+      <h4>git commit</h4>
+      <div class="cmd-row"><code>git commit -m "message"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Staged changes ka ek permanent snapshot (commit) save karta hai, saath me ek message jo batata hai ki kya change kiya.</p>
+    </div>
+
+    <div class="card">
+      <h4>git push</h4>
+      <div class="cmd-row"><code>git push origin main</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Apne local commits ko remote server (GitHub) par upload karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git pull</h4>
+      <div class="cmd-row"><code>git pull origin main</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Remote repository me hue latest changes ko apne local folder me download/merge karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git branch</h4>
+      <div class="cmd-row"><code>git branch</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>git branch new-feature</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Existing branches list karta hai ya naya branch banata hai — alag features par bina main code disturb kiye kaam karne ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>git checkout / switch</h4>
+      <div class="cmd-row"><code>git checkout branch-name</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek branch se doosre branch me switch karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git log</h4>
+      <div class="cmd-row"><code>git log --oneline</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ab tak ke saare commits ki history dikhata hai — <code>--oneline</code> se compact, ek-line format me.</p>
+    </div>
+
+    <div class="card">
+      <h4>git diff</h4>
+      <div class="cmd-row"><code>git diff</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Last commit ke muqable abhi files me kya-kya exact changes hue hain, line-by-line dikhata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git stash</h4>
+      <div class="cmd-row"><code>git stash</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>git stash pop</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Incomplete changes ko temporarily "side me rakh" deta hai bina commit kiye, taaki clean branch switch ho sake. <code>pop</code> se wapas laa sakte ho.</p>
+    </div>
+
+    <div class="card">
+      <h4>git merge</h4>
+      <div class="cmd-row"><code>git merge branch-name</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek branch ke changes ko doosre branch me combine (merge) karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>git reset</h4>
+      <div class="cmd-row"><code>git reset --hard HEAD~1</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Last commit ko poori tarah undo kar deta hai — <b>ise dhyan se use karo, changes permanently khatam ho jaate hain.</b></p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 11 VIM ================= -->
+<section id="vimcmds">
+  <div class="section-head">
+    <span class="section-num">11</span>
+    <h2 class="section-title">Vim Editor Basics</h2>
+  </div>
+  <p class="section-desc"><code>nano</code> ke alawa Termux me powerful <code>vim</code> editor bhi available hai. Shuru me thoda tricky lagta hai par bahut fast hai.</p>
+  <div class="grid" data-section="vimcmds">
+
+    <div class="card important">
+      <h4>vim install <span class="tag">required</span></h4>
+      <div class="cmd-row"><code>pkg install vim</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>vim file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Vim install karke kisi file ko open karta hai. Vim me 2 modes hote hain — Normal (commands) aur Insert (typing).</p>
+    </div>
+
+    <div class="card">
+      <h4>i (insert mode)</h4>
+      <div class="cmd-row"><code>i</code></div>
+      <p class="desc">Normal mode se Insert mode me jaata hai, tabhi text type kar sakte ho. Bahar aane ke liye <code>Esc</code> dabao.</p>
+    </div>
+
+    <div class="card">
+      <h4>:w (save)</h4>
+      <div class="cmd-row"><code>:w</code></div>
+      <p class="desc">Normal mode me file ko save (write) karta hai, bina exit kiye.</p>
+    </div>
+
+    <div class="card">
+      <h4>:q / :q!</h4>
+      <div class="cmd-row"><code>:q</code></div>
+      <div class="cmd-row"><code>:q!</code></div>
+      <p class="desc">Vim se exit karta hai. <code>:q!</code> se bina save kiye, force exit hota hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>:wq (save & quit)</h4>
+      <div class="cmd-row"><code>:wq</code></div>
+      <p class="desc">File ko save karke turant Vim se bahar bhi nikal jaata hai — sabse common exit command.</p>
+    </div>
+
+    <div class="card">
+      <h4>dd (delete line)</h4>
+      <div class="cmd-row"><code>dd</code></div>
+      <p class="desc">Normal mode me cursor jis line par hai, poori line delete kar deta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>yy / p (copy-paste)</h4>
+      <div class="cmd-row"><code>yy</code></div>
+      <div class="cmd-row"><code>p</code></div>
+      <p class="desc"><code>yy</code> se current line copy (yank) hoti hai, <code>p</code> se usko cursor ke neeche paste karte hain.</p>
+    </div>
+
+    <div class="card">
+      <h4>/search</h4>
+      <div class="cmd-row"><code>/keyword</code></div>
+      <p class="desc">File ke andar kisi word ko search karta hai. <code>n</code> dabakar next match par jump karo.</p>
+    </div>
+
+    <div class="card">
+      <h4>u (undo)</h4>
+      <div class="cmd-row"><code>u</code></div>
+      <p class="desc">Last change ko undo karta hai — galti se kuch delete/change ho gaya ho to isse wapas laa sakte ho.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 12 SHELL/ENV ================= -->
+<section id="shellscript">
+  <div class="section-head">
+    <span class="section-num">12</span>
+    <h2 class="section-title">Shell Scripting & Environment Variables</h2>
+  </div>
+  <p class="section-desc">Apne khud ke automation scripts banane aur environment variables manage karne ke commands.</p>
+  <div class="grid" data-section="shellscript">
+
+    <div class="card">
+      <h4>#!/bin/bash (shebang)</h4>
+      <div class="cmd-row"><code>#!/data/data/com.termux/files/usr/bin/bash</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Har script file ki pehli line — batata hai ki yeh script kaunse interpreter (yaha bash) se run honi chahiye.</p>
+    </div>
+
+    <div class="card">
+      <h4>bash script.sh</h4>
+      <div class="cmd-row"><code>bash script.sh</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>./script.sh</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek shell script file ko run karta hai. <code>./</code> se direct chalane ke liye pehle <code>chmod +x</code> karna padta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>export (environment variable)</h4>
+      <div class="cmd-row"><code>export API_KEY="12345"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek variable set karta hai jo current session ke sub-processes/scripts me bhi accessible rehta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>echo $PATH</h4>
+      <div class="cmd-row"><code>echo $PATH</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">System kis-kis folder me commands dhoondhta hai, uski list dikhata hai — "command not found" errors debug karne me kaam aata hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>if / else</h4>
+      <div class="cmd-row"><code>if [ -f file.txt ]; then echo "exists"; fi</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Scripts me condition check karne ke liye — yaha check ho raha hai ki file exist karti hai ya nahi.</p>
+    </div>
+
+    <div class="card">
+      <h4>for loop</h4>
+      <div class="cmd-row"><code>for i in 1 2 3; do echo $i; done</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Same command ko multiple values par baar-baar repeat karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>while loop</h4>
+      <div class="cmd-row"><code>while true; do echo "running"; sleep 1; done</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Ek condition true hone tak commands ko baar-baar repeat karta hai — yaha infinite loop chal raha hai jo har 1 second me print karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>read (user input)</h4>
+      <div class="cmd-row"><code>read -p "Enter name: " name</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Script chalte waqt user se terminal me input lene ke liye — yaha input <code>name</code> variable me store hota hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>$1, $2 (script arguments)</h4>
+      <div class="cmd-row"><code>./script.sh hello world</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Script ko command-line se diye gaye arguments <code>$1</code>, <code>$2</code> variables ke through script ke andar access hote hain.</p>
+    </div>
+
+    <div class="card">
+      <h4>sleep</h4>
+      <div class="cmd-row"><code>sleep 5</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Script/terminal ko diye gaye seconds tak pause (wait) karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>source / . (dot)</h4>
+      <div class="cmd-row"><code>source ~/.bashrc</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi script file ko current shell session me hi execute karta hai (naya sub-shell nahi khulta) — <code>.bashrc</code> me kiye changes turant apply karne ke liye.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 13 ARCHIVE ================= -->
+<section id="archive">
+  <div class="section-head">
+    <span class="section-num">13</span>
+    <h2 class="section-title">Compression & Archives</h2>
+  </div>
+  <p class="section-desc">Files/folders ko compress karke storage bachane aur transfer karne ke commands.</p>
+  <div class="grid" data-section="archive">
+
+    <div class="card">
+      <h4>gzip / gunzip</h4>
+      <div class="cmd-row"><code>gzip file.txt</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>gunzip file.txt.gz</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Single file ko <code>.gz</code> format me compress/decompress karta hai — original file ki jagah compressed file ban jaati hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>bzip2 / bunzip2</h4>
+      <div class="cmd-row"><code>pkg install bzip2</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>bzip2 file.txt</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>gzip</code> jaisa hi, par thoda better compression ratio deta hai (par speed thodi slow hoti hai).</p>
+    </div>
+
+    <div class="card">
+      <h4>7z (7-zip)</h4>
+      <div class="cmd-row"><code>pkg install p7zip</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>7z a archive.7z folder/</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Sabse high compression ratio wala format — badi files ko sabse chhota size me compress karta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>tar.bz2 / tar.xz</h4>
+      <div class="cmd-row"><code>tar -cjvf backup.tar.bz2 folder/</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>tar</code> ko alag compression algorithms (bzip2, xz) ke saath combine karke behtar compression ratio milta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>unrar</h4>
+      <div class="cmd-row"><code>pkg install unrar</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>unrar x file.rar</code><button class="copy-btn">Copy</button></div>
+      <p class="desc"><code>.rar</code> format ki archives ko extract karta hai — Windows se aayi files ke liye common.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 14 MEDIA ================= -->
+<section id="media">
+  <div class="section-head">
+    <span class="section-num">14</span>
+    <h2 class="section-title">Media, Downloads & Conversion Tools</h2>
+  </div>
+  <p class="section-desc">Videos, audio, aur images ko terminal se hi download, convert aur edit karne ke tools.</p>
+  <div class="grid" data-section="media">
+
+    <div class="card important">
+      <h4>yt-dlp <span class="tag">popular</span></h4>
+      <div class="cmd-row"><code>pkg install python && pip install yt-dlp</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>yt-dlp "https://youtube.com/watch?v=..."</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">YouTube aur 1000+ sites se videos/audio download karne ka sabse popular command-line tool. Sirf apni khud ki ya copyright-free content download karo.</p>
+    </div>
+
+    <div class="card">
+      <h4>ffmpeg</h4>
+      <div class="cmd-row"><code>pkg install ffmpeg</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>ffmpeg -i input.mp4 output.mp3</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Video/audio convert, trim, merge, compress karne ka industry-standard tool — yaha video ko audio(mp3) me convert kar raha hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>imagemagick (convert)</h4>
+      <div class="cmd-row"><code>pkg install imagemagick</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>convert photo.png photo.jpg</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Images ka format convert karna, resize karna, ya batch-edit karna — terminal se hi image editing ka powerful tool.</p>
+    </div>
+
+    <div class="card">
+      <h4>cmus (music player)</h4>
+      <div class="cmd-row"><code>pkg install cmus</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>cmus</code></div>
+      <p class="desc">Terminal ke andar hi ek lightweight music player chalata hai — apni <code>~/storage/music</code> folder ki songs play karne ke liye.</p>
+    </div>
+
+    <div class="card">
+      <h4>mpv (video player)</h4>
+      <div class="cmd-row"><code>pkg install mpv</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>mpv video.mp4</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Lightweight command-line video/audio player, streaming URLs bhi directly play kar sakta hai.</p>
+    </div>
+
+    <div class="card">
+      <h4>qrencode</h4>
+      <div class="cmd-row"><code>pkg install qrencode</code><button class="copy-btn">Copy</button></div>
+      <div class="cmd-row"><code>qrencode -o code.png "Hello"</code><button class="copy-btn">Copy</button></div>
+      <p class="desc">Kisi bhi text/URL ka QR code image bana deta hai terminal se hi.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= 08 TIPS ================= -->
+<section id="tips">
+  <div class="section-head">
+    <span class="section-num">15</span>
+    <h2 class="section-title">Pro Tips</h2>
+  </div>
+  <div class="grid" data-section="tips">
+    <div class="card">
+      <h4>Keyboard shortcuts</h4>
+      <p class="desc">
+        <b>CTRL+C</b> — running command ko stop karo<br>
+        <b>CTRL+L</b> — screen clear (clear command jaisa)<br>
+        <b>CTRL+A then D</b> — tmux session ko background me chhod do<br>
+        <b>Volume Down + Q/W/E</b> — Termux ke extra symbol keys (Esc, Tab, arrows) access karo
+      </p>
+    </div>
+    <div class="card">
+      <h4>Tab completion</h4>
+      <p class="desc">Command ya file naam type karte waqt <b>Tab</b> dabao — Termux khud auto-complete kar dega. Time bachata hai aur typo se bachaata hai.</p>
+    </div>
+    <div class="card">
+      <h4>Storage location</h4>
+      <p class="desc">Termux setup-storage ke baad phone ki files <code>~/storage/shared/</code> ya <code>~/storage/downloads/</code> me milti hain.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  root@termux-guide:~$ made with <span style="color:var(--green)">&lt;3</span> for learners &nbsp;|&nbsp; Always hack ethically. Always take permission.
+</footer>
+
+<button id="back-top" title="Top par jao">↑</button>
+
+<script>
+  // Copy to clipboard
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.previousElementSibling.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1200);
+      }).catch(() => {
+        btn.textContent = 'Failed';
+        setTimeout(() => btn.textContent = 'Copy', 1200);
+      });
+    });
+  });
+
+  // Search filter across all cards
+  const searchInput = document.getElementById('search');
+  const allCards = document.querySelectorAll('.card');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    allCards.forEach(card => {
+      const text = card.innerText.toLowerCase();
+      card.classList.toggle('hidden', q.length > 0 && !text.includes(q));
+    });
+    // hide empty sections
+    document.querySelectorAll('section').forEach(sec => {
+      const grid = sec.querySelector('.grid');
+      if (!grid) return;
+      const visible = [...grid.children].some(c => !c.classList.contains('hidden'));
+      sec.style.display = (q.length > 0 && !visible) ? 'none' : '';
+    });
+  });
+
+  // active chip highlight on scroll
+  const chips = document.querySelectorAll('.chip');
+  const sections = document.querySelectorAll('section');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 160) current = sec.id;
+    });
+    chips.forEach(c => c.classList.toggle('active', c.getAttribute('href') === '#' + current));
+
+    document.getElementById('back-top').style.display = window.scrollY > 500 ? 'flex' : 'none';
+  });
+
+  document.getElementById('back-top').addEventListener('click', () => {
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+</script>
+
+</body>
+</html>
