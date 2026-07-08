@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Sikho — Formula se Dosti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F4EC;
+    --ink:#1E2B23;
+    --grass:#2F6B4F;
+    --grass-dark:#204A37;
+    --amber:#C9863D;
+    --gridline:#DAD4C3;
+    --cellwhite:#FFFFFF;
+    --muted:#6E6A5C;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--amber);color:#fff;}
+
+  /* subtle graph-paper texture */
+  .grid-bg{
+    background-image:
+      linear-gradient(var(--gridline) 1px, transparent 1px),
+      linear-gradient(90deg, var(--gridline) 1px, transparent 1px);
+    background-size: 34px 34px;
+    background-position: -1px -1px;
+  }
+
+  h1,h2,h3{font-family:'Fraunces',serif; margin:0; letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--grass-dark);
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding: 64px 24px 40px;
+    max-width:980px;
+    margin:0 auto;
+  }
+  .formula-bar{
+    display:flex;
+    align-items:center;
+    background:var(--cellwhite);
+    border:1.5px solid var(--gridline);
+    border-radius:6px;
+    padding:10px 14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    max-width:520px;
+    margin-bottom:28px;
+    box-shadow:0 1px 0 var(--gridline);
+  }
+  .formula-bar .ref{
+    color:var(--muted);
+    padding-right:10px;
+    margin-right:10px;
+    border-right:1px solid var(--gridline);
+    font-weight:600;
+  }
+  .formula-bar .fx{color:var(--grass); font-weight:600; margin-right:8px;}
+  .typed{color:var(--ink); white-space:nowrap; overflow:hidden; border-right:2px solid var(--grass); width:0; animation: type 2.6s steps(28,end) forwards 0.3s, blink 0.8s step-end infinite;}
+  @keyframes type{from{width:0} to{width:26ch}}
+  @keyframes blink{50%{border-color:transparent}}
+
+  header.hero h1{
+    font-size:clamp(38px,6vw,64px);
+    font-weight:600;
+    line-height:1.05;
+    max-width:11ch;
+  }
+  header.hero h1 em{
+    font-style:italic;
+    color:var(--grass);
+  }
+  header.hero p.sub{
+    font-size:17px;
+    color:var(--muted);
+    max-width:46ch;
+    margin-top:18px;
+    line-height:1.6;
+  }
+  .cta-row{margin-top:30px; display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    padding:12px 22px;
+    border-radius:6px;
+    border:1.5px solid var(--grass-dark);
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{background:var(--grass); color:#fff;}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 4px 0 var(--grass-dark);}
+  .btn-ghost{background:transparent; color:var(--grass-dark);}
+  .btn-ghost:hover{background:rgba(47,107,79,0.08);}
+
+  /* ---------- WORKBOOK (main app) ---------- */
+  .workbook{
+    max-width:1040px;
+    margin: 20px auto 90px;
+    padding: 0 24px;
+  }
+  .book-frame{
+    background:var(--cellwhite);
+    border:1.5px solid var(--gridline);
+    border-radius:10px 10px 0 0;
+    overflow:hidden;
+    box-shadow: 0 18px 40px -22px rgba(30,43,35,0.35);
+  }
+  .titlebar{
+    background:var(--grass-dark);
+    color:#EFE9DA;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    padding:10px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .titlebar .dots span{
+    display:inline-block; width:9px; height:9px; border-radius:50%;
+    background:#EFE9DA33; margin-right:6px;
+  }
+  .panel{
+    padding: 34px 36px 40px;
+    min-height:420px;
+  }
+  .panel h2{font-size:26px; margin-bottom:6px;}
+  .panel .lead{color:var(--muted); font-size:15px; margin-bottom:26px; max-width:60ch; line-height:1.6;}
+
+  .card-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; margin-top:18px;}
+  .card{
+    border:1.5px solid var(--gridline);
+    border-radius:8px;
+    padding:18px 18px 16px;
+    background: repeating-linear-gradient(var(--cellwhite),var(--cellwhite));
+  }
+  .card .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--amber); font-weight:600; letter-spacing:.06em;
+  }
+  .card h3{font-size:17px; margin:8px 0 6px; font-family:'Inter',sans-serif; font-weight:700;}
+  .card p{font-size:13.5px; color:var(--muted); line-height:1.55; margin:0 0 10px;}
+  .card code{
+    display:block;
+    background:var(--paper);
+    border:1px solid var(--gridline);
+    border-radius:5px;
+    padding:8px 10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--grass-dark);
+  }
+
+  .shortcut-table{width:100%; border-collapse:collapse; margin-top:10px;}
+  .shortcut-table th{
+    text-align:left; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+    border-bottom:1.5px solid var(--gridline); padding:8px 10px;
+  }
+  .shortcut-table td{
+    padding:10px 10px; border-bottom:1px solid var(--gridline); font-size:14px;
+  }
+  .kbd{
+    font-family:'IBM Plex Mono',monospace; background:var(--paper);
+    border:1px solid var(--gridline); border-bottom-width:2px;
+    border-radius:4px; padding:2px 7px; font-size:12.5px; color:var(--grass-dark);
+  }
+
+  /* ---------- practice grid ---------- */
+  .practice-toolbar{
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px;
+  }
+  .practice-toolbar .cellref{
+    background:var(--paper); border:1px solid var(--gridline); border-radius:5px;
+    padding:6px 10px; min-width:44px; text-align:center; font-weight:600; color:var(--grass-dark);
+  }
+  .practice-toolbar .fxlabel{color:var(--grass); font-weight:700;}
+  #formulaInput{
+    flex:1; font-family:'IBM Plex Mono',monospace; font-size:13.5px;
+    padding:7px 10px; border:1px solid var(--gridline); border-radius:5px; background:var(--cellwhite);
+  }
+  .sheet-wrap{overflow-x:auto; border:1px solid var(--gridline); border-radius:6px;}
+  table.sheet{border-collapse:collapse; font-family:'IBM Plex Mono',monospace; font-size:13px; min-width:640px;}
+  table.sheet th{
+    background:var(--paper); color:var(--muted); font-weight:600;
+    border:1px solid var(--gridline); padding:6px 4px; width:88px; position:sticky; top:0;
+  }
+  table.sheet th.rownum{width:34px;}
+  table.sheet td.rownum{
+    background:var(--paper); color:var(--muted); text-align:center; border:1px solid var(--gridline);
+  }
+  table.sheet td.cell{
+    border:1px solid var(--gridline); padding:0; height:30px;
+  }
+  table.sheet td.cell input{
+    width:100%; height:100%; border:none; outline:none; padding:5px 7px;
+    font-family:'IBM Plex Mono',monospace; font-size:13px; background:transparent; color:var(--ink);
+  }
+  table.sheet td.cell.active input{background:#FBEEDA;}
+  table.sheet td.cell input:focus{background:#FBEEDA;}
+
+  .hint-strip{
+    margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .hint-strip button{
+    font-family:'IBM Plex Mono',monospace; font-size:12px;
+    background:var(--paper); border:1px solid var(--gridline); border-radius:5px;
+    padding:6px 10px; cursor:pointer; color:var(--grass-dark);
+  }
+  .hint-strip button:hover{background:#EFE7D2;}
+
+  /* ---------- sheet tabs ---------- */
+  .tabbar{
+    display:flex; align-items:flex-end; gap:2px; padding: 0 10px;
+    background:var(--paper); border-bottom:1.5px solid var(--gridline);
+    overflow-x:auto;
+  }
+  .tab{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    padding:10px 18px; cursor:pointer; color:var(--muted);
+    border:1px solid transparent; border-bottom:none;
+    border-radius:6px 6px 0 0; white-space:nowrap;
+    display:flex; align-items:center; gap:7px;
+  }
+  .tab .dot{width:6px; height:6px; border-radius:50%; background:var(--gridline);}
+  .tab:hover{color:var(--ink); background:#EFE9DA88;}
+  .tab.active{
+    color:var(--grass-dark); font-weight:600; background:var(--cellwhite);
+    border-color:var(--gridline); border-bottom:1.5px solid var(--cellwhite); margin-bottom:-1.5px;
+  }
+  .tab.active .dot{background:var(--grass);}
+
+  footer{
+    text-align:center; padding:30px 20px 50px; color:var(--muted);
+    font-family:'IBM Plex Mono',monospace; font-size:12px;
+  }
+
+  @media (max-width:640px){
+    .panel{padding:24px 18px 30px;}
+    header.hero{padding:44px 18px 30px;}
+  }
+
+  /* ---------- FORMULA LIBRARY ---------- */
+  :root{
+    --lv1:#2F6B4F; /* beginner - grass */
+    --lv1-bg:#EAF3EC;
+    --lv2:#B87A2E; /* intermediate - amber */
+    --lv2-bg:#FBF0DE;
+    --lv3:#3D6B98; /* advanced - blue */
+    --lv3-bg:#E8F0F8;
+    --lv4:#8C3A3A; /* expert - maroon */
+    --lv4-bg:#F7E9E9;
+  }
+
+  .lib-hero{
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    flex-wrap:wrap; margin-bottom:22px; padding-bottom:22px; border-bottom:1.5px dashed var(--gridline);
+  }
+  .lib-count{font-family:'Fraunces',serif; font-size:44px; font-weight:600; line-height:1; color:var(--ink);}
+  .lib-count span{color:var(--grass); font-style:italic;}
+  .lib-count small{display:block; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; color:var(--muted); font-weight:600; margin-top:4px;}
+  .lib-legend{display:flex; gap:14px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted);}
+  .lib-legend .lg{display:flex; align-items:center; gap:6px;}
+  .lib-legend .sw{width:10px; height:10px; border-radius:3px;}
+
+  .lib-controls{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:22px;
+    position:sticky; top:0; background:var(--cellwhite); z-index:5; padding:10px 0;
+  }
+  .pill{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600;
+    padding:7px 14px; border-radius:999px; border:1.5px solid var(--gridline);
+    background:var(--cellwhite); color:var(--muted); cursor:pointer;
+    transition:all .18s ease; white-space:nowrap;
+  }
+  .pill:hover{transform:translateY(-1px); border-color:var(--ink);}
+  .pill.active{color:#fff; border-color:transparent;}
+  .pill[data-level="0"].active{background:var(--ink);}
+  .pill[data-level="1"].active{background:var(--lv1);}
+  .pill[data-level="2"].active{background:var(--lv2);}
+  .pill[data-level="3"].active{background:var(--lv3);}
+  .pill[data-level="4"].active{background:var(--lv4);}
+
+  #catSelect, #formulaSearch{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    border:1.5px solid var(--gridline); border-radius:999px; padding:7px 14px;
+    background:var(--cellwhite); color:var(--ink);
+  }
+  #formulaSearch{min-width:190px;}
+  #formulaSearch:focus, #catSelect:focus{outline:none; border-color:var(--grass);}
+
+  .lib-empty{
+    text-align:center; padding:50px 20px; color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:13px; display:none;
+  }
+
+  .fgrid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(268px,1fr)); gap:14px;
+  }
+  .fcard{
+    border:1.5px solid var(--gridline); border-left-width:5px; border-radius:8px;
+    padding:16px 16px 14px; background:var(--cellwhite);
+    opacity:0; transform:translateY(14px) scale(.98);
+    animation: fcardIn .5s cubic-bezier(.2,.8,.2,1) forwards;
+    transition: box-shadow .2s ease, transform .2s ease;
+  }
+  .fcard:hover{box-shadow:0 10px 24px -14px rgba(30,43,35,0.35); transform:translateY(-3px);}
+  @keyframes fcardIn{ to{opacity:1; transform:translateY(0) scale(1);} }
+  .fcard.lv1{border-left-color:var(--lv1);}
+  .fcard.lv2{border-left-color:var(--lv2);}
+  .fcard.lv3{border-left-color:var(--lv3);}
+  .fcard.lv4{border-left-color:var(--lv4);}
+
+  .fcard .frow{display:flex; align-items:flex-start; justify-content:space-between; gap:8px;}
+  .fcard .fname{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:15px; color:var(--ink);}
+  .fcard .flevel{
+    font-size:9.5px; font-weight:700; letter-spacing:.06em; padding:3px 7px; border-radius:5px;
+    font-family:'IBM Plex Mono',monospace; white-space:nowrap;
+  }
+  .fcard.lv1 .flevel{background:var(--lv1-bg); color:var(--lv1);}
+  .fcard.lv2 .flevel{background:var(--lv2-bg); color:var(--lv2);}
+  .fcard.lv3 .flevel{background:var(--lv3-bg); color:var(--lv3);}
+  .fcard.lv4 .flevel{background:var(--lv4-bg); color:var(--lv4);}
+
+  .fcard .fcat{font-size:11px; color:var(--muted); margin:5px 0 8px; font-family:'IBM Plex Mono',monospace;}
+  .fcard .fsyntax{
+    display:block; background:var(--paper); border:1px solid var(--gridline); border-radius:5px;
+    padding:6px 9px; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--grass-dark);
+    margin-bottom:8px; overflow-x:auto; white-space:nowrap;
+  }
+  .fcard .fdesc{font-size:13px; color:var(--ink); line-height:1.5; margin:0 0 8px;}
+  .fcard .fexample{font-size:11.5px; color:var(--muted); font-family:'IBM Plex Mono',monospace;}
+  .fcard .fexample b{color:var(--ink);}
+  .fstars{margin-top:8px; font-size:11px; letter-spacing:1px;}
+  .fstars .on{color:var(--amber);}
+  .fstars .off{color:var(--gridline);}
+
+  .lib-resultcount{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-bottom:12px;}
+</style>
+</head>
+<body class="grid-bg">
+
+<header class="hero">
+  <div class="eyebrow">EXCEL.SIKHO — WORKBOOK 1</div>
+  <div class="formula-bar">
+    <span class="ref">A1</span>
+    <span class="fx">fx</span>
+    <span class="typed">=DAR_KHATAM("Excel")</span>
+  </div>
+  <h1>Excel se dosti,<br><em>ek cell se shuru.</em></h1>
+  <p class="sub">Yeh koi lecture nahi hai — yeh ek asli spreadsheet hai jisme aap seekhte-seekhte type karte hain, formula chalate hain, aur turant result dekhte hain.</p>
+  <div class="cta-row">
+    <button class="btn btn-primary" onclick="goTab('practice')">Seedha practice pe jao →</button>
+    <button class="btn btn-ghost" onclick="goTab('basics')">Basics se shuru karo</button>
+  </div>
+</header>
+
+<div class="workbook">
+  <div class="book-frame">
+    <div class="titlebar">
+      <span>excel-sikho.xlsx</span>
+      <span class="dots"><span></span><span></span><span></span></span>
+    </div>
+    <div class="tabbar" id="tabbar">
+      <div class="tab active" data-tab="basics"><span class="dot"></span>Sheet1 · Basics</div>
+      <div class="tab" data-tab="formulas"><span class="dot"></span>Sheet2 · Formulas</div>
+      <div class="tab" data-tab="functions"><span class="dot"></span>Sheet3 · Functions</div>
+      <div class="tab" data-tab="shortcuts"><span class="dot"></span>Sheet4 · Shortcuts</div>
+      <div class="tab" data-tab="practice"><span class="dot"></span>Sheet5 · Practice ✏️</div>
+      <div class="tab" data-tab="library"><span class="dot"></span>Sheet6 · 200+ Formulas 📚</div>
+    </div>
+
+    <!-- SHEET 1: BASICS -->
+    <section class="panel" id="panel-basics">
+      <div class="eyebrow">Sheet1</div>
+      <h2>Excel ka basic structure</h2>
+      <p class="lead">Har spreadsheet ek grid hai — columns (A, B, C...) aur rows (1, 2, 3...). Jahan column aur row milte hain, wahan banta hai ek <strong>cell</strong>, jaise <code>B4</code>.</p>
+      <div class="card-row">
+        <div class="card">
+          <div class="tag">CELL</div>
+          <h3>Cell Reference</h3>
+          <p>Har cell ka apna address hota hai — column pehle, row baad me.</p>
+          <code>B4 = Column B, Row 4</code>
+        </div>
+        <div class="card">
+          <div class="tag">RANGE</div>
+          <h3>Cell Range</h3>
+          <p>Ek se zyada cells ko colon (:) se jodkar range banti hai.</p>
+          <code>A1:A5 = A1 se A5 tak</code>
+        </div>
+        <div class="card">
+          <div class="tag">TYPE</div>
+          <h3>Data ke prakar</h3>
+          <p>Cell me number, text, ya formula — teeno aa sakte hain.</p>
+          <code>42   "Hello"   =A1+A2</code>
+        </div>
+        <div class="card">
+          <div class="tag">SHEET</div>
+          <h3>Worksheet vs Workbook</h3>
+          <p>Ek file (workbook) ke andar kai sheets ho sakti hain — jaise iss page ke tabs.</p>
+          <code>Sheet1, Sheet2, Sheet3...</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHEET 2: FORMULAS -->
+    <section class="panel" id="panel-formulas" style="display:none">
+      <div class="eyebrow">Sheet2</div>
+      <h2>Formula kaise likhte hain</h2>
+      <p class="lead">Har formula <strong>=</strong> (equal sign) se shuru hota hai. Uske baad aap numbers, cell references, ya functions ko operators se jod sakte hain.</p>
+      <div class="card-row">
+        <div class="card">
+          <div class="tag">+ − × ÷</div>
+          <h3>Basic Operators</h3>
+          <p>Jod, ghata, guna, bhaag — sabke apne symbol hote hain.</p>
+          <code>=A1+A2 &nbsp; =A1-A2<br>=A1*A2 &nbsp; =A1/A2</code>
+        </div>
+        <div class="card">
+          <div class="tag">SUM</div>
+          <h3>=SUM(range)</h3>
+          <p>Ek range ke saare numbers jod deta hai.</p>
+          <code>=SUM(A1:A10)</code>
+        </div>
+        <div class="card">
+          <div class="tag">AVERAGE</div>
+          <h3>=AVERAGE(range)</h3>
+          <p>Range ka average (ausat) nikalta hai.</p>
+          <code>=AVERAGE(B1:B6)</code>
+        </div>
+        <div class="card">
+          <div class="tag">MIN / MAX</div>
+          <h3>Sabse chhota / bada</h3>
+          <p>Range me sabse kam ya sabse zyada value dhundhta hai.</p>
+          <code>=MIN(A1:A10)<br>=MAX(A1:A10)</code>
+        </div>
+      </div>
+      <p style="margin-top:22px; font-size:13.5px; color:var(--muted);">💡 Tip: Formula likhne ke baad <span class="kbd">Enter</span> dabao — result turant dikhega. Practice Sheet5 me try karo.</p>
+    </section>
+
+    <!-- SHEET 3: FUNCTIONS -->
+    <section class="panel" id="panel-functions" style="display:none">
+      <div class="eyebrow">Sheet3</div>
+      <h2>Thoda advanced — logic wale functions</h2>
+      <p class="lead">Yeh functions decision lene aur data dhundhne me madad karte hain — office ke real kaam me sabse zyada use hote hain.</p>
+      <div class="card-row">
+        <div class="card">
+          <div class="tag">IF</div>
+          <h3>=IF(condition, sahi, galat)</h3>
+          <p>Agar condition sach hai to pehla jawab, warna dusra.</p>
+          <code>=IF(A1>50,"Pass","Fail")</code>
+        </div>
+        <div class="card">
+          <div class="tag">COUNTIF</div>
+          <h3>=COUNTIF(range, condition)</h3>
+          <p>Range me kitni cells ek condition follow karti hain, gin deta hai.</p>
+          <code>=COUNTIF(A1:A20,">10")</code>
+        </div>
+        <div class="card">
+          <div class="tag">VLOOKUP</div>
+          <h3>=VLOOKUP(value, table, col, false)</h3>
+          <p>Ek badi table me se ek value ko dhundh kar uske saath wali cell laata hai.</p>
+          <code>=VLOOKUP("Ravi",A2:C50,2,FALSE)</code>
+        </div>
+        <div class="card">
+          <div class="tag">CONCAT</div>
+          <h3>=CONCATENATE(a,b)</h3>
+          <p>Do ya zyada text values ko jod deta hai.</p>
+          <code>=CONCATENATE(A1," ",B1)</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHEET 4: SHORTCUTS -->
+    <section class="panel" id="panel-shortcuts" style="display:none">
+      <div class="eyebrow">Sheet4</div>
+      <h2>Keyboard shortcuts jo time bachate hain</h2>
+      <p class="lead">In shortcuts ko yaad kar liya to mouse ka use kaafi kam ho jayega.</p>
+      <table class="shortcut-table">
+        <tr><th>Kaam</th><th>Windows</th><th>Mac</th></tr>
+        <tr><td>Sab select karo</td><td><span class="kbd">Ctrl</span>+<span class="kbd">A</span></td><td><span class="kbd">⌘</span>+<span class="kbd">A</span></td></tr>
+        <tr><td>Bold karo</td><td><span class="kbd">Ctrl</span>+<span class="kbd">B</span></td><td><span class="kbd">⌘</span>+<span class="kbd">B</span></td></tr>
+        <tr><td>Undo</td><td><span class="kbd">Ctrl</span>+<span class="kbd">Z</span></td><td><span class="kbd">⌘</span>+<span class="kbd">Z</span></td></tr>
+        <tr><td>Naya row/column insert</td><td><span class="kbd">Ctrl</span>+<span class="kbd">+</span></td><td><span class="kbd">⌘</span>+<span class="kbd">+</span></td></tr>
+        <tr><td>Row/column delete</td><td><span class="kbd">Ctrl</span>+<span class="kbd">-</span></td><td><span class="kbd">⌘</span>+<span class="kbd">-</span></td></tr>
+        <tr><td>Formula dikhao</td><td><span class="kbd">Ctrl</span>+<span class="kbd">`</span></td><td><span class="kbd">⌘</span>+<span class="kbd">`</span></td></tr>
+        <tr><td>Sum turant lagao</td><td><span class="kbd">Alt</span>+<span class="kbd">=</span></td><td><span class="kbd">⌘</span>+<span class="kbd">⇧</span>+<span class="kbd">T</span></td></tr>
+      </table>
+    </section>
+
+    <!-- SHEET 5: PRACTICE -->
+    <section class="panel" id="panel-practice" style="display:none">
+      <div class="eyebrow">Sheet5</div>
+      <h2>Ab khud try karo — yeh asli spreadsheet hai</h2>
+      <p class="lead">Kisi cell pe click karo, number ya formula type karo, aur <span class="kbd">Enter</span> dabao. Neeche diye buttons se sample formulas bhi daal sakte ho.</p>
+
+      <div class="practice-toolbar">
+        <span class="cellref" id="cellRefLabel">A1</span>
+        <span class="fxlabel">fx</span>
+        <input id="formulaInput" placeholder="jaise: =SUM(B2:B5)" />
+      </div>
+
+      <div class="sheet-wrap">
+        <table class="sheet" id="sheetTable"></table>
+      </div>
+
+      <div class="hint-strip">
+        <button onclick="fillDemo('sum')">Demo: =SUM(B2:B5)</button>
+        <button onclick="fillDemo('avg')">Demo: =AVERAGE(B2:B5)</button>
+        <button onclick="fillDemo('if')">Demo: =IF(B2>10,"Zyada","Kam")</button>
+        <button onclick="resetSheet()">Sheet reset karo</button>
+      </div>
+    </section>
+
+    <!-- SHEET 6: FORMULA LIBRARY -->
+    <section class="panel" id="panel-library" style="display:none">
+      <div class="eyebrow">Sheet6</div>
+      <div class="lib-hero">
+        <div>
+          <div class="lib-count"><span id="libCounter">0</span>+ <span>Excel Formulas</span></div>
+          <small>BEGINNER → INTERMEDIATE → ADVANCED → EXPERT tak, ek jagah</small>
+        </div>
+        <div class="lib-legend">
+          <div class="lg"><span class="sw" style="background:var(--lv1)"></span>Beginner</div>
+          <div class="lg"><span class="sw" style="background:var(--lv2)"></span>Intermediate</div>
+          <div class="lg"><span class="sw" style="background:var(--lv3)"></span>Advanced</div>
+          <div class="lg"><span class="sw" style="background:var(--lv4)"></span>Expert</div>
+        </div>
+      </div>
+
+      <div class="lib-controls">
+        <button class="pill active" data-level="0">Sabhi</button>
+        <button class="pill" data-level="1">🟢 Beginner</button>
+        <button class="pill" data-level="2">🟠 Intermediate</button>
+        <button class="pill" data-level="3">🔵 Advanced</button>
+        <button class="pill" data-level="4">🔴 Expert</button>
+        <select id="catSelect"><option value="all">Saari categories</option></select>
+        <input id="formulaSearch" placeholder="🔍 formula dhundo... jaise VLOOKUP" />
+      </div>
+
+      <div class="lib-resultcount" id="resultCount"></div>
+      <div class="fgrid" id="fgrid"></div>
+      <div class="lib-empty" id="libEmpty">Kuch nahi mila 🙈 — spelling check karo ya filter hatao.</div>
+    </section>
+  </div>
+</div>
+
+<footer>excel-sikho.xlsx · saara kaam browser me hi hota hai, kuch bhi save nahi hota</footer>
+
+<script>
+  // ---------------- Tabs ----------------
+  const tabs = document.querySelectorAll('.tab');
+  const panels = {
+    basics: document.getElementById('panel-basics'),
+    formulas: document.getElementById('panel-formulas'),
+    functions: document.getElementById('panel-functions'),
+    shortcuts: document.getElementById('panel-shortcuts'),
+    practice: document.getElementById('panel-practice'),
+    library: document.getElementById('panel-library'),
+  };
+  function goTab(name){
+    tabs.forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+    Object.keys(panels).forEach(k=>panels[k].style.display = (k===name?'block':'none'));
+    document.querySelector('.workbook').scrollIntoView({behavior:'smooth', block:'start'});
+    if(name==='library') initLibrary();
+  }
+  tabs.forEach(t=> t.addEventListener('click', ()=>goTab(t.dataset.tab)) );
+
+  // ---------------- Practice spreadsheet ----------------
+  const COLS = ['A','B','C','D','E','F'];
+  const ROWS = 10;
+  const raw = {};      // raw user input per cell, e.g. raw['B2'] = '=SUM(A1:A3)'
+  let activeCell = 'A1';
+
+  function buildSheet(){
+    const table = document.getElementById('sheetTable');
+    table.innerHTML = '';
+    const headRow = document.createElement('tr');
+    headRow.innerHTML = '<th class="rownum"></th>' + COLS.map(c=>`<th>${c}</th>`).join('');
+    table.appendChild(headRow);
+    for(let r=1;r<=ROWS;r++){
+      const tr = document.createElement('tr');
+      let html = `<td class="rownum">${r}</td>`;
+      COLS.forEach(c=>{
+        const id = c+r;
+        html += `<td class="cell" data-cell="${id}"><input data-cell="${id}" /></td>`;
+      });
+      tr.innerHTML = html;
+      table.appendChild(tr);
+    }
+    table.querySelectorAll('input').forEach(inp=>{
+      inp.addEventListener('focus', ()=> selectCell(inp.dataset.cell));
+      inp.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter'){ commitCell(inp.dataset.cell, inp.value); moveDown(inp.dataset.cell); }
+      });
+      inp.addEventListener('blur', ()=> commitCell(inp.dataset.cell, inp.value));
+    });
+  }
+
+  function selectCell(id){
+    activeCell = id;
+    document.querySelectorAll('td.cell').forEach(td=>td.classList.toggle('active', td.dataset.cell===id));
+    document.getElementById('cellRefLabel').textContent = id;
+    const input = document.getElementById('formulaInput');
+    input.value = raw[id] || '';
+    input.onkeydown = (e)=>{
+      if(e.key==='Enter'){ commitCell(id, input.value); document.querySelector(`input[data-cell="${id}"]`).focus(); }
+    };
+  }
+
+  function moveDown(id){
+    const col = id[0], row = parseInt(id.slice(1));
+    if(row < ROWS){
+      const next = col+(row+1);
+      const nextInput = document.querySelector(`input[data-cell="${next}"]`);
+      if(nextInput) nextInput.focus();
+    }
+  }
+
+  function commitCell(id, value){
+    raw[id] = value;
+    recalcAll();
+  }
+
+  function cellRange(a,b){
+    const colIdx = c => COLS.indexOf(c);
+    const [ac, ar] = [a[0], parseInt(a.slice(1))];
+    const [bc, br] = [b[0], parseInt(b.slice(1))];
+    const c1 = Math.min(colIdx(ac), colIdx(bc)), c2 = Math.max(colIdx(ac), colIdx(bc));
+    const r1 = Math.min(ar,br), r2 = Math.max(ar,br);
+    const cells = [];
+    for(let ci=c1; ci<=c2; ci++){
+      for(let ri=r1; ri<=r2; ri++){
+        cells.push(COLS[ci]+ri);
+      }
+    }
+    return cells;
+  }
+
+  function getValue(id, depth){
+    if(depth > 25) return '#REF!';
+    const v = raw[id];
+    if(v === undefined || v === '') return 0;
+    if(v.startsWith('=')) return evalFormula(v.slice(1), depth+1);
+    const n = parseFloat(v);
+    return isNaN(n) ? v : n;
+  }
+
+  function evalFormula(expr, depth){
+    try{
+      expr = expr.trim();
+      // function calls: SUM/AVERAGE/MIN/MAX(range)
+      let m = expr.match(/^(SUM|AVERAGE|MIN|MAX)\(([A-F]\d{1,2}):([A-F]\d{1,2})\)$/i);
+      if(m){
+        const fn = m[1].toUpperCase();
+        const cells = cellRange(m[2].toUpperCase(), m[3].toUpperCase());
+        const nums = cells.map(c=>Number(getValue(c, depth))||0);
+        if(fn==='SUM') return nums.reduce((a,b)=>a+b,0);
+        if(fn==='AVERAGE') return nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length) : 0;
+        if(fn==='MIN') return Math.min(...nums);
+        if(fn==='MAX') return Math.max(...nums);
+      }
+      // IF(condition, a, b)
+      m = expr.match(/^IF\((.+),(.+),(.+)\)$/i);
+      if(m){
+        const cond = substituteCells(m[1], depth);
+        const a = m[2].trim().replace(/^"|"$/g,'');
+        const b = m[3].trim().replace(/^"|"$/g,'');
+        // eslint-disable-next-line no-eval
+        const ok = Function('return ('+cond+')')();
+        return ok ? a : b;
+      }
+      // plain arithmetic with cell refs, e.g. A1+B2*3
+      const sub = substituteCells(expr, depth);
+      // eslint-disable-next-line no-eval
+      const result = Function('return ('+sub+')')();
+      return typeof result === 'number' && !isNaN(result) ? result : '#ERR';
+    }catch(e){
+      return '#ERR';
+    }
+  }
+
+  function substituteCells(expr, depth){
+    return expr.replace(/\b([A-F])(\d{1,2})\b/g, (whole, c, r)=>{
+      const val = getValue(c+r, depth);
+      return typeof val === 'number' ? val : ('"'+val+'"');
+    });
+  }
+
+  function recalcAll(){
+    Object.keys(raw).forEach(id=>{
+      const input = document.querySelector(`input[data-cell="${id}"]`);
+      if(!input) return;
+      const v = raw[id];
+      if(v && v.startsWith('=')){
+        input.value = getValue(id, 0);
+      } else {
+        input.value = v || '';
+      }
+    });
+  }
+
+  function fillDemo(kind){
+    resetSheet(false);
+    raw['B2']='4'; raw['B3']='9'; raw['B4']='15'; raw['B5']='7';
+    if(kind==='sum') raw['D2']='=SUM(B2:B5)';
+    if(kind==='avg') raw['D2']='=AVERAGE(B2:B5)';
+    if(kind==='if') raw['D2']='=IF(B2>10,"Zyada","Kam")';
+    Object.keys(raw).forEach(id=>{
+      const input = document.querySelector(`input[data-cell="${id}"]`);
+      if(input) input.value = raw[id];
+    });
+    recalcAll();
+    selectCell('D2');
+    document.querySelector('input[data-cell="D2"]').focus();
+  }
+
+  function resetSheet(clearActive=true){
+    Object.keys(raw).forEach(k=>delete raw[k]);
+    document.querySelectorAll('#sheetTable input').forEach(i=>i.value='');
+    if(clearActive){ selectCell('A1'); }
+  }
+
+  buildSheet();
+  selectCell('A1');
+
+  // ================= FORMULA LIBRARY =================
+  // [name, category, level(1=Beginner,2=Intermediate,3=Advanced,4=Expert), syntax, description(hinglish), example, importance(1-5)]
+  const FORMULAS = [
+    // ---------- BEGINNER ----------
+    ["SUM","Math",1,"=SUM(range)","Sabhi numbers ko jodta hai — sabse zyada use hone wala formula.","=SUM(A1:A10) → 155",5],
+    ["AVERAGE","Math",1,"=AVERAGE(range)","Numbers ka ausat (mean) nikalta hai.","=AVERAGE(B2:B10) → 42.3",5],
+    ["MAX","Math",1,"=MAX(range)","Range me sabse badi value dhundta hai.","=MAX(C1:C20) → 980",5],
+    ["MIN","Math",1,"=MIN(range)","Range me sabse chhoti value dhundta hai.","=MIN(C1:C20) → 12",5],
+    ["COUNT","Math",1,"=COUNT(range)","Sirf number wali cells ginti hai.","=COUNT(A1:A50) → 37",4],
+    ["COUNTA","Math",1,"=COUNTA(range)","Khali chhod kar sabhi bhari hui cells ginta hai.","=COUNTA(A1:A50) → 45",4],
+    ["COUNTBLANK","Math",1,"=COUNTBLANK(range)","Sirf khali cells ginta hai.","=COUNTBLANK(A1:A50) → 5",3],
+    ["PRODUCT","Math",1,"=PRODUCT(range)","Sabhi numbers ko multiply karta hai.","=PRODUCT(A1:A3) → 60",3],
+    ["ROUND","Math",1,"=ROUND(number,digits)","Number ko diye gaye decimal tak round karta hai.","=ROUND(4.567,2) → 4.57",5],
+    ["ROUNDUP","Math",1,"=ROUNDUP(number,digits)","Hamesha upar ki taraf round karta hai.","=ROUNDUP(4.12,0) → 5",3],
+    ["ROUNDDOWN","Math",1,"=ROUNDDOWN(number,digits)","Hamesha neeche ki taraf round karta hai.","=ROUNDDOWN(4.98,0) → 4",3],
+    ["ABS","Math",1,"=ABS(number)","Number ki absolute (bina sign ki) value deta hai.","=ABS(-15) → 15",3],
+    ["SQRT","Math",1,"=SQRT(number)","Number ka square root nikalta hai.","=SQRT(81) → 9",2],
+    ["POWER","Math",1,"=POWER(number,power)","Number ko kisi power tak uthata hai.","=POWER(2,5) → 32",3],
+    ["INT","Math",1,"=INT(number)","Decimal hata kar sirf poora number (neeche ki taraf) deta hai.","=INT(9.8) → 9",3],
+    ["MOD","Math",1,"=MOD(number,divisor)","Division ke baad bacha hua remainder deta hai.","=MOD(10,3) → 1",4],
+    ["CEILING","Math",1,"=CEILING(number,significance)","Number ko nearest multiple tak upar round karta hai.","=CEILING(22,10) → 30",2],
+    ["FLOOR","Math",1,"=FLOOR(number,significance)","Number ko nearest multiple tak neeche round karta hai.","=FLOOR(22,10) → 20",2],
+    ["SIGN","Math",1,"=SIGN(number)","Number positive(1), negative(-1), ya zero(0) hai batata hai.","=SIGN(-8) → -1",1],
+    ["EXP","Math",1,"=EXP(number)","e ki power number nikalta hai.","=EXP(1) → 2.718",1],
+    ["LN","Math",1,"=LN(number)","Number ka natural log nikalta hai.","=LN(10) → 2.303",1],
+    ["LOG","Math",1,"=LOG(number,base)","Diye gaye base ka logarithm nikalta hai.","=LOG(100,10) → 2",1],
+    ["LOG10","Math",1,"=LOG10(number)","Base-10 logarithm nikalta hai.","=LOG10(1000) → 3",1],
+    ["RAND","Math",1,"=RAND()","0 aur 1 ke beech random decimal number deta hai.","=RAND() → 0.732",2],
+    ["RANDBETWEEN","Math",1,"=RANDBETWEEN(bottom,top)","Do numbers ke beech random whole number deta hai.","=RANDBETWEEN(1,100) → 57",3],
+    ["IF","Logical",1,"=IF(condition,true_val,false_val)","Condition check karke do me se ek jawab deta hai — sabse important logical formula.","=IF(A1>=40,\"Pass\",\"Fail\")",5],
+    ["AND","Logical",1,"=AND(cond1,cond2,...)","Sabhi conditions sach hon tabhi TRUE deta hai.","=AND(A1>10,B1<50) → TRUE",4],
+    ["OR","Logical",1,"=OR(cond1,cond2,...)","Koi bhi ek condition sach ho to TRUE deta hai.","=OR(A1>10,B1>10) → TRUE",4],
+    ["NOT","Logical",1,"=NOT(condition)","Condition ko ulta kar deta hai.","=NOT(A1=0) → TRUE",2],
+    ["TRUE","Logical",1,"=TRUE()","Logical value TRUE return karta hai.","=TRUE() → TRUE",1],
+    ["FALSE","Logical",1,"=FALSE()","Logical value FALSE return karta hai.","=FALSE() → FALSE",1],
+    ["IFERROR","Logical",1,"=IFERROR(value,value_if_error)","Agar formula me error aaye to custom message dikhata hai.","=IFERROR(A1/B1,\"Error\")",5],
+    ["ISBLANK","Information",1,"=ISBLANK(cell)","Cell khali hai ya nahi, check karta hai.","=ISBLANK(A1) → TRUE",2],
+    ["ISNUMBER","Information",1,"=ISNUMBER(cell)","Cell me number hai ya nahi, check karta hai.","=ISNUMBER(A1) → TRUE",2],
+    ["ISTEXT","Information",1,"=ISTEXT(cell)","Cell me text hai ya nahi, check karta hai.","=ISTEXT(A1) → TRUE",2],
+    ["ISERROR","Information",1,"=ISERROR(value)","Value me error hai ya nahi, check karta hai.","=ISERROR(A1/0) → TRUE",3],
+    ["CONCATENATE","Text",1,"=CONCATENATE(text1,text2,...)","Kai text values ko jod kar ek banata hai.","=CONCATENATE(A1,\" \",B1)",4],
+    ["CONCAT","Text",1,"=CONCAT(range)","CONCATENATE ka naya version, range bhi le sakta hai.","=CONCAT(A1:A3)",3],
+    ["LEN","Text",1,"=LEN(text)","Text me kitne characters hain, ginta hai.","=LEN(\"Excel\") → 5",3],
+    ["UPPER","Text",1,"=UPPER(text)","Text ko capital letters me convert karta hai.","=UPPER(\"hindi\") → HINDI",3],
+    ["LOWER","Text",1,"=LOWER(text)","Text ko small letters me convert karta hai.","=LOWER(\"HELLO\") → hello",3],
+    ["PROPER","Text",1,"=PROPER(text)","Har word ka pehla letter capital karta hai.","=PROPER(\"ravi kumar\") → Ravi Kumar",3],
+    ["TRIM","Text",1,"=TRIM(text)","Extra spaces hata deta hai — data cleaning me zaroori.","=TRIM(\"  Excel  \") → Excel",4],
+    ["LEFT","Text",1,"=LEFT(text,num_chars)","Text ke shuru se diye gaye characters nikalta hai.","=LEFT(\"Varanasi\",3) → Var",4],
+    ["RIGHT","Text",1,"=RIGHT(text,num_chars)","Text ke aakhir se diye gaye characters nikalta hai.","=RIGHT(\"Varanasi\",3) → asi",4],
+    ["MID","Text",1,"=MID(text,start,num_chars)","Text ke beech se characters nikalta hai.","=MID(\"Varanasi\",3,4) → rana",4],
+    ["SUBSTITUTE","Text",1,"=SUBSTITUTE(text,old,new)","Text ke andar ek word/character ko doosre se badalta hai.","=SUBSTITUTE(\"Hi Ram\",\"Ram\",\"Sam\")",3],
+    ["REPLACE","Text",1,"=REPLACE(old,start,chars,new)","Position batakar text ka hissa replace karta hai.","=REPLACE(\"123456\",1,2,\"99\")",2],
+    ["TEXT","Text",1,"=TEXT(value,format)","Number ko custom format me text banata hai.","=TEXT(1234.5,\"#,##0.00\")",4],
+    ["VALUE","Text",1,"=VALUE(text)","Text ko number me convert karta hai.","=VALUE(\"123\") → 123",3],
+    ["TODAY","Date & Time",1,"=TODAY()","Aaj ki date deta hai (auto-update hoti hai).","=TODAY() → 08-07-2026",4],
+    ["NOW","Date & Time",1,"=NOW()","Aaj ki date aur time dono deta hai.","=NOW() → 08-07-2026 14:32",3],
+    ["DATE","Date & Time",1,"=DATE(year,month,day)","Year, month, day se ek date banata hai.","=DATE(2026,7,8) → 08-07-2026",4],
+    ["DAY","Date & Time",1,"=DAY(date)","Date me se sirf din (1-31) nikalta hai.","=DAY(\"08-07-2026\") → 8",3],
+    ["MONTH","Date & Time",1,"=MONTH(date)","Date me se sirf month (1-12) nikalta hai.","=MONTH(\"08-07-2026\") → 7",3],
+    ["YEAR","Date & Time",1,"=YEAR(date)","Date me se sirf year nikalta hai.","=YEAR(\"08-07-2026\") → 2026",3],
+    ["WEEKDAY","Date & Time",1,"=WEEKDAY(date)","Date se hafte ka din (number me) batata hai.","=WEEKDAY(\"08-07-2026\") → 4",2],
+
+    // ---------- INTERMEDIATE ----------
+    ["SUMIF","Math",2,"=SUMIF(range,criteria,sum_range)","Ek condition ke basis pe select numbers jodta hai.","=SUMIF(A:A,\"Delhi\",B:B)",5],
+    ["SUMIFS","Math",2,"=SUMIFS(sum_range,crit_range1,crit1,...)","Multiple conditions ke basis pe numbers jodta hai.","=SUMIFS(C:C,A:A,\"Delhi\",B:B,\">100\")",5],
+    ["COUNTIF","Math",2,"=COUNTIF(range,criteria)","Ek condition follow karne wali cells ginta hai.","=COUNTIF(A:A,\"Pass\") → 34",5],
+    ["COUNTIFS","Math",2,"=COUNTIFS(range1,crit1,...)","Multiple conditions ke saath cells ginta hai.","=COUNTIFS(A:A,\"Delhi\",B:B,\">50\")",5],
+    ["AVERAGEIF","Math",2,"=AVERAGEIF(range,criteria,avg_range)","Ek condition ke basis pe average nikalta hai.","=AVERAGEIF(A:A,\"Delhi\",B:B)",4],
+    ["AVERAGEIFS","Math",2,"=AVERAGEIFS(avg_range,crit1,...)","Multiple conditions ke saath average nikalta hai.","=AVERAGEIFS(C:C,A:A,\"Delhi\",B:B,\">10\")",4],
+    ["VLOOKUP","Lookup",2,"=VLOOKUP(value,table,col_index,FALSE)","Table me value dhundh kar uske saath wali cell laata hai — office ka sabse popular formula.","=VLOOKUP(\"Ravi\",A2:C50,2,FALSE)",5],
+    ["HLOOKUP","Lookup",2,"=HLOOKUP(value,table,row_index,FALSE)","VLOOKUP jaisa hi, par horizontal (row-wise) table me kaam karta hai.","=HLOOKUP(\"Jan\",A1:M5,3,FALSE)",3],
+    ["INDEX","Lookup",2,"=INDEX(range,row,col)","Row aur column number se value nikalta hai.","=INDEX(A2:C50,5,2)",4],
+    ["MATCH","Lookup",2,"=MATCH(value,range,0)","Value ki position (kaunsa row/col) range me dhundta hai.","=MATCH(\"Ravi\",A2:A50,0) → 12",4],
+    ["CHOOSE","Lookup",2,"=CHOOSE(index,val1,val2,...)","Index number se list me se ek value choose karta hai.","=CHOOSE(2,\"Low\",\"Mid\",\"High\") → Mid",2],
+    ["IFS","Logical",2,"=IFS(cond1,val1,cond2,val2,...)","Kai IF conditions ko ek formula me chain karta hai.","=IFS(A1>90,\"A\",A1>75,\"B\",TRUE,\"C\")",4],
+    ["SWITCH","Logical",2,"=SWITCH(value,case1,res1,...)","Ek value ko multiple cases se match karta hai.","=SWITCH(A1,1,\"Som\",2,\"Mangal\")",3],
+    ["RANK.EQ","Statistical",2,"=RANK.EQ(number,range)","List me number ki rank (position) batata hai.","=RANK.EQ(B2,B2:B20) → 3",3],
+    ["RANK.AVG","Statistical",2,"=RANK.AVG(number,range)","Tie hone par average rank deta hai.","=RANK.AVG(B2,B2:B20)",1],
+    ["LARGE","Statistical",2,"=LARGE(range,k)","Range me se k-vi sabse badi value deta hai.","=LARGE(A1:A20,2) → 2nd biggest",3],
+    ["SMALL","Statistical",2,"=SMALL(range,k)","Range me se k-vi sabse chhoti value deta hai.","=SMALL(A1:A20,2) → 2nd smallest",3],
+    ["MEDIAN","Statistical",2,"=MEDIAN(range)","Numbers ki beech wali (madhyam) value nikalta hai.","=MEDIAN(A1:A9)",3],
+    ["MODE.SNGL","Statistical",2,"=MODE.SNGL(range)","Sabse zyada baar aane wali value batata hai.","=MODE.SNGL(A1:A20)",2],
+    ["STDEV.S","Statistical",2,"=STDEV.S(range)","Sample data ka standard deviation nikalta hai.","=STDEV.S(A1:A20)",2],
+    ["STDEV.P","Statistical",2,"=STDEV.P(range)","Poori population ka standard deviation nikalta hai.","=STDEV.P(A1:A20)",2],
+    ["VAR.S","Statistical",2,"=VAR.S(range)","Sample data ka variance nikalta hai.","=VAR.S(A1:A20)",1],
+    ["VAR.P","Statistical",2,"=VAR.P(range)","Population data ka variance nikalta hai.","=VAR.P(A1:A20)",1],
+    ["TEXTJOIN","Text",2,"=TEXTJOIN(delim,ignore_empty,range)","Delimiter ke saath poore range ka text jodta hai.","=TEXTJOIN(\", \",TRUE,A1:A5)",4],
+    ["FIND","Text",2,"=FIND(find_text,within_text)","Case-sensitive tareeke se text dhundh kar position deta hai.","=FIND(\"a\",\"Varanasi\") → 2",2],
+    ["SEARCH","Text",2,"=SEARCH(find_text,within_text)","FIND jaisa, par case-insensitive.","=SEARCH(\"VAR\",\"Varanasi\") → 1",2],
+    ["EXACT","Text",2,"=EXACT(text1,text2)","Do texts bilkul same hain (case-sensitive) check karta hai.","=EXACT(\"Ram\",\"ram\") → FALSE",2],
+    ["REPT","Text",2,"=REPT(text,times)","Text ko diye gaye baar repeat karta hai.","=REPT(\"*\",5) → *****",1],
+    ["DATEDIF","Date & Time",2,"=DATEDIF(start,end,unit)","Do dates ke beech ka farak (din/mahine/saal) nikalta hai.","=DATEDIF(A1,B1,\"Y\") → 3",4],
+    ["EDATE","Date & Time",2,"=EDATE(start,months)","Diye gaye mahino baad/pehle ki date deta hai.","=EDATE(TODAY(),3)",3],
+    ["EOMONTH","Date & Time",2,"=EOMONTH(start,months)","Us mahine ki aakhri date deta hai.","=EOMONTH(TODAY(),0)",3],
+    ["NETWORKDAYS","Date & Time",2,"=NETWORKDAYS(start,end)","Do dates ke beech ke working days ginta hai (weekend chhod kar).","=NETWORKDAYS(A1,B1)",3],
+    ["WORKDAY","Date & Time",2,"=WORKDAY(start,days)","Kitne working days baad ki date batata hai.","=WORKDAY(TODAY(),10)",3],
+    ["DAYS","Date & Time",2,"=DAYS(end,start)","Do dates ke beech kitne din hain, seedha batata hai.","=DAYS(B1,A1) → 45",3],
+    ["TIME","Date & Time",2,"=TIME(hour,minute,second)","Ghante, minute, second se ek time value banata hai.","=TIME(14,30,0) → 2:30 PM",2],
+    ["HOUR","Date & Time",2,"=HOUR(time)","Time me se sirf ghanta nikalta hai.","=HOUR(NOW())",1],
+    ["MINUTE","Date & Time",2,"=MINUTE(time)","Time me se sirf minute nikalta hai.","=MINUTE(NOW())",1],
+    ["SECOND","Date & Time",2,"=SECOND(time)","Time me se sirf second nikalta hai.","=SECOND(NOW())",1],
+    ["WEEKNUM","Date & Time",2,"=WEEKNUM(date)","Saal ke hisaab se week number batata hai.","=WEEKNUM(TODAY())",1],
+    ["NPV","Financial",2,"=NPV(rate,values)","Future cash flows ki aaj ki value (Net Present Value) nikalta hai.","=NPV(8%,B2:B6)",3],
+    ["PMT","Financial",2,"=PMT(rate,nper,pv)","Loan ki fixed monthly/periodic payment (EMI) nikalta hai.","=PMT(8%/12,60,500000)",4],
+    ["FV","Financial",2,"=FV(rate,nper,pmt,pv)","Investment ki future value nikalta hai.","=FV(6%/12,120,-5000)",3],
+    ["PV","Financial",2,"=PV(rate,nper,pmt,fv)","Future amount ki aaj ki value (present value) nikalta hai.","=PV(6%/12,120,-5000)",3],
+    ["RATE","Financial",2,"=RATE(nper,pmt,pv,fv)","Loan/investment ki interest rate nikalta hai.","=RATE(60,-9270,500000)",2],
+    ["NPER","Financial",2,"=NPER(rate,pmt,pv)","Loan chukaane me kitne periods lagenge, batata hai.","=NPER(8%/12,-9270,500000)",2],
+    ["SLN","Financial",2,"=SLN(cost,salvage,life)","Straight-line method se asset ki depreciation nikalta hai.","=SLN(50000,5000,5)",2],
+    ["SUMPRODUCT","Math",2,"=SUMPRODUCT(range1,range2)","Do ranges ko multiply karke total jodta hai — bahut powerful.","=SUMPRODUCT(A2:A10,B2:B10)",4],
+    ["TRANSPOSE","Lookup",2,"=TRANSPOSE(range)","Rows ko columns me aur columns ko rows me badal deta hai.","=TRANSPOSE(A1:C1)",2],
+    ["ROW","Lookup",2,"=ROW(cell)","Cell ka row number deta hai.","=ROW(B5) → 5",2],
+    ["COLUMN","Lookup",2,"=COLUMN(cell)","Cell ka column number deta hai.","=COLUMN(B5) → 2",2],
+    ["ROWS","Lookup",2,"=ROWS(range)","Range me kitni rows hain, ginta hai.","=ROWS(A1:A10) → 10",1],
+    ["COLUMNS","Lookup",2,"=COLUMNS(range)","Range me kitne columns hain, ginta hai.","=COLUMNS(A1:D1) → 4",1],
+    ["ADDRESS","Lookup",2,"=ADDRESS(row,col)","Row/column number se cell address text banata hai.","=ADDRESS(5,2) → $B$5",1],
+    ["INDIRECT","Lookup",2,"=INDIRECT(text_ref)","Text ko cell reference me badal kar use karta hai.","=INDIRECT(\"A1\")",3],
+    ["OFFSET","Lookup",2,"=OFFSET(ref,rows,cols)","Ek cell se hatt kar doosri cell/range ka reference deta hai.","=OFFSET(A1,2,1)",3],
+
+    // ---------- ADVANCED ----------
+    ["XLOOKUP","Lookup",3,"=XLOOKUP(value,lookup_arr,return_arr)","VLOOKUP ka modern upgrade — left-right dono taraf lookup kar sakta hai.","=XLOOKUP(\"Ravi\",A:A,C:C)",5],
+    ["XMATCH","Lookup",3,"=XMATCH(value,array)","MATCH ka naya version, zyada flexible search ke saath.","=XMATCH(\"Ravi\",A:A)",3],
+    ["FILTER","Dynamic Array",3,"=FILTER(array,condition)","Condition ke hisaab se data ko turant chhaant deta hai.","=FILTER(A2:C50,B2:B50>100)",5],
+    ["SORT","Dynamic Array",3,"=SORT(array,col,order)","Data ko formula se hi sort kar deta hai.","=SORT(A2:B50,2,-1)",4],
+    ["SORTBY","Dynamic Array",3,"=SORTBY(array,by_array)","Ek array ko doosre array ke basis pe sort karta hai.","=SORTBY(A2:A50,B2:B50)",3],
+    ["UNIQUE","Dynamic Array",3,"=UNIQUE(range)","Range me se sirf unique (bina duplicate) values nikalta hai.","=UNIQUE(A2:A100)",5],
+    ["SEQUENCE","Dynamic Array",3,"=SEQUENCE(rows,cols,start,step)","Automatic number series generate karta hai.","=SEQUENCE(5,1,1,1) → 1,2,3,4,5",2],
+    ["RANDARRAY","Dynamic Array",3,"=RANDARRAY(rows,cols)","Random numbers ka poora array generate karta hai.","=RANDARRAY(5,2)",1],
+    ["LET","Logical",3,"=LET(name,value,...,calc)","Formula ke andar variables banakar use readable banata hai.","=LET(x,A1*2,x+10)",3],
+    ["LAMBDA","Logical",3,"=LAMBDA(param,calc)","Apna custom reusable formula/function banata hai.","=LAMBDA(x,x^2)(5) → 25",3],
+    ["TEXTSPLIT","Text",3,"=TEXTSPLIT(text,delimiter)","Text ko delimiter se todkar kai cells me daal deta hai.","=TEXTSPLIT(A1,\",\")",4],
+    ["TEXTBEFORE","Text",3,"=TEXTBEFORE(text,delimiter)","Diye gaye delimiter se pehle ka text nikalta hai.","=TEXTBEFORE(\"a@b.com\",\"@\") → a",3],
+    ["TEXTAFTER","Text",3,"=TEXTAFTER(text,delimiter)","Diye gaye delimiter ke baad ka text nikalta hai.","=TEXTAFTER(\"a@b.com\",\"@\") → b.com",3],
+    ["VSTACK","Dynamic Array",3,"=VSTACK(array1,array2)","Kai ranges ko upar-neeche (vertically) jodta hai.","=VSTACK(A1:B3,D1:E3)",2],
+    ["HSTACK","Dynamic Array",3,"=HSTACK(array1,array2)","Kai ranges ko left-right (horizontally) jodta hai.","=HSTACK(A1:A3,C1:C3)",2],
+    ["TOROW","Dynamic Array",3,"=TOROW(array)","Kisi bhi array ko ek single row me badal deta hai.","=TOROW(A1:C3)",1],
+    ["TOCOL","Dynamic Array",3,"=TOCOL(array)","Kisi bhi array ko ek single column me badal deta hai.","=TOCOL(A1:C3)",1],
+    ["WRAPROWS","Dynamic Array",3,"=WRAPROWS(vector,wrap_count)","Ek row ko diye gaye count ke baad next row me wrap karta hai.","=WRAPROWS(A1:A10,3)",1],
+    ["WRAPCOLS","Dynamic Array",3,"=WRAPCOLS(vector,wrap_count)","Ek column ko diye gaye count ke baad next column me wrap karta hai.","=WRAPCOLS(A1:A10,3)",1],
+    ["EXPAND","Dynamic Array",3,"=EXPAND(array,rows,cols)","Array ko diye gaye size tak badhata hai (khali jagah fill karke).","=EXPAND(A1:B2,4,4)",1],
+    ["DROP","Dynamic Array",3,"=DROP(array,rows,cols)","Array me se rows/columns hata deta hai.","=DROP(A1:C10,1)",2],
+    ["TAKE","Dynamic Array",3,"=TAKE(array,rows,cols)","Array me se sirf pehli/aakhri rows-cols leta hai.","=TAKE(A1:C10,3)",2],
+    ["CHOOSECOLS","Dynamic Array",3,"=CHOOSECOLS(array,col_nums)","Array me se chuni hui columns nikalta hai.","=CHOOSECOLS(A1:E10,1,3)",2],
+    ["CHOOSEROWS","Dynamic Array",3,"=CHOOSEROWS(array,row_nums)","Array me se chuni hui rows nikalta hai.","=CHOOSEROWS(A1:E10,1,3)",2],
+    ["BYROW","Dynamic Array",3,"=BYROW(array,lambda)","Har row pe ek custom calculation apply karta hai.","=BYROW(A1:C5,LAMBDA(r,SUM(r)))",1],
+    ["BYCOL","Dynamic Array",3,"=BYCOL(array,lambda)","Har column pe ek custom calculation apply karta hai.","=BYCOL(A1:C5,LAMBDA(c,SUM(c)))",1],
+    ["MAP","Dynamic Array",3,"=MAP(array,lambda)","Array ke har element pe ek function apply karta hai.","=MAP(A1:A5,LAMBDA(x,x*2))",1],
+    ["REDUCE","Dynamic Array",3,"=REDUCE(initial,array,lambda)","Array ko step-by-step ek single value me reduce karta hai.","=REDUCE(0,A1:A5,LAMBDA(a,b,a+b))",1],
+    ["SCAN","Dynamic Array",3,"=SCAN(initial,array,lambda)","REDUCE jaisa, par har step ki running value dikhata hai.","=SCAN(0,A1:A5,LAMBDA(a,b,a+b))",1],
+    ["MAKEARRAY","Dynamic Array",3,"=MAKEARRAY(rows,cols,lambda)","Formula se hi ek custom array bana deta hai.","=MAKEARRAY(3,3,LAMBDA(r,c,r*c))",1],
+    ["XOR","Logical",3,"=XOR(cond1,cond2,...)","Odd number of conditions TRUE hon to TRUE deta hai.","=XOR(TRUE,FALSE) → TRUE",1],
+    ["IFNA","Logical",3,"=IFNA(value,value_if_na)","Sirf #N/A error ko custom message se replace karta hai.","=IFNA(VLOOKUP(...),\"Nahi mila\")",3],
+    ["AGGREGATE","Math",3,"=AGGREGATE(func_num,options,range)","Errors ko ignore karke SUM/AVERAGE jaise 19 functions apply karta hai.","=AGGREGATE(9,6,A1:A10)",2],
+    ["SUBTOTAL","Math",3,"=SUBTOTAL(func_num,range)","Filtered data pe hi calculation karta hai, chhupi rows ko chhod kar.","=SUBTOTAL(109,A1:A100)",3],
+    ["CELL","Information",3,"=CELL(info_type,ref)","Cell ke baare me info (format, address, etc) deta hai.","=CELL(\"address\",A1)",1],
+    ["TYPE","Information",3,"=TYPE(value)","Value ka data-type number me batata hai.","=TYPE(A1) → 1",1],
+    ["ISFORMULA","Information",3,"=ISFORMULA(cell)","Cell me formula hai ya nahi, check karta hai.","=ISFORMULA(A1) → TRUE",1],
+    ["FORMULATEXT","Information",3,"=FORMULATEXT(cell)","Cell ka formula, text ki tarah dikhata hai.","=FORMULATEXT(A1)",1],
+    ["N","Information",3,"=N(value)","Value ko number me convert karta hai (nahi ho sake to 0).","=N(\"5\") → 0",1],
+    ["T","Information",3,"=T(value)","Value text hai to wahi deta hai, warna khali.","=T(A1)",1],
+    ["NA","Information",3,"=NA()","Jaan-boojh kar #N/A error create karta hai.","=NA() → #N/A",1],
+    ["ERROR.TYPE","Information",3,"=ERROR.TYPE(error_val)","Error kis type ka hai, number me batata hai.","=ERROR.TYPE(#DIV/0!) → 2",1],
+    ["GETPIVOTDATA","Lookup",3,"=GETPIVOTDATA(field,pivot_ref)","PivotTable se seedha specific value nikalta hai.","=GETPIVOTDATA(\"Sales\",A3)",2],
+    ["SUMSQ","Math",3,"=SUMSQ(range)","Sabhi numbers ke squares ka total nikalta hai.","=SUMSQ(A1:A5)",1],
+    ["GEOMEAN","Statistical",3,"=GEOMEAN(range)","Numbers ka geometric mean nikalta hai.","=GEOMEAN(A1:A5)",1],
+    ["HARMEAN","Statistical",3,"=HARMEAN(range)","Numbers ka harmonic mean nikalta hai.","=HARMEAN(A1:A5)",1],
+    ["PERCENTILE.INC","Statistical",3,"=PERCENTILE.INC(range,k)","Data me diye gaye percentile ki value nikalta hai.","=PERCENTILE.INC(A1:A50,0.9)",2],
+    ["PERCENTILE.EXC","Statistical",3,"=PERCENTILE.EXC(range,k)","PERCENTILE.INC jaisa, par range ke extremes exclude karta hai.","=PERCENTILE.EXC(A1:A50,0.9)",1],
+    ["QUARTILE.INC","Statistical",3,"=QUARTILE.INC(range,quart)","Data ko 4 barabar hisso me baant kar quartile deta hai.","=QUARTILE.INC(A1:A50,1)",2],
+    ["QUARTILE.EXC","Statistical",3,"=QUARTILE.EXC(range,quart)","QUARTILE.INC jaisa, par extremes exclude karta hai.","=QUARTILE.EXC(A1:A50,1)",1],
+    ["CORREL","Statistical",3,"=CORREL(range1,range2)","Do datasets ke beech ka correlation nikalta hai.","=CORREL(A1:A20,B1:B20)",2],
+    ["COVARIANCE.P","Statistical",3,"=COVARIANCE.P(range1,range2)","Poori population ka covariance nikalta hai.","=COVARIANCE.P(A1:A20,B1:B20)",1],
+    ["COVARIANCE.S","Statistical",3,"=COVARIANCE.S(range1,range2)","Sample data ka covariance nikalta hai.","=COVARIANCE.S(A1:A20,B1:B20)",1],
+    ["TREND","Statistical",3,"=TREND(known_y,known_x)","Linear trend ke basis pe future values predict karta hai.","=TREND(B1:B10,A1:A10)",2],
+    ["FORECAST.LINEAR","Statistical",3,"=FORECAST.LINEAR(x,known_y,known_x)","Ek naye x ke liye value predict karta hai.","=FORECAST.LINEAR(13,B1:B10,A1:A10)",3],
+    ["GROWTH","Statistical",3,"=GROWTH(known_y,known_x)","Exponential trend ke basis pe values predict karta hai.","=GROWTH(B1:B10,A1:A10)",1],
+    ["SLOPE","Statistical",3,"=SLOPE(known_y,known_x)","Regression line ka slope nikalta hai.","=SLOPE(B1:B10,A1:A10)",1],
+    ["INTERCEPT","Statistical",3,"=INTERCEPT(known_y,known_x)","Regression line ka Y-intercept nikalta hai.","=INTERCEPT(B1:B10,A1:A10)",1],
+    ["RSQ","Statistical",3,"=RSQ(known_y,known_x)","Regression ki R-squared value (fit kitna accha hai) deta hai.","=RSQ(B1:B10,A1:A10)",1],
+    ["STEYX","Statistical",3,"=STEYX(known_y,known_x)","Regression prediction ki standard error nikalta hai.","=STEYX(B1:B10,A1:A10)",1],
+
+    // ---------- EXPERT (Financial + Engineering) ----------
+    ["IRR","Financial",4,"=IRR(values)","Cash flows ka internal rate of return (asli return %) nikalta hai.","=IRR(B2:B8)",4],
+    ["XIRR","Financial",4,"=XIRR(values,dates)","Alag-alag dates wale cash flows ka IRR nikalta hai.","=XIRR(B2:B8,A2:A8)",4],
+    ["MIRR","Financial",4,"=MIRR(values,finance_rate,reinvest_rate)","Modified IRR — finance aur reinvest rate dono consider karta hai.","=MIRR(B2:B8,8%,10%)",2],
+    ["XNPV","Financial",4,"=XNPV(rate,values,dates)","Alag dates wale cash flows ka present value nikalta hai.","=XNPV(8%,B2:B8,A2:A8)",2],
+    ["DB","Financial",4,"=DB(cost,salvage,life,period)","Fixed-declining balance method se depreciation nikalta hai.","=DB(50000,5000,5,1)",1],
+    ["SYD","Financial",4,"=SYD(cost,salvage,life,period)","Sum-of-years-digits method se depreciation nikalta hai.","=SYD(50000,5000,5,1)",1],
+    ["VDB","Financial",4,"=VDB(cost,salvage,life,start,end)","Variable-declining balance depreciation nikalta hai.","=VDB(50000,5000,5,0,1)",1],
+    ["CUMIPMT","Financial",4,"=CUMIPMT(rate,nper,pv,start,end,type)","Do periods ke beech ka total interest payment nikalta hai.","=CUMIPMT(8%/12,60,500000,1,12,0)",2],
+    ["CUMPRINC","Financial",4,"=CUMPRINC(rate,nper,pv,start,end,type)","Do periods ke beech ka total principal payment nikalta hai.","=CUMPRINC(8%/12,60,500000,1,12,0)",2],
+    ["ISPMT","Financial",4,"=ISPMT(rate,period,nper,pv)","Ek specific period ka interest payment nikalta hai.","=ISPMT(8%/12,1,60,500000)",1],
+    ["EFFECT","Financial",4,"=EFFECT(nominal_rate,periods)","Nominal rate ko effective annual rate me convert karta hai.","=EFFECT(8%,12)",2],
+    ["NOMINAL","Financial",4,"=NOMINAL(effect_rate,periods)","Effective rate ko nominal annual rate me convert karta hai.","=NOMINAL(8.3%,12)",1],
+    ["PRICE","Financial",4,"=PRICE(settle,maturity,rate,yld,redemption,freq)","Bond ki price (face value ke $100 par) nikalta hai.","=PRICE(A1,A2,5%,6%,100,2)",1],
+    ["YIELD","Financial",4,"=YIELD(settle,maturity,rate,pr,redemption,freq)","Bond ka yield-to-maturity nikalta hai.","=YIELD(A1,A2,5%,98,100,2)",1],
+    ["DURATION","Financial",4,"=DURATION(settle,maturity,coupon,yld,freq)","Bond ki Macaulay duration nikalta hai.","=DURATION(A1,A2,5%,6%,2)",1],
+    ["MDURATION","Financial",4,"=MDURATION(settle,maturity,coupon,yld,freq)","Bond ki modified duration nikalta hai.","=MDURATION(A1,A2,5%,6%,2)",1],
+    ["TBILLEQ","Financial",4,"=TBILLEQ(settle,maturity,discount)","Treasury bill ka bond-equivalent yield nikalta hai.","=TBILLEQ(A1,A2,5%)",1],
+    ["TBILLPRICE","Financial",4,"=TBILLPRICE(settle,maturity,discount)","Treasury bill ki price nikalta hai.","=TBILLPRICE(A1,A2,5%)",1],
+    ["TBILLYIELD","Financial",4,"=TBILLYIELD(settle,maturity,pr)","Treasury bill ka yield nikalta hai.","=TBILLYIELD(A1,A2,98)",1],
+    ["ACCRINT","Financial",4,"=ACCRINT(issue,first,settle,rate,par,freq)","Periodic interest dene wali security ka accrued interest nikalta hai.","=ACCRINT(A1,A2,A3,5%,1000,2)",1],
+    ["COUPDAYS","Financial",4,"=COUPDAYS(settle,maturity,freq)","Coupon period me kitne din hain, batata hai.","=COUPDAYS(A1,A2,2)",1],
+    ["COUPNCD","Financial",4,"=COUPNCD(settle,maturity,freq)","Settlement date ke baad ki next coupon date deta hai.","=COUPNCD(A1,A2,2)",1],
+    ["DISC","Financial",4,"=DISC(settle,maturity,pr,redemption)","Security ka discount rate nikalta hai.","=DISC(A1,A2,98,100)",1],
+    ["INTRATE","Financial",4,"=INTRATE(settle,maturity,invest,redemption)","Fully-invested security ki interest rate nikalta hai.","=INTRATE(A1,A2,1000,1050)",1],
+    ["RECEIVED","Financial",4,"=RECEIVED(settle,maturity,invest,discount)","Maturity par milne wali poori amount nikalta hai.","=RECEIVED(A1,A2,1000,5%)",1],
+    ["DOLLARDE","Financial",4,"=DOLLARDE(fractional,fraction)","Fraction wale price ko decimal me convert karta hai.","=DOLLARDE(1.02,16) → 1.125",1],
+    ["DOLLARFR","Financial",4,"=DOLLARFR(decimal,fraction)","Decimal price ko fraction me convert karta hai.","=DOLLARFR(1.125,16) → 1.02",1],
+    ["CONVERT","Engineering",4,"=CONVERT(number,from_unit,to_unit)","Ek unit se doosri unit me convert karta hai (kg, miles, celsius, etc).","=CONVERT(10,\"kg\",\"lbm\")",3],
+    ["DELTA","Engineering",4,"=DELTA(number1,number2)","Do numbers barabar hain ya nahi, check karta hai (1/0).","=DELTA(5,5) → 1",1],
+    ["GESTEP","Engineering",4,"=GESTEP(number,step)","Number ek threshold se bada hai ya nahi, check karta hai.","=GESTEP(10,5) → 1",1],
+    ["BIN2DEC","Engineering",4,"=BIN2DEC(binary)","Binary number ko decimal me convert karta hai.","=BIN2DEC(1100) → 12",1],
+    ["DEC2BIN","Engineering",4,"=DEC2BIN(decimal)","Decimal number ko binary me convert karta hai.","=DEC2BIN(12) → 1100",1],
+    ["HEX2DEC","Engineering",4,"=HEX2DEC(hex)","Hexadecimal number ko decimal me convert karta hai.","=HEX2DEC(\"1A\") → 26",1],
+    ["DEC2HEX","Engineering",4,"=DEC2HEX(decimal)","Decimal number ko hexadecimal me convert karta hai.","=DEC2HEX(26) → 1A",1],
+    ["OCT2DEC","Engineering",4,"=OCT2DEC(octal)","Octal number ko decimal me convert karta hai.","=OCT2DEC(17) → 15",1],
+    ["DEC2OCT","Engineering",4,"=DEC2OCT(decimal)","Decimal number ko octal me convert karta hai.","=DEC2OCT(15) → 17",1],
+    ["IMSUM","Engineering",4,"=IMSUM(complex1,complex2)","Do complex numbers ko jodta hai.","=IMSUM(\"3+2i\",\"1+4i\") → 4+6i",1],
+    ["IMPRODUCT","Engineering",4,"=IMPRODUCT(complex1,complex2)","Do complex numbers ko multiply karta hai.","=IMPRODUCT(\"3+2i\",\"1+4i\")",1],
+    ["BITAND","Engineering",4,"=BITAND(number1,number2)","Do numbers ka bitwise AND nikalta hai.","=BITAND(5,3) → 1",1],
+    ["BITOR","Engineering",4,"=BITOR(number1,number2)","Do numbers ka bitwise OR nikalta hai.","=BITOR(5,3) → 7",1],
+    ["BITXOR","Engineering",4,"=BITXOR(number1,number2)","Do numbers ka bitwise XOR nikalta hai.","=BITXOR(5,3) → 6",1],
+    ["BITLSHIFT","Engineering",4,"=BITLSHIFT(number,shift)","Number ke bits ko left shift karta hai.","=BITLSHIFT(4,2) → 16",1],
+    ["BITRSHIFT","Engineering",4,"=BITRSHIFT(number,shift)","Number ke bits ko right shift karta hai.","=BITRSHIFT(16,2) → 4",1],
+  ];
+
+  const LEVEL_NAME = {1:"Beginner",2:"Intermediate",3:"Advanced",4:"Expert"};
+  let libInited = false;
+  let currentLevel = "0";
+  let currentCat = "all";
+  let currentSearch = "";
+
+  function populateCategories(){
+    const cats = [...new Set(FORMULAS.map(f=>f[1]))].sort();
+    const sel = document.getElementById('catSelect');
+    cats.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+
+  function starString(n){
+    let s='';
+    for(let i=0;i<5;i++) s += `<span class="${i<n?'on':'off'}">★</span>`;
+    return s;
+  }
+
+  function renderLibrary(){
+    const grid = document.getElementById('fgrid');
+    const empty = document.getElementById('libEmpty');
+    const resultCount = document.getElementById('resultCount');
+    grid.innerHTML = '';
+
+    const filtered = FORMULAS.filter(f=>{
+      if(currentLevel!=="0" && String(f[2])!==currentLevel) return false;
+      if(currentCat!=="all" && f[1]!==currentCat) return false;
+      if(currentSearch && !f[0].toLowerCase().includes(currentSearch) && !f[4].toLowerCase().includes(currentSearch)) return false;
+      return true;
+    });
+
+    resultCount.textContent = filtered.length + ' formulas mil rahe hain';
+    empty.style.display = filtered.length ? 'none' : 'block';
+
+    filtered.forEach((f,i)=>{
+      const [name,cat,level,syntax,desc,example,rating] = f;
+      const card = document.createElement('div');
+      card.className = `fcard lv${level}`;
+      card.style.animationDelay = (Math.min(i,24)*0.025)+'s';
+      card.innerHTML = `
+        <div class="frow">
+          <div class="fname">${name}</div>
+          <div class="flevel">${LEVEL_NAME[level]}</div>
+        </div>
+        <div class="fcat">${cat}</div>
+        <code class="fsyntax">${syntax}</code>
+        <p class="fdesc">${desc}</p>
+        <div class="fexample"><b>Example:</b> ${example}</div>
+        <div class="fstars">${starString(rating)}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function animateCounter(){
+    const el = document.getElementById('libCounter');
+    const target = FORMULAS.length;
+    let cur = 0;
+    const step = Math.max(1, Math.round(target/40));
+    const iv = setInterval(()=>{
+      cur += step;
+      if(cur >= target){ cur = target; clearInterval(iv); }
+      el.textContent = cur;
+    }, 18);
+  }
+
+  function initLibrary(){
+    if(libInited) return;
+    libInited = true;
+    populateCategories();
+    renderLibrary();
+    animateCounter();
+
+    document.querySelectorAll('.pill').forEach(p=>{
+      p.addEventListener('click', ()=>{
+        document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+        p.classList.add('active');
+        currentLevel = p.dataset.level;
+        renderLibrary();
+      });
+    });
+    document.getElementById('catSelect').addEventListener('change', (e)=>{
+      currentCat = e.target.value;
+      renderLibrary();
+    });
+    document.getElementById('formulaSearch').addEventListener('input', (e)=>{
+      currentSearch = e.target.value.toLowerCase();
+      renderLibrary();
+    });
+  }
+</script>
+</body>
+</html>
