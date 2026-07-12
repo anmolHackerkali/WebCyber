@@ -86,7 +86,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const panel = document.createElement('div');
   panel.id = 'wcChatPanel';
   panel.innerHTML = `
-    <textarea id="wcMsgInput" maxlength="200" placeholder="Apna message likho..."></textarea>
+    <textarea id="wcMsgInput" maxlength="200" placeholder="💬Apna message likho..."></textarea>
     <button id="wcMsgSend">SEND &gt;&gt;</button>`;
   document.body.appendChild(panel);
 
