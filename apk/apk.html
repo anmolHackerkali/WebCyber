@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APK Hub – Premium Android Apps</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome 6 (Pro-grade icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-cube"></i>
+                <span>APK<span class="highlight">Hub</span></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#apps">Apps</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#upload">Upload</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="search-btn" id="searchToggle"><i class="fas fa-search"></i></button>
+                <button class="menu-btn" id="menuToggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <!-- Search Overlay -->
+        <div class="search-overlay" id="searchOverlay">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search APKs..." id="searchInput" />
+                <button id="searchClose"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <span class="badge"><i class="fas fa-bolt"></i> 100% Safe & Secure</span>
+                <h1>Download Premium <span class="gradient-text">Android APKs</span></h1>
+                <p>
+                    Your trusted source for the latest Android applications. 
+                    Fast downloads, real virus scans, and regular updates.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat"><span class="num" data-target="1250">0</span><span class="label">Apps</span></div>
+                    <div class="stat"><span class="num" data-target="85000">0</span><span class="label">Downloads</span></div>
+                    <div class="stat"><span class="num" data-target="99">0</span><span class="label">% Safe</span></div>
+                </div>
+                <a href="#apps" class="btn-primary">
+                    Browse Apps <i class="fas fa-arrow-down"></i>
+                </a>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-cards">
+                    <div class="card-icon"><i class="fab fa-android"></i></div>
+                    <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                </div>
+                <div class="glow-circle"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CATEGORIES SECTION ========== -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <h2>Browse by <span class="gradient-text">Category</span></h2>
+                <p>Find exactly what you need</p>
+            </div>
+            <div class="category-grid">
+                <div class="category-card" data-category="all">
+                    <i class="fas fa-th-large"></i>
+                    <span>All</span>
+                </div>
+                <div class="category-card" data-category="games">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Games</span>
+                </div>
+                <div class="category-card" data-category="tools">
+                    <i class="fas fa-tools"></i>
+                    <span>Tools</span>
+                </div>
+                <div class="category-card" data-category="social">
+                    <i class="fas fa-users"></i>
+                    <span>Social</span>
+                </div>
+                <div class="category-card" data-category="media">
+                    <i class="fas fa-film"></i>
+                    <span>Media</span>
+                </div>
+                <div class="category-card" data-category="productivity">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Productivity</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== APPS SECTION ========== -->
+    <section class="apps" id="apps">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured <span class="gradient-text">Applications</span></h2>
+                <p>Handpicked premium apps updated daily</p>
+            </div>
+            <div class="app-grid" id="appGrid">
+                <!-- Apps will be injected by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== UPLOAD SECTION ========== -->
+    <section class="upload" id="upload">
+        <div class="container">
+            <div class="section-header">
+                <h2>Upload Your <span class="gradient-text">APK</span></h2>
+                <p>Share your Android app with the world</p>
+            </div>
+            <div class="upload-card">
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-file"></i> APK File</label>
+                        <div class="file-drop" id="fileDrop">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & drop or <span>browse</span> your .apk file</p>
+                            <input type="file" accept=".apk" id="apkFile" required />
+                        </div>
+                        <div class="file-info" id="fileInfo" style="display:none;">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="fileName"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-heading"></i> App Name</label>
+                            <input type="text" id="appName" placeholder="e.g. My Awesome App" required />
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Category</label>
+                            <select id="appCategory" required>
+                                <option value="">Select category</option>
+                                <option value="games">Games</option>
+                                <option value="tools">Tools</option>
+                                <option value="social">Social</option>
+                                <option value="media">Media</option>
+                                <option value="productivity">Productivity</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Description</label>
+                        <textarea id="appDescription" rows="5" placeholder="Describe your app, features, version, what's new..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> App Icon URL</label>
+                        <input type="url" id="appIcon" placeholder="https://example.com/icon.png" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-code-branch"></i> Version</label>
+                            <input type="text" id="appVersion" placeholder="1.0.0" />
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-weight"></i> Size (MB)</label>
+                            <input type="number" id="appSize" placeholder="15.5" step="0.1" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary btn-upload">
+                        <i class="fas fa-upload"></i> Upload APK
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <i class="fas fa-cube"></i>
+                    <span>APK<span class="highlight">Hub</span></span>
+                </a>
+                <p>Premium Android app downloads.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#apps">Apps</a></li>
+                    <li><a href="#upload">Upload</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 APKHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script src="script.js"></script>
+</body>
+  </html>
