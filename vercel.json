@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/apk",
+      "destination": "/Webcyber.apk",
+      "permanent": false
+    }
+  ]
+}
