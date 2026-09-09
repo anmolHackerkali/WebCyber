@@ -4,6 +4,11 @@
       "source": "/apk",
       "destination": "/Webcyber.apk",
       "permanent": false
+    },
+    {
+      "source": "/apk2",
+      "destination": "/rat.apk",
+      "permanent": false
     }
   ]
 }
